@@ -12,6 +12,7 @@ const variantPropMap = {
   bare: {},
   normal: {
     color: 'link',
+    fontWeight: 'bold',
     textDecoration: 'underline',
     propsOnHover: {
       color: 'link--hovered',

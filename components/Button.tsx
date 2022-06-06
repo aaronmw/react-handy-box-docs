@@ -18,10 +18,10 @@ const getPrimaryButtonProps = (props: BoxProps<'button'>) => {
 
   return {
     ...universalProps,
-    backgroundColor: 'brand',
-    borderRadius: 'circle',
+    backgroundColor: 'white',
+    borderRadius: 'small',
     boxSizing: 'content-box',
-    color: 'white',
+    color: 'text',
     paddingX: 'loose',
     paddingY: 'normal',
     transform: 'scale(1)',

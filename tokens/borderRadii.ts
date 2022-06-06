@@ -1,1 +1,1 @@
-export const borderRadii = { small: '6px', normal: '24px', circle: '5000px' };
+export const borderRadii = { small: '6px', normal: '16px', circle: '5000px' };

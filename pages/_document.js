@@ -21,10 +21,6 @@ export default class MyDocument extends Document {
             {initialProps.styles}
             {sheet.getStyleElement()}
             <link rel="shortcut icon" href="/favicon.png" />
-            <link
-              href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
-              rel="stylesheet"
-            />
           </>
         ),
       };

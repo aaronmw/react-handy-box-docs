@@ -1,4 +1,4 @@
-import { ElementType, forwardRef, Ref } from 'react';
+import { forwardRef, Ref } from 'react';
 import { Box } from './Box';
 import { BoxProps } from './Box.types';
 
@@ -6,6 +6,7 @@ const textStyles = {
   'heading--1': {
     as: 'h1',
     fontSize: 'xxlarge',
+    fontWeight: 900,
   },
   'heading--2': {
     as: 'h2',
@@ -15,6 +16,7 @@ const textStyles = {
   'heading--3': {
     as: 'h3',
     fontSize: 'large',
+    fontWeight: 'bold',
   },
   'label': {
     color: 'purple--200',
