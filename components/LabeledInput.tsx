@@ -15,7 +15,7 @@ type LabeledInputComponentProps = BoxProps<'label'> & LabeledInputProps;
 const baseLabelProps: BoxProps<'label'> = {
   flexGrow: 1,
   flexShrink: 1,
-  focusProps: {
+  propsOnFocus: {
     boxShadow: 'focusRing',
   },
 };
