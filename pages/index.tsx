@@ -69,7 +69,7 @@ const Home: NextPage = () => {
             position="relative"
             width="100%"
           >
-            <ContentContainer paddingY="xloose">
+            <ContentContainer paddingY="xloose" zIndex={1}>
               <Box
                 rowGap="xloose"
                 alignItems="flex-start"
@@ -96,6 +96,7 @@ const Home: NextPage = () => {
                 right: -200,
                 top: '50%',
                 transform: 'translateY(-50%)',
+                zIndex: 0,
               }}
             >
               <Image
@@ -119,45 +120,46 @@ const Home: NextPage = () => {
               gap="normal"
               justifyContent="space-evenly"
               opacity={0.6}
-              paddingY="loose"
+              padding="loose"
               width="100%"
             >
               {[
                 {
-                  logo: 'logo.tendermint.png',
+                  logo: 'logo.cosmos-sdk.png',
                   logoHeight: 80,
-                  logoWidth: 240,
+                  logoWidth: 318,
                   name: 'Cosmos-SDK',
                 },
                 {
                   logo: 'logo.tendermint.png',
                   logoHeight: 80,
-                  logoWidth: 240,
+                  logoWidth: 293,
                   name: 'Tendermint',
                 },
                 {
-                  logo: 'logo.tendermint.png',
+                  logo: 'logo.ibc.png',
                   logoHeight: 80,
-                  logoWidth: 240,
+                  logoWidth: 308,
                   name: 'Inter-Blockchain Communication (IBC)',
                 },
                 {
-                  logo: 'logo.tendermint.png',
+                  logo: 'logo.cosmos-hub.png',
                   logoHeight: 80,
-                  logoWidth: 240,
+                  logoWidth: 315,
                   name: 'CosmosHub',
                 },
                 {
-                  logo: 'logo.tendermint.png',
+                  logo: 'logo.cosmwasm.png',
                   logoHeight: 80,
-                  logoWidth: 240,
+                  logoWidth: 351,
                   name: 'CosmWasm',
                 },
               ].map((project) => (
-                <Box as="li" key={project.name}>
+                <Box as="li" key={project.name} width={200}>
                   <Image
                     alt={`${project.name} Logo`}
                     height={project.logoHeight}
+                    layout="responsive"
                     src={`/${project.logo}`}
                     width={project.logoWidth}
                   />
@@ -208,7 +210,15 @@ const Home: NextPage = () => {
                 `Now, projects get immediate access to hundreds of thousands of active users and benefit from Cosmos network effects over time.`,
               ],
             ].map(([before, after], index) => (
-              <Box columnGap="xloose" columns={2} key={index}>
+              <Box
+                columnGap="normal"
+                columns={2}
+                key={index}
+                propsForTabletOrLarger={{
+                  columnGap: 'xloose',
+                  display: 'grid',
+                }}
+              >
                 <Box columnGap="normal">
                   <Icon name="bolt-lightning" variant="solid" />
                   <Box>{before}</Box>
@@ -250,10 +260,13 @@ const Home: NextPage = () => {
           </ContentContainer>
 
           <ContentContainer
-            alignItems="center"
-            display="grid"
-            columns={2}
-            columnGap="xloose"
+            rowGap="xloose"
+            propsForTabletOrLarger={{
+              alignItems: 'center',
+              display: 'grid',
+              columnGap: 'xloose',
+              columns: 2,
+            }}
           >
             <Box rowGap="loose">
               <Text variant="heading--2">
@@ -291,7 +304,13 @@ const Home: NextPage = () => {
           <ContentContainer rowGap="loose">
             <Text variant="heading--2">Contract Consumer Chains</Text>
 
-            <Box columnGap="normal" columns={3}>
+            <Box
+              rowGap="normal"
+              propsForTabletOrLarger={{
+                columnGap: 'normal',
+                columns: 3,
+              }}
+            >
               {[
                 {
                   icon: 'brain-circuit',
@@ -349,7 +368,13 @@ const Home: NextPage = () => {
           >
             <Text variant="heading--2">Join the Community</Text>
 
-            <Box columns={3} gap="loose">
+            <Box
+              gap="loose"
+              propsForTabletOrLarger={{
+                columnGap: 'loose',
+                columns: 3,
+              }}
+            >
               {[
                 [
                   'twitter',

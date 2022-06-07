@@ -6,7 +6,7 @@ describe('Home', () => {
     render(<Home />);
 
     const heading = screen.getByRole('heading', {
-      name: /Introducing Interchain Security/i,
+      name: /Launch your project to the entire Cosmos/i,
     });
 
     expect(heading).toBeInTheDocument();
