@@ -86,7 +86,16 @@ const Home: NextPage = () => {
                   />
                 </Text>
 
-                <Button>Get started today</Button>
+                <Button
+                  asAnchor={true}
+                  columnGap="tight"
+                  display="flex"
+                  href="https://github.com/cosmos/interchain-security"
+                  target="_blank"
+                >
+                  Get Started Today
+                  <Icon name="up-right-from-square" />
+                </Button>
               </Box>
             </ContentContainer>
 
