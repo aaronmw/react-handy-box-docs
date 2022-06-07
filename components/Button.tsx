@@ -9,7 +9,8 @@ const getBaseButtonProps = (props: BoxProps<'button'>) => ({
   pointerEvents: props.disabled ? 'none' : 'all',
   whiteSpace: 'nowrap',
   propsOnHover: {
-    backgroundColor: 'blue--300',
+    backgroundColor: 'purple',
+    color: 'white',
   },
 });
 
@@ -89,34 +90,41 @@ const variantPropMap = {
   primary: getPrimaryButtonProps,
 };
 
-type ButtonProps = BoxProps<'button'> & {
+type BaseButtonProps<AsAnchor extends boolean> = {
+  asAnchor?: AsAnchor;
   stopClickPropagation?: boolean;
   variant?: keyof typeof variantPropMap;
 };
 
+// TODO: Improve this type definition
+type ButtonProps<AsAnchor extends boolean> = AsAnchor extends true
+  ? Omit<BoxProps<'a'>, 'as' | 'ref'> & BaseButtonProps<AsAnchor>
+  : Omit<BoxProps<'button'>, 'as' | 'ref'> & BaseButtonProps<AsAnchor>;
+
 // eslint-disable-next-line react/display-name
 const Button = forwardRef(
-  (
+  <AsAnchor extends boolean>(
     {
+      asAnchor = false,
       children,
       stopClickPropagation = false,
       variant = 'primary',
       onClick,
       ...props
-    }: ButtonProps,
-    ref: Ref<HTMLButtonElement>
+    }: ButtonProps<AsAnchor>,
+    ref: AsAnchor extends true ? Ref<HTMLAnchorElement> : Ref<HTMLButtonElement>
   ) => (
     <Box
-      as="button"
+      as={asAnchor ? 'a' : 'button'}
       ref={ref}
-      onClick={(event: MouseEvent<HTMLButtonElement>) => {
+      onClick={(event: MouseEvent<any>) => {
         if (stopClickPropagation) {
           event.stopPropagation();
         }
 
         return onClick?.(event);
       }}
-      {...(variantPropMap[variant](props) as BoxProps<'button'>)}
+      {...(variantPropMap as any)[variant](props)}
       {...props}
     >
       {children}

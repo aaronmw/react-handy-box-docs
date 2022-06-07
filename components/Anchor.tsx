@@ -20,7 +20,8 @@ const variantPropMap = {
   },
   subtle: {
     color: 'text',
-    textDecoration: 'none',
+    fontWeight: 'bold',
+    textDecoration: 'underline',
     propsOnHover: {
       color: 'link--hovered',
     },

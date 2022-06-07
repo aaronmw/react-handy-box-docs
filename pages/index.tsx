@@ -179,7 +179,7 @@ const Home: NextPage = () => {
           >
             <Text variant="heading--2">Key Features</Text>
 
-            <Box columnGap="xloose" columns={2} width="100%">
+            <Box columnGap="xloose" columns={2} textAlign="center" width="100%">
               <Text
                 borderBottom="hairline"
                 paddingBottom="loose"
@@ -219,12 +219,20 @@ const Home: NextPage = () => {
                   display: 'grid',
                 }}
               >
-                <Box columnGap="normal">
-                  <Icon name="bolt-lightning" variant="solid" />
+                <Box
+                  borderBottom="hairline"
+                  columnGap="normal"
+                  paddingBottom="loose"
+                >
+                  <Icon color="gray--200" name="thumbs-down" variant="solid" />
                   <Box>{before}</Box>
                 </Box>
-                <Box columnGap="normal">
-                  <Icon name="bolt-lightning" variant="solid" />
+                <Box
+                  borderBottom="hairline"
+                  columnGap="normal"
+                  paddingBottom="loose"
+                >
+                  <Icon color="purple" name="thumbs-up" variant="solid" />
                   <Box>{after}</Box>
                 </Box>
               </Box>
@@ -254,7 +262,16 @@ const Home: NextPage = () => {
                   QuickSilver is a liquid staking zone built for the Cosmos
                   ecosystem.
                 </Box>
-                <Button>Learn More</Button>
+                <Button
+                  asAnchor={true}
+                  columnGap="tight"
+                  display="flex"
+                  href="https://medium.com/quicksilverzone/interchain-security-on-quicksilver-5f7478a93c22"
+                  target="_blank"
+                >
+                  Learn More
+                  <Icon name="up-right-from-square" />
+                </Button>
               </Box>
             </FancyBackgroundBox>
           </ContentContainer>
@@ -292,6 +309,17 @@ const Home: NextPage = () => {
                   </Box>
                 ))}
               </Box>
+              <Box>
+                <Anchor
+                  columnGap="tight"
+                  href="https://docs.cosmos.network/"
+                  target="_blank"
+                  variant="subtle"
+                >
+                  Dive Deeper into the Cosmos-SDK
+                  <Icon name="up-right-from-square" />
+                </Anchor>
+              </Box>
             </Box>
             <Image
               alt="Informal Systems Logo"
@@ -321,10 +349,7 @@ const Home: NextPage = () => {
                   content: (
                     <>
                       EVM and CosmWasm compatibility allow developers to program
-                      applications in languages they are comfortable with{' '}
-                      <Anchor color="white" href="#">
-                        Build with CosmWasm
-                      </Anchor>
+                      applications in languages they are comfortable with
                     </>
                   ),
                 },
@@ -356,6 +381,12 @@ const Home: NextPage = () => {
                 </FancyBackgroundBox>
               ))}
             </Box>
+
+            <Box>
+              <Anchor columnGap="tight" href="#" variant="subtle">
+                Build with CosmWasm <Icon name="up-right-from-square" />
+              </Anchor>
+            </Box>
           </ContentContainer>
         </Box>
         <Box backgroundColor="shaded" paddingY="xloose">
@@ -377,22 +408,37 @@ const Home: NextPage = () => {
             >
               {[
                 [
+                  'https://twitter.com/informalinc',
                   'twitter',
                   'brands',
                   'Stay up to date on the latest updates from the team.',
                 ],
                 [
+                  'https://discord.gg/Rv6HYmHmBP',
                   'discord',
                   'brands',
                   'Join our testnet and connect with the development team.',
                 ],
                 [
+                  'https://informal.systems/blog',
                   'pencil',
                   'solid',
                   'For updates on Interchain Security development',
                 ],
-              ].map(([iconName, iconFamily, message], index) => (
-                <Box alignItems="center" rowGap="normal" key={index}>
+              ].map(([url, iconName, iconFamily, message], index) => (
+                <Anchor
+                  alignItems="center"
+                  borderRadius="normal"
+                  href={url}
+                  key={index}
+                  padding="normal"
+                  rowGap="normal"
+                  target="_blank"
+                  variant="bare"
+                  propsOnHover={{
+                    backgroundColor: 'gray--200',
+                  }}
+                >
                   <Box
                     alignItems="center"
                     backgroundColor="white"
@@ -400,10 +446,14 @@ const Home: NextPage = () => {
                     justifyContent="center"
                     padding="normal"
                   >
-                    <Icon name={iconName as any} variant={iconFamily as any} />
+                    <Icon
+                      color="text"
+                      name={iconName as any}
+                      variant={iconFamily as any}
+                    />
                   </Box>
                   {message}
-                </Box>
+                </Anchor>
               ))}
             </Box>
           </ContentContainer>
@@ -414,7 +464,7 @@ const Home: NextPage = () => {
 };
 
 const ContentContainer = ({ children, ...otherProps }: BoxProps<'div'>) => (
-  <Box marginX="auto" width="80vw" {...otherProps}>
+  <Box marginX="auto" maxWidth={1200} width="80vw" {...otherProps}>
     {children}
   </Box>
 );
