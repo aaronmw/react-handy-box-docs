@@ -1,5 +1,5 @@
 // https://github.com/kripod/react-polymorphic-box/blob/main/src/Box.tsx
-import { ComponentProps, CSSProperties, ElementType, ReactNode } from 'react';
+import { ComponentProps, CSSProperties, ReactNode } from 'react';
 import { ColorLightnessValue } from 'tokens/colorPalette';
 import {
   animationNames,
@@ -21,7 +21,7 @@ export type AnimationName = keyof typeof animationNames;
 
 export type BorderRadius = keyof typeof borderRadii | Length | number;
 
-export type BorderStyle = keyof ReturnType<typeof borderStyles>;
+export type BorderStyle = keyof typeof borderStyles;
 
 export type Breakpoint = keyof typeof breakpoints;
 
@@ -427,22 +427,32 @@ export type BoxPropsWithHandlers<TagName extends keyof JSX.IntrinsicElements> =
     border?: BorderStyle;
     borderBottom?: BorderStyle;
     borderBottomLeftRadius?: BorderRadius;
+    borderBottomRadius?: BorderRadius;
     borderBottomRightRadius?: BorderRadius;
     borderColor?: Color;
     borderColorLightness?: ColorLightnessAdjustmentValue;
-    borderBottomColor?: Color;
-    borderLeftColor?: Color;
-    borderRightColor?: Color;
-    borderTopColor?: Color;
     /** Sets both `borderLeftColor` and `borderRightColor` */
     borderXColor?: Color;
+    borderXColorLightness?: ColorLightnessAdjustmentValue;
     /** Sets both `borderBottomColor` and `borderTopColor` */
     borderYColor?: Color;
+    borderYColorLightness?: ColorLightnessAdjustmentValue;
+    borderBottomColor?: Color;
+    borderBottomColorLightness?: ColorLightnessAdjustmentValue;
+    borderLeftColor?: Color;
+    borderLeftColorLightness?: ColorLightnessAdjustmentValue;
+    borderRightColor?: Color;
+    borderRightColorLightness?: ColorLightnessAdjustmentValue;
+    borderTopColor?: Color;
+    borderTopColorLightness?: ColorLightnessAdjustmentValue;
     borderLeft?: BorderStyle;
+    borderLeftRadius?: BorderRadius;
     borderRadius?: BorderRadius;
     borderRight?: BorderStyle;
+    borderRightRadius?: BorderRadius;
     borderTop?: BorderStyle;
     borderTopLeftRadius?: BorderRadius;
+    borderTopRadius?: BorderRadius;
     borderTopRightRadius?: BorderRadius;
     /** Sets both `borderLeft` and `borderRight` */
     borderX?: BorderStyle;

@@ -1,20 +1,24 @@
+import {
+  BorderStyle,
+  BoxProps,
+  Breakpoint,
+  Color,
+  validStyleProps,
+} from '@/components/Box.types';
+import { animationNames } from '@/tokens/animationNames';
+import { borderRadii } from '@/tokens/borderRadii';
+import { borderStyles } from '@/tokens/borderStyles';
+import { boxShadows } from '@/tokens/boxShadows';
+import { breakpoints } from '@/tokens/breakpoints';
+import { colorPalette } from '@/tokens/colorPalette';
+import { transitionDurations } from '@/tokens/transitionDurations';
+import { fontNames } from '@/tokens/typography';
+import { whiteSpacesAsCSSVariables } from '@/tokens/whiteSpaces';
+import { zIndices } from '@/tokens/zIndices';
+import { adjustColorLightness } from '@/utilities/adjustColorLightness';
 import camelCase from 'lodash/camelCase';
-import clamp from 'lodash/clamp';
 import upperFirst from 'lodash/upperFirst';
 import styled, { CSSObject } from 'styled-components';
-import {
-  animationNames,
-  borderRadii,
-  borderStyles,
-  boxShadows,
-  breakpoints,
-  colorPalette,
-  fontNames,
-  transitionDurations,
-  whiteSpacesAsCSSVariables,
-  zIndices,
-} from '../tokens';
-import { BoxProps, Breakpoint, Color, validStyleProps } from './Box.types';
 
 type PropOptionResolver<TagName extends keyof JSX.IntrinsicElements> = <
   P extends string & keyof BoxProps<TagName>
@@ -37,8 +41,8 @@ type PropHandlers<TagName extends keyof JSX.IntrinsicElements> = {
 };
 
 const nestedSelectorPropAliases = {
-  propsForAfterElement: '&::after',
-  propsForBeforeElement: '&::before',
+  propsForAfterElement: '&:after',
+  propsForBeforeElement: '&:before',
   propsForFirstElement: '&:first-child',
   propsOnFocus: '&:focus, &:focus-within',
   propsOnHover: '&:hover, &:focus, &:focus-within',
@@ -70,6 +74,24 @@ const propHandlers: PropHandlers<any> = {
     ],
     options: borderRadii,
   },
+  borderBottomRadius: {
+    aliases: ['borderLeftRadius', 'borderRightRadius', 'borderTopRadius'],
+    options: ({ propName, propValue }) => {
+      const edgeName = propName.replace(/(border|Radius)/g, '');
+      const isLeftOrRight = ['Left', 'Right'].includes(edgeName);
+      const propNameA = isLeftOrRight
+        ? `borderBottom${edgeName}Radius`
+        : `border${edgeName}LeftRadius`;
+      const propNameB = isLeftOrRight
+        ? `borderTop${edgeName}Radius`
+        : `border${edgeName}RightRadius`;
+
+      return propsToStyleObject({
+        [propNameA]: propValue,
+        [propNameB]: propValue,
+      });
+    },
+  },
   border: {
     aliases: [
       'borderTop',
@@ -83,21 +105,15 @@ const propHandlers: PropHandlers<any> = {
       'borderLeftColor',
     ],
     options: ({ props, propName = 'border' }) => {
-      const borderEdgeName = propName.replace('Color', '') as
-        | 'border'
-        | 'borderTop'
-        | 'borderRight'
-        | 'borderBottom'
-        | 'borderLeft';
-      const borderStylesObject = borderStyles(props);
-      const borderStyle = props[borderEdgeName] ?? 'normal';
-      const borderColor = (props[`${borderEdgeName}Color`] ??
-        'border') as Color;
+      const borderEdgeName = propName.replace('Color', '');
+      const borderStyleObject =
+        borderStyles[(props[borderEdgeName] ?? 'normal') as BorderStyle];
+      const borderColor = props[`${borderEdgeName}Color`] ?? 'border';
 
       return {
-        [`${borderEdgeName}Color`]: colorPalette[borderColor],
-        [`${borderEdgeName}Style`]: borderStylesObject[borderStyle].borderStyle,
-        [`${borderEdgeName}Width`]: borderStylesObject[borderStyle].borderWidth,
+        [`${borderEdgeName}Color`]: colorPalette[borderColor as Color],
+        [`${borderEdgeName}Style`]: borderStyleObject.borderStyle,
+        [`${borderEdgeName}Width`]: borderStyleObject.borderWidth,
       };
     },
   },
@@ -113,18 +129,32 @@ const propHandlers: PropHandlers<any> = {
     options: colorPalette,
   },
   colorLightness: {
-    aliases: ['backgroundColorLightness', 'borderColorLightness'],
+    aliases: [
+      'backgroundColorLightness',
+      'borderBottomColorLightness',
+      'borderColorLightness',
+      'borderLeftColorLightness',
+      'borderRightColorLightness',
+      'borderTopColorLightness',
+    ],
     options: ({ props, propName, propValue }) => {
-      const colorPropName = propName.replace('Lightness', '');
-      const colorPropValue = props[colorPropName];
-      const [colorName, lightnessValue = 400] = colorPropValue.split('--');
+      const colorProp = propName.replace('Lightness', '');
 
-      const newLightnessValue = ['+', '-'].includes(propValue[0])
-        ? clamp(Number(lightnessValue) + Number(propValue), 100, 700)
-        : propValue;
+      const isBorderProp = colorProp.startsWith('border');
+
+      const isColorProp = colorProp === 'color';
+
+      const colorName =
+        props[colorProp] ??
+        (isBorderProp ? 'border' : isColorProp ? 'text' : undefined);
+
+      const borderProp = colorProp.replace('Color', '');
 
       return propsToStyleObject({
-        [colorPropName]: `${colorName}--${newLightnessValue}`,
+        ...(isBorderProp
+          ? { [borderProp]: props[borderProp] ?? 'normal' }
+          : {}),
+        [colorProp]: adjustColorLightness(colorName, propValue),
       });
     },
   },
@@ -190,7 +220,7 @@ const propHandlers: PropHandlers<any> = {
   },
   isOnlyForScreenReaders: {
     options: () => ({
-      clip: 'rect(0,0,0,0)',
+      clip: 'rect(0, 0, 0, 0)',
       clipPath: 'inset(50%)',
       height: '1px',
       margin: '-1px',
@@ -200,13 +230,13 @@ const propHandlers: PropHandlers<any> = {
       width: '1px',
     }),
   },
-  padding: {
+  margin: {
     aliases: [
+      'padding',
       'paddingLeft',
       'paddingRight',
       'paddingTop',
       'paddingBottom',
-      'margin',
       'marginLeft',
       'marginRight',
       'marginTop',
@@ -214,17 +244,28 @@ const propHandlers: PropHandlers<any> = {
     ],
     options: whiteSpacesAsCSSVariables,
   },
-  paddingX: {
-    aliases: ['paddingY', 'marginX', 'marginY'],
+  marginX: {
+    aliases: [
+      'borderX',
+      'borderXColor',
+      'borderXColorLightness',
+      'borderY',
+      'borderYColor',
+      'borderYColorLightness',
+      'marginY',
+      'paddingX',
+      'paddingY',
+    ],
     options: ({ propName, propValue }) => {
-      const axis = propName.slice(-1);
-      const propNameMinusAxis = propName.slice(0, -1);
-      const A = axis === 'X' ? 'Left' : 'Bottom';
-      const B = axis === 'X' ? 'Right' : 'Top';
+      const XorY = propName.includes('X') ? 'X' : 'Y';
+      const LeftOrBottom = XorY === 'X' ? 'Left' : 'Bottom';
+      const RightOrTop = XorY === 'X' ? 'Right' : 'Top';
+      const propNameLeftOrBottom = propName.replace(XorY, LeftOrBottom);
+      const propNameRightOrTop = propName.replace(XorY, RightOrTop);
 
       return propsToStyleObject({
-        [`${propNameMinusAxis}${A}`]: propValue,
-        [`${propNameMinusAxis}${B}`]: propValue,
+        [`${propNameLeftOrBottom}`]: propValue,
+        [`${propNameRightOrTop}`]: propValue,
       });
     },
   },
@@ -234,8 +275,8 @@ const propHandlers: PropHandlers<any> = {
       [nestedSelectorPropAliases[
         propName as keyof typeof nestedSelectorPropAliases
       ]]: {
-        content: '',
         ...propsToStyleObject(propValue),
+        content: `"${propValue.content ?? ''}"`,
       },
     }),
   },
@@ -257,7 +298,7 @@ const propHandlers: PropHandlers<any> = {
   },
   propsOnFocus: {
     options: ({ propValue }) => ({
-      '&:focus, &:focus-within': propsToStyleObject(propValue),
+      [nestedSelectorPropAliases.propsOnFocus]: propsToStyleObject(propValue),
     }),
   },
   propsOnHover: {
@@ -366,4 +407,5 @@ const Box: <TagName extends keyof JSX.IntrinsicElements = 'div'>(
   ) => propsToStyleObject(props)}
 `;
 
-export { Box, nestedSelectorPropAliases, propsToStyleObject };
+export { Box };
+export { nestedSelectorPropAliases, propsToStyleObject };

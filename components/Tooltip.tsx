@@ -1,9 +1,9 @@
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
 import clamp from 'lodash/clamp';
 import { forwardRef, ReactNode, Ref, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useMultipleRefs } from '../hooks';
-import { Box } from './Box';
-import { BoxProps } from './Box.types';
 
 const variantPropMap = {
   normal: {
@@ -21,7 +21,6 @@ type TooltipProps = Omit<BoxProps<'div'>, 'content'> & {
   variant?: keyof typeof variantPropMap;
 };
 
-// eslint-disable-next-line react/display-name
 const Tooltip = forwardRef(
   (
     {

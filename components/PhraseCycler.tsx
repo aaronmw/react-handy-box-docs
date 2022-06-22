@@ -1,8 +1,8 @@
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
 import last from 'lodash/last';
 import sortBy from 'lodash/sortBy';
 import { forwardRef, ReactNode, useEffect, useState } from 'react';
-import { Box } from '.';
-import { BoxProps } from './Box.types';
 
 type PhraseCyclerProps = Omit<BoxProps<'span'>, 'children'> & {
   /** Time in milliseconds to show each phrase; default is `2000` */
@@ -10,7 +10,6 @@ type PhraseCyclerProps = Omit<BoxProps<'span'>, 'children'> & {
   phrases: Array<ReactNode>;
 };
 
-// eslint-disable-next-line react/display-name
 const PhraseCycler = forwardRef(
   (
     { duration = 2000, phrases, ...props }: PhraseCyclerProps,

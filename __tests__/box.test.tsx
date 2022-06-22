@@ -1,16 +1,15 @@
-import { render, screen } from '@testing-library/react';
-import { CSSObject } from 'styled-components';
 import {
   nestedSelectorPropAliases,
   propsToStyleObject,
-} from '../components/Box';
-import { BoxProps } from '../components/Box.types';
-import {
-  breakpoints,
-  colorPalette,
-  transitionDurations,
-  zIndices,
-} from '../tokens';
+} from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
+import { borderRadii } from '@/tokens/borderRadii';
+import { borderStyles } from '@/tokens/borderStyles';
+import { breakpoints } from '@/tokens/breakpoints';
+import { colorPalette } from '@/tokens/colorPalette';
+import { transitionDurations } from '@/tokens/transitionDurations';
+import { zIndices } from '@/tokens/zIndices';
+import { CSSObject } from 'styled-components';
 
 type TestDescriptor = [
   description: string,
@@ -28,6 +27,15 @@ const tests: Array<TestDescriptor> = [
         },
         {
           backgroundColor: colorPalette.black,
+        },
+      ],
+      [
+        'adjusts lightness value of default text color',
+        {
+          colorLightness: 200,
+        },
+        {
+          color: colorPalette['blue--200'],
         },
       ],
       [
@@ -58,6 +66,116 @@ const tests: Array<TestDescriptor> = [
         },
         {
           backgroundColor: colorPalette['orange--700'],
+        },
+      ],
+      [
+        'adjusts a swatch for border edge, no color specified',
+        {
+          borderLeft: 'normal',
+          borderLeftColorLightness: '+200',
+        },
+        {
+          borderLeftColor: colorPalette['gray--400'],
+          borderLeftStyle: borderStyles.normal.borderStyle as any,
+          borderLeftWidth: borderStyles.normal.borderWidth,
+        },
+      ],
+      [
+        'adjusts a swatch for border edge of specific color',
+        {
+          borderLeft: 'normal',
+          borderLeftColor: 'blue',
+          borderLeftColorLightness: '+200',
+        },
+        {
+          borderLeftColor: colorPalette['blue--600'],
+          borderLeftStyle: borderStyles.normal.borderStyle as any,
+          borderLeftWidth: borderStyles.normal.borderWidth,
+        },
+      ],
+      [
+        'adjusts a swatch for border edge of non-normal style',
+        {
+          borderLeft: 'thick',
+          borderLeftColor: 'blue',
+          borderLeftColorLightness: '+200',
+        },
+        {
+          borderLeftColor: colorPalette['blue--600'],
+          borderLeftStyle: borderStyles.thick.borderStyle as any,
+          borderLeftWidth: borderStyles.thick.borderWidth,
+        },
+      ],
+      [
+        'adjusts a swatch for border edges alias, no color specified',
+        {
+          borderY: 'normal',
+          borderYColorLightness: '+200',
+        },
+        {
+          borderBottomColor: colorPalette['gray--400'],
+          borderBottomStyle: borderStyles.normal.borderStyle as any,
+          borderBottomWidth: borderStyles.normal.borderWidth,
+          borderTopColor: colorPalette['gray--400'],
+          borderTopStyle: borderStyles.normal.borderStyle as any,
+          borderTopWidth: borderStyles.normal.borderWidth,
+        },
+      ],
+      [
+        'sets individual borders',
+        {
+          borderLeft: 'hairline',
+          borderTop: 'dashed',
+        },
+        {
+          borderLeftColor: colorPalette.border,
+          borderLeftStyle: borderStyles.hairline.borderStyle as any,
+          borderLeftWidth: borderStyles.hairline.borderWidth,
+          borderTopColor: colorPalette.border,
+          borderTopStyle: borderStyles.dashed.borderStyle as any,
+          borderTopWidth: borderStyles.dashed.borderWidth,
+        },
+      ],
+      [
+        'sets aliased border props',
+        {
+          borderX: 'hairline',
+          borderYColor: 'black',
+        },
+        {
+          borderBottomColor: colorPalette.black,
+          borderBottomStyle: borderStyles.normal.borderStyle as any,
+          borderBottomWidth: borderStyles.normal.borderWidth,
+          borderLeftColor: colorPalette.border,
+          borderLeftStyle: borderStyles.hairline.borderStyle as any,
+          borderLeftWidth: borderStyles.hairline.borderWidth,
+          borderRightColor: colorPalette.border,
+          borderRightStyle: borderStyles.hairline.borderStyle as any,
+          borderRightWidth: borderStyles.hairline.borderWidth,
+          borderTopColor: colorPalette.black,
+          borderTopStyle: borderStyles.normal.borderStyle as any,
+          borderTopWidth: borderStyles.normal.borderWidth,
+        },
+      ],
+      [
+        'sets border radii',
+        {
+          borderRadius: 'circle',
+          borderTopLeftRadius: 'normal',
+        },
+        {
+          borderRadius: borderRadii.circle,
+          borderTopLeftRadius: borderRadii.normal,
+        },
+      ],
+      [
+        'sets aliased border radii',
+        {
+          borderTopRadius: 'normal',
+        },
+        {
+          borderTopRightRadius: borderRadii.normal,
+          borderTopLeftRadius: borderRadii.normal,
         },
       ],
       [
@@ -131,7 +249,7 @@ const tests: Array<TestDescriptor> = [
           color: colorPalette.white,
           [nestedSelectorPropAliases.propsForAfterElement]: {
             backgroundColor: colorPalette.black,
-            content: '',
+            content: '""',
             display: 'block',
           },
         },
@@ -149,7 +267,7 @@ const tests: Array<TestDescriptor> = [
           color: colorPalette.black,
           [nestedSelectorPropAliases.propsForBeforeElement]: {
             backgroundColor: colorPalette.white,
-            content: '',
+            content: '""',
             display: 'block',
           },
         },
@@ -173,7 +291,7 @@ const tests: Array<TestDescriptor> = [
         'resolves responsive props (propsFor{breakpointName})',
         {
           color: 'black',
-          propsForDesktopOrLarger: {
+          propsForTabletOrLarger: {
             color: 'white',
           },
           propsForPhoneOnly: {
@@ -182,7 +300,7 @@ const tests: Array<TestDescriptor> = [
         },
         {
           color: colorPalette.black,
-          [breakpoints.desktopOrLarger]: {
+          [breakpoints.tabletOrLarger]: {
             color: colorPalette.white,
           },
           [breakpoints.phoneOnly]: {

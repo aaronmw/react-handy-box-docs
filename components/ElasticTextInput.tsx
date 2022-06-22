@@ -1,10 +1,13 @@
+import { Box } from '@/components/Box';
+import {
+  commonInputBoxProps,
+  TextInput,
+  TextInputProps,
+} from '@/components/TextInput';
+import { addMultipleEventListeners } from '@/utilities/addMultipleEventListeners';
 import { forwardRef, Ref, useEffect, useRef } from 'react';
 import { useKeyboardShortcuts, useMultipleRefs } from '../hooks';
-import { addMultipleEventListeners } from '../utilities';
-import { Box } from './Box';
-import { commonInputBoxProps, TextInput, TextInputProps } from './TextInput';
 
-// eslint-disable-next-line react/display-name
 const ElasticTextInput = forwardRef(
   (
     { ...otherProps }: Omit<TextInputProps<'textarea'>, 'type'>,

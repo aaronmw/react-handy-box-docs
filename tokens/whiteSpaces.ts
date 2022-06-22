@@ -2,11 +2,11 @@ import mapValues from 'lodash/mapValues';
 
 export const whiteSpaceNames = {
   xxloose: '15vh',
-  xloose: '4rem',
-  loose: '2rem',
-  normal: '1rem',
-  tight: '0.5rem',
-  xtight: '0.25rem',
+  xloose: '5rem',
+  loose: '3rem',
+  normal: '2rem',
+  tight: '1rem',
+  xtight: '0.5rem',
 };
 
 export const whiteSpacesAsCSSVariables = mapValues(

@@ -1,5 +1,5 @@
 {
-  "name": "interchain-security",
+  "name": "react-handy-box",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -15,6 +15,9 @@
     "polished": "^4.2.2",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
+    "react-element-to-jsx-string": "^15.0.0",
+    "react-markdown": "^8.0.3",
+    "react-syntax-highlighter": "^15.5.0",
     "styled-components": "^5.3.5"
   },
   "devDependencies": {
@@ -24,7 +27,9 @@
     "@testing-library/user-event": "14.2.0",
     "@types/lodash": "^4.14.182",
     "@types/mousetrap": "^1.6.9",
+    "@types/node": "^18.0.0",
     "@types/react": "18.0.9",
+    "@types/react-syntax-highlighter": "^15.5.2",
     "@types/styled-components": "^5.1.25",
     "eslint": "^8.17.0",
     "jest": "28.1.0",

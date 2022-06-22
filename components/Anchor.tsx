@@ -1,7 +1,9 @@
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
+import { useLinkActivity } from '@/hooks/useLinkActivity';
 import Link from 'next/link';
-import { forwardRef, Ref } from 'react';
-import { Box } from './Box';
-import { BoxProps } from './Box.types';
+import { useRouter } from 'next/router';
+import { forwardRef, MouseEvent, Ref } from 'react';
 
 type AnchorProps = BoxProps<'a'> & {
   href: string;
@@ -28,13 +30,12 @@ const variantPropMap = {
   },
 };
 
-// eslint-disable-next-line react/display-name
 const Anchor = forwardRef(
   (
     { children, href, variant = 'normal', ...props }: AnchorProps,
     ref: Ref<HTMLAnchorElement>
   ) => (
-    <Link href={href} passHref={true} scroll={false}>
+    <Link href={href} as={href} passHref={true} shallow={true}>
       <Box
         as="a"
         cursor="pointer"

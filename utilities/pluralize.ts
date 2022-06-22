@@ -9,4 +9,4 @@ const pluralize = (
   return `${inclusive ? `${count} ` : ''}${label}`;
 };
 
-export { pluralize };
+export default pluralize;

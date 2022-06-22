@@ -1,7 +1,7 @@
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
+import { Text } from '@/components/Text';
 import { forwardRef, ReactNode, Ref } from 'react';
-import { Box } from './Box';
-import { BoxProps } from './Box.types';
-import { Text } from './Text';
 
 export type LabeledInputProps = {
   errorMessage?: ReactNode;
@@ -53,7 +53,6 @@ const labelLocationPropMap: {
   },
 };
 
-// eslint-disable-next-line react/display-name
 const LabeledInput = forwardRef(
   (
     {

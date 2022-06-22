@@ -1,8 +1,8 @@
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
+import { CommonFormInputProps, useFormField } from '@/components/Form';
+import { LabeledInput } from '@/components/LabeledInput';
 import { forwardRef, ReactNode, Ref, useEffect, useRef, useState } from 'react';
-import { Box } from './Box';
-import { BoxProps } from './Box.types';
-import { CommonFormInputProps, useFormField } from './Form';
-import { LabeledInput } from './LabeledInput';
 
 export type BaseOptionShape = {
   id: string | number;
@@ -27,7 +27,6 @@ export type AbstractMultiSelectInputProps<
   }) => JSX.Element;
 } & CommonFormInputProps;
 
-// eslint-disable-next-line react/display-name
 const AbstractMultiSelectInput = forwardRef(
   <T extends BaseOptionShape, IsMulti extends boolean>(
     {

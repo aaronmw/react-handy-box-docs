@@ -1,9 +1,9 @@
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
+import { CommonFormInputProps, useFormField } from '@/components/Form';
+import { LabeledInput } from '@/components/LabeledInput';
 import { FocusEvent, FocusEventHandler, forwardRef, Ref, useRef } from 'react';
 import { useMultipleRefs } from '../hooks';
-import { Box } from './Box';
-import { BoxProps } from './Box.types';
-import { CommonFormInputProps, useFormField } from './Form';
-import { LabeledInput } from './LabeledInput';
 
 export type SupportedInputTypes =
   | 'text'
@@ -34,7 +34,6 @@ export const commonInputBoxProps = {
   width: '100%',
 } as const;
 
-// eslint-disable-next-line react/display-name
 const TextInput = forwardRef(
   <T extends SupportedInputTypes>(
     {

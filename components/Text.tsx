@@ -1,8 +1,12 @@
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
 import { forwardRef, Ref } from 'react';
-import { Box } from './Box';
-import { BoxProps } from './Box.types';
 
 const textStyles = {
+  'code': {
+    color: 'purple',
+    fontFamily: 'monospace',
+  },
   'heading--1': {
     as: 'h1',
     fontSize: 'xxlarge',
@@ -29,7 +33,6 @@ type TextProps<TagName extends keyof JSX.IntrinsicElements> =
     variant?: keyof typeof textStyles;
   };
 
-// eslint-disable-next-line react/display-name
 const Text = forwardRef(
   <TagName extends keyof JSX.IntrinsicElements = 'span'>(
     { children, variant = 'normal', ...props }: TextProps<TagName>,

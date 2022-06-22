@@ -1,6 +1,6 @@
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
 import { forwardRef, ReactNode, Ref } from 'react';
-import { Box } from './Box';
-import { BoxProps } from './Box.types';
 
 export type LoadableBoxProps = Omit<BoxProps<'div'>, 'ref'> & {
   isLoading: boolean;
@@ -16,7 +16,6 @@ const loadingProps = {
   width: '100%',
 };
 
-// eslint-disable-next-line react/display-name
 const LoadableBox = forwardRef(
   (
     {

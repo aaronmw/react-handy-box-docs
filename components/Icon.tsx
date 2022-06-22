@@ -1,8 +1,7 @@
+import { Box } from '@/components/Box';
+import { IconProps } from '@/components/Icon.types';
 import { forwardRef, Ref } from 'react';
-import { Box } from './Box';
-import { IconProps } from './Icon.types';
 
-// eslint-disable-next-line react/display-name
 const Icon = forwardRef(
   (
     { name = 'face-sad-sweat', variant = 'regular', ...props }: IconProps,
@@ -10,8 +9,8 @@ const Icon = forwardRef(
   ) => (
     <Box
       as="span"
-      display="inline-block"
       className={`fa-${variant} fa-${name} fa-1x fa-fw`}
+      display="inline-block"
       key={`${name}-${variant}`}
       ref={ref}
       {...props}

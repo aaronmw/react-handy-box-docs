@@ -1,21 +1,18 @@
-import { colorPalette } from './colorPalette';
-
-export const borderStyles = ({
-  borderColor = colorPalette['border'],
-} = {}) => ({
+export const borderStyles = {
   dashed: {
-    borderColor,
     borderStyle: 'dashed',
     borderWidth: '2px',
   },
   hairline: {
-    borderColor,
     borderStyle: 'solid',
     borderWidth: '1px',
   },
   normal: {
-    borderColor,
     borderStyle: 'solid',
     borderWidth: '2px',
   },
-});
+  thick: {
+    borderStyle: 'solid',
+    borderWidth: '4px',
+  },
+};

@@ -1,4 +1,4 @@
-import { BoxProps } from './Box.types';
+import { BoxProps } from '@/components/Box.types';
 
 export type IconProps = BoxProps<'span'> &
   (

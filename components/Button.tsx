@@ -1,6 +1,6 @@
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
 import { forwardRef, MouseEvent, Ref } from 'react';
-import { Box } from './Box';
-import { BoxProps } from './Box.types';
 
 const getBaseButtonProps = (props: BoxProps<'button'>) => ({
   borderRadius: 'small',
@@ -23,7 +23,7 @@ const getPrimaryButtonProps = (props: BoxProps<'button'>) => {
     borderRadius: 'small',
     boxSizing: 'content-box',
     color: 'text',
-    paddingX: 'loose',
+    paddingX: 'normal',
     paddingY: 'normal',
     transform: 'scale(1)',
     transitionProperty: ['transform'].concat(props.transitionProperty ?? []),
@@ -101,7 +101,6 @@ type ButtonProps<AsAnchor extends boolean> = AsAnchor extends true
   ? Omit<BoxProps<'a'>, 'as' | 'ref'> & BaseButtonProps<AsAnchor>
   : Omit<BoxProps<'button'>, 'as' | 'ref'> & BaseButtonProps<AsAnchor>;
 
-// eslint-disable-next-line react/display-name
 const Button = forwardRef(
   <AsAnchor extends boolean>(
     {
@@ -133,3 +132,4 @@ const Button = forwardRef(
 );
 
 export { Button };
+export { variantPropMap as buttonVariants };

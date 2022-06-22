@@ -1,3 +1,6 @@
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
+import { LabeledInputProps } from '@/components/LabeledInput';
 import mapValues from 'lodash/mapValues';
 import {
   ChangeEvent,
@@ -14,9 +17,6 @@ import {
   useState,
 } from 'react';
 import useMultipleRefs from '../hooks/useMultipleRefs';
-import { Box } from './Box';
-import { BoxProps } from './Box.types';
-import { LabeledInputProps } from './LabeledInput';
 
 export type CommonFormInputProps = {
   description?: ReactNode;
@@ -200,7 +200,6 @@ export const useFormField = (fieldDescriptor: FormFieldDescriptor) => {
   };
 };
 
-// eslint-disable-next-line react/display-name
 const Form = forwardRef(
   (
     { children, onDirtyStateChange, onSubmit, ...props }: FormProps,
