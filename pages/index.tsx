@@ -165,4 +165,5 @@ const Home: NextPage<{
 
 export { getServerSideProps as getStaticProps } from '../utilities/getServerSideProps';
 export type { DocumentationPageDescriptor, DocumentationSectionDescriptor };
+
 export default Home;
