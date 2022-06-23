@@ -1,7 +1,7 @@
 import { Box } from '@/components/Box';
 import { BoxProps } from '@/components/Box.types';
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { borderRadii, borderStyles, colorPalette } from '../tokens';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { colorPalette } from '../tokens';
 
 type CodeSnippetProps = Omit<BoxProps<'div'>, 'children'> & {
   children: string;
@@ -11,7 +11,6 @@ type CodeSnippetProps = Omit<BoxProps<'div'>, 'children'> & {
 const highlightedLineProps = {
   backgroundColor: colorPalette['yellow--100'],
   display: 'block',
-  fontWeight: 'bold',
 };
 
 const CodeSnippet = ({
@@ -64,119 +63,133 @@ const removeIndentation = (code: string) => {
 };
 
 const styles = {
-  'hljs': {
-    display: 'block',
-    overflowX: 'auto',
+  'code[class*="language-"]': {
+    direction: 'ltr',
+    textAlign: 'left',
+    whiteSpace: 'pre',
+    wordSpacing: 'normal',
+    wordBreak: 'normal',
+    lineHeight: '1.5em',
+    MozTabSize: '4',
+    OTabSize: '4',
+    tabSize: '4',
+    WebkitHyphens: 'none',
+    MozHyphens: 'none',
+    msHyphens: 'none',
+    hyphens: 'none',
   },
-  'hljs-comment': {
-    color: '#998',
+  'pre[class*="language-"]': {
+    direction: 'ltr',
+    textAlign: 'left',
+    whiteSpace: 'pre',
+    wordSpacing: 'normal',
+    wordBreak: 'normal',
+    lineHeight: '1.5em',
+    MozTabSize: '4',
+    OTabSize: '4',
+    tabSize: '4',
+    WebkitHyphens: 'none',
+    MozHyphens: 'none',
+    msHyphens: 'none',
+    hyphens: 'none',
+    overflow: 'auto',
+  },
+  'comment': {
+    color: colorPalette['gray--400'],
     fontStyle: 'italic',
   },
-  'hljs-quote': {
-    color: '#998',
+  'prolog': {
+    color: colorPalette['gray--400'],
     fontStyle: 'italic',
   },
-  'hljs-keyword': {
-    color: '#333',
-    fontWeight: 'bold',
-  },
-  'linenumber': {
-    color: colorPalette['gray--200'],
-  },
-  'hljs-selector-tag': {
-    color: '#333',
-    fontWeight: 'bold',
-  },
-  'hljs-subst': {
-    color: '#333',
-    fontWeight: 'normal',
-  },
-  'hljs-number': {
-    color: '#008080',
-  },
-  'hljs-literal': {
-    color: '#008080',
-  },
-  'hljs-variable': {
-    color: '#008080',
-  },
-  'hljs-template-variable': {
-    color: '#008080',
-  },
-  'hljs-tag .hljs-attr': {
-    color: '#008080',
-  },
-  'hljs-string': {
-    color: '#d14',
-  },
-  'hljs-doctag': {
-    color: '#d14',
-  },
-  'hljs-title': {
-    color: '#900',
-    fontWeight: 'bold',
-  },
-  'hljs-section': {
-    color: '#900',
-    fontWeight: 'bold',
-  },
-  'hljs-selector-id': {
-    color: '#900',
-    fontWeight: 'bold',
-  },
-  'hljs-type': {
-    color: '#458',
-    fontWeight: 'bold',
-  },
-  'hljs-class .hljs-title': {
-    color: '#458',
-    fontWeight: 'bold',
-  },
-  'hljs-tag': {
-    color: '#000080',
-    fontWeight: 'normal',
-  },
-  'hljs-name': {
-    color: '#000080',
-    fontWeight: 'normal',
-  },
-  'hljs-attribute': {
-    color: '#000080',
-    fontWeight: 'normal',
-  },
-  'hljs-regexp': {
-    color: '#009926',
-  },
-  'hljs-link': {
-    color: '#009926',
-  },
-  'hljs-symbol': {
-    color: '#990073',
-  },
-  'hljs-bullet': {
-    color: '#990073',
-  },
-  'hljs-built_in': {
-    color: '#0086b3',
-  },
-  'hljs-builtin-name': {
-    color: '#0086b3',
-  },
-  'hljs-meta': {
-    color: '#999',
-    fontWeight: 'bold',
-  },
-  'hljs-deletion': {
-    background: '#fdd',
-  },
-  'hljs-addition': {
-    background: '#dfd',
-  },
-  'hljs-emphasis': {
+  'doctype': {
+    color: colorPalette['gray--400'],
     fontStyle: 'italic',
   },
-  'hljs-strong': {
+  'cdata': {
+    color: colorPalette['gray--400'],
+    fontStyle: 'italic',
+  },
+  'namespace': {
+    opacity: '0.7',
+  },
+  'string': {
+    color: colorPalette['purple--500'],
+  },
+  'attr-value': {
+    color: colorPalette['purple--500'],
+  },
+  'punctuation': {},
+  'operator': {},
+  'entity': {
+    color: colorPalette['teal--500'],
+  },
+  'url': {
+    color: colorPalette['teal--500'],
+  },
+  'symbol': {
+    color: colorPalette['teal--500'],
+  },
+  'number': {
+    color: colorPalette['teal--500'],
+  },
+  'boolean': {
+    color: colorPalette['teal--500'],
+  },
+  'variable': {
+    color: colorPalette['teal--500'],
+  },
+  'constant': {
+    color: colorPalette['teal--500'],
+  },
+  'property': {
+    color: colorPalette['teal--500'],
+  },
+  'regex': {
+    color: colorPalette['teal--500'],
+  },
+  'inserted': {
+    color: colorPalette['teal--500'],
+  },
+  'atrule': {
+    color: colorPalette['blue--500'],
+  },
+  'keyword': {
+    color: colorPalette['blue--500'],
+  },
+  'attr-name': {
+    color: colorPalette['blue--500'],
+  },
+  '.language-autohotkey .token.selector': {
+    color: colorPalette['blue--500'],
+  },
+  'function': {
+    color: colorPalette['red--500'],
     fontWeight: 'bold',
+  },
+  'deleted': {
+    color: colorPalette['red--500'],
+  },
+  '.language-autohotkey .token.tag': {
+    color: colorPalette['red--500'],
+  },
+  'tag': {
+    color: colorPalette['purple--600'],
+  },
+  'selector': {
+    color: colorPalette['purple--600'],
+  },
+  '.language-autohotkey .token.keyword': {
+    color: colorPalette['purple--600'],
+  },
+  'important': {
+    fontWeight: 'bold',
+  },
+  'bold': {
+    fontWeight: 'bold',
+  },
+  'italic': {
+    fontStyle: 'italic',
   },
 } as const;
 
