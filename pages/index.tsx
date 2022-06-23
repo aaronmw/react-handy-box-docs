@@ -14,10 +14,6 @@ import Script from 'next/script';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheetManager } from 'styled-components';
 
-Router.events.on('routeChangeError', (err, url, { shallow }) => {
-  console.log('Navigating to: ' + 'url: ' + url, { cancelled: err.cancelled });
-});
-
 type DocumentationPageDescriptor = {
   title: string;
   description: string;
@@ -41,7 +37,7 @@ const Home: NextPage<{
   const [pageData, setPageData] = useState<DocumentationPageDescriptor>();
   const isLoading = !pageData;
   const router = useRouter();
-  const { componentName } = router.query;
+  const { componentName = 'box' } = router.query;
   const { pathname = '', hash = '' } =
     typeof window !== 'undefined' ? window.location : {};
 
@@ -50,8 +46,6 @@ const Home: NextPage<{
       const headingElement = select(hash);
 
       if (headingElement) {
-        console.log(`Scrolling to element:`, headingElement);
-
         headingElement.scrollIntoView({
           behavior: 'smooth',
         });
