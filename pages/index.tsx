@@ -163,6 +163,6 @@ const Home: NextPage<{
   );
 };
 
-export { getServerSideProps } from '../utilities/getServerSideProps';
+export { getServerSideProps as getStaticProps } from '../utilities/getServerSideProps';
 export type { DocumentationPageDescriptor, DocumentationSectionDescriptor };
 export default Home;
