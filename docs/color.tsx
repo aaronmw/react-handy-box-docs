@@ -104,7 +104,19 @@ const docs: DocumentationPageDescriptor = {
       title: 'Utility Colors',
       values: Object.keys(utilityColors),
       renderDemo: (utilityColorName) => (
-        <Box backgroundColor="black" borderRadius="small" padding="normal">
+        <Box
+          background={`
+            repeating-linear-gradient(
+              -55deg,
+              #222,
+              #222 10px,
+              #333 10px,
+              #333 20px
+            )
+          `}
+          borderRadius="small"
+          padding="normal"
+        >
           <ColorSwatch
             border="normal"
             borderColor="white"
