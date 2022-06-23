@@ -26,7 +26,7 @@ const CodeSnippet = ({
   const patchedCodeSnippet = Object.keys(codeReplacements).reduce(
     (acc, needle) =>
       acc.replace(
-        needle,
+        new RegExp(needle, 'gm'),
         codeReplacements[needle as keyof typeof codeReplacements]
       ),
     trimmedCodeSnippet
