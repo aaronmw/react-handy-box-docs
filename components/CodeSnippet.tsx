@@ -13,12 +13,24 @@ const highlightedLineProps = {
   display: 'block',
 };
 
+const codeReplacements = {
+  'styled.div': 'Box',
+};
+
 const CodeSnippet = ({
   children,
   highlightLines = [],
   ...otherProps
 }: CodeSnippetProps) => {
   const trimmedCodeSnippet = removeIndentation(children);
+  const patchedCodeSnippet = Object.keys(codeReplacements).reduce(
+    (acc, needle) =>
+      acc.replace(
+        needle,
+        codeReplacements[needle as keyof typeof codeReplacements]
+      ),
+    trimmedCodeSnippet
+  );
 
   return (
     <Box fontFamily="monospace" {...otherProps}>
@@ -36,7 +48,7 @@ const CodeSnippet = ({
         style={styles}
         wrapLines={true}
       >
-        {trimmedCodeSnippet}
+        {patchedCodeSnippet}
       </SyntaxHighlighter>
     </Box>
   );
