@@ -1,135 +1,134 @@
-import { Box } from '@/components/Box';
-import { BoxProps } from '@/components/Box.types';
-import { forwardRef, MouseEvent, Ref } from 'react';
+import { Box } from "@/components/Box";
+import { BoxProps } from "@/components/Box.types";
+import { FormContext } from "@/components/Form";
+import { FormFieldClickHandler } from "@/components/Form.types";
+import {
+  forwardRef,
+  MouseEvent,
+  MouseEventHandler,
+  Ref,
+  useContext,
+} from "react";
 
-const getBaseButtonProps = (props: BoxProps<'button'>) => ({
-  borderRadius: 'small',
-  cursor: 'pointer',
-  display: 'inline-block',
-  pointerEvents: props.disabled ? 'none' : 'all',
-  whiteSpace: 'nowrap',
-  propsOnHover: {
-    backgroundColor: 'purple',
-    color: 'white',
+type ButtonProps = Omit<BoxProps<"button">, "ref" | "onClick"> & {
+  disabled?: boolean;
+  stopClickPropagation?: boolean;
+  variant?: keyof typeof variantPropMap;
+  onClick?: MouseEventHandler | FormFieldClickHandler;
+};
+
+type ButtonPropBuilderFunction = (props: ButtonProps) => ButtonProps;
+
+const getBaseButtonProps: ButtonPropBuilderFunction = (props) => ({
+  borderRadius: "small",
+  cursor: "pointer",
+  display: "inline-block",
+  pointerEvents: props.disabled ? "none" : "all",
+  width: "fit-content",
+  whiteSpace: "nowrap",
+  propsOnFocus: {
+    boxShadow: "focusRing",
   },
 });
 
-const getPrimaryButtonProps = (props: BoxProps<'button'>) => {
-  const universalProps = getBaseButtonProps(props);
+const getPrimaryButtonProps: ButtonPropBuilderFunction = (props) => {
+  const renderedBaseButtonProps = getBaseButtonProps(props);
 
   return {
-    ...universalProps,
-    backgroundColor: 'white',
-    borderRadius: 'small',
-    boxSizing: 'content-box',
-    color: 'text',
-    paddingX: 'normal',
-    paddingY: 'normal',
-    transform: 'scale(1)',
-    transitionProperty: ['transform'].concat(props.transitionProperty ?? []),
+    ...renderedBaseButtonProps,
+    backgroundColor: "brand",
+    borderRadius: "small",
+    boxSizing: "content-box",
+    color: "white",
+    paddingX: "tight",
+    paddingY: "xtight",
+    transform: "scale(1)",
+    transitionProperty: ["transform"].concat(props.transitionProperty ?? []),
     propsOnHover: {
-      ...universalProps.propsOnHover,
       ...props.propsOnHover,
-      transform: 'scale(1.1)',
+      backgroundColor: "purple",
+      color: "white",
+      transform: "scale(1.1)",
     },
   };
 };
 
-const variantPropMap = {
+const variantPropMap: {
+  [key: string]: ButtonPropBuilderFunction;
+} = {
   bare: getBaseButtonProps,
 
-  caution: (props: BoxProps<'button'>) => {
+  caution: (props) => {
     const renderedPrimaryButtonProps = getPrimaryButtonProps(props);
 
     return Object.assign(renderedPrimaryButtonProps, {
-      borderColor: 'transparent',
-      color: 'danger',
+      borderColor: "transparent",
+      color: "danger",
       propsOnHover: {
         ...props.propsOnHover,
         ...renderedPrimaryButtonProps.propsOnHover,
-        borderColor: 'danger',
+        borderColor: "danger",
       },
     });
   },
 
-  danger: (props: BoxProps<'button'>) => {
+  danger: (props) => {
     const renderedPrimaryButtonProps = getPrimaryButtonProps(props);
 
     return {
       ...renderedPrimaryButtonProps,
-      borderColor: 'danger',
-      borderStyle: 'thick',
-      color: 'danger',
+      borderColor: "danger",
+      borderStyle: "thick",
+      color: "danger",
       propsOnHover: {
         ...props.propsOnHover,
         ...renderedPrimaryButtonProps.propsOnHover,
-        backgroundColor: 'danger',
-        borderColor: 'danger',
-        color: 'white',
+        backgroundColor: "danger",
+        borderColor: "danger",
+        color: "white",
       },
     };
   },
 
   iconOnly: getBaseButtonProps,
 
-  navigation: (props: BoxProps<'button'>) => {
-    const renderedBaseButtonProps = getBaseButtonProps(props);
-
-    return {
-      ...renderedBaseButtonProps,
-      fontWeight: 'bold',
-      paddingY: 'tight',
-      propsOnHover: {
-        ...renderedBaseButtonProps.propsOnHover,
-        ...props.propsOnHover,
-        color: 'link--hovered',
-      },
-    };
-  },
-
   primary: getPrimaryButtonProps,
 };
 
-type BaseButtonProps<AsAnchor extends boolean> = {
-  asAnchor?: AsAnchor;
-  stopClickPropagation?: boolean;
-  variant?: keyof typeof variantPropMap;
-};
-
-// TODO: Improve this type definition
-type ButtonProps<AsAnchor extends boolean> = AsAnchor extends true
-  ? Omit<BoxProps<'a'>, 'as' | 'ref'> & BaseButtonProps<AsAnchor>
-  : Omit<BoxProps<'button'>, 'as' | 'ref'> & BaseButtonProps<AsAnchor>;
-
 const Button = forwardRef(
-  <AsAnchor extends boolean>(
+  (
     {
-      asAnchor = false,
       children,
       stopClickPropagation = false,
-      variant = 'primary',
+      variant = "primary",
       onClick,
       ...props
-    }: ButtonProps<AsAnchor>,
-    ref: AsAnchor extends true ? Ref<HTMLAnchorElement> : Ref<HTMLButtonElement>
-  ) => (
-    <Box
-      as={asAnchor ? 'a' : 'button'}
-      ref={ref}
-      onClick={(event: MouseEvent<any>) => {
-        if (stopClickPropagation) {
-          event.stopPropagation();
-        }
+    }: ButtonProps,
+    ref: Ref<HTMLButtonElement>
+  ) => {
+    const formContext = useContext(FormContext);
 
-        return onClick?.(event);
-      }}
-      {...(variantPropMap as any)[variant](props)}
-      {...props}
-    >
-      {children}
-    </Box>
-  )
+    return (
+      <Box
+        as="button"
+        ref={ref}
+        onClick={(event: MouseEvent<HTMLButtonElement>) => {
+          if (stopClickPropagation) {
+            event.stopPropagation();
+          }
+
+          return (onClick as FormFieldClickHandler)?.(event, formContext);
+        }}
+        {...variantPropMap[variant](props)}
+        {...props}
+      >
+        {children}
+      </Box>
+    );
+  }
 );
+
+Button.displayName = "Button";
 
 export { Button };
 export { variantPropMap as buttonVariants };

@@ -1,41 +1,59 @@
-import { Color, ColorLightnessAdjustmentValue } from '@/components/Box.types';
+import {
+  Color,
+  ColorLightnessAdjustmentValue,
+  ColorOpacityAdjustmentValue,
+} from "@/components/Box.types";
 import {
   coreColors,
   coreSwatches,
   semanticSwatchAliases,
-} from '@/tokens/colorPalette';
-import clamp from 'lodash/clamp';
+} from "@/tokens/colorPalette";
+import clamp from "lodash/clamp";
 
-const adjustColorLightness = (
+const getAdjustableSwatchName = (givenColorName: Color) =>
+  givenColorName in coreSwatches
+    ? givenColorName
+    : givenColorName in coreColors
+    ? `${givenColorName}--400`
+    : givenColorName in semanticSwatchAliases
+    ? Object.keys(coreSwatches).find(
+        (coreSwatchName) =>
+          coreSwatches[coreSwatchName as keyof typeof coreSwatches] ===
+          semanticSwatchAliases[
+            givenColorName as keyof typeof semanticSwatchAliases
+          ]
+      ) ?? null
+    : null;
+
+const adjustColor = (
   givenColorName: Color,
-  adjustment: ColorLightnessAdjustmentValue
+  lightnessAdjustment: ColorLightnessAdjustmentValue | undefined,
+  alphaAdjustment: ColorOpacityAdjustmentValue | undefined
 ): Color => {
-  const adjustableSwatchName =
-    givenColorName in coreSwatches
-      ? givenColorName
-      : givenColorName in coreColors
-      ? `${givenColorName}--400`
-      : givenColorName in semanticSwatchAliases
-      ? Object.keys(coreSwatches).find(
-          (coreSwatchName) =>
-            coreSwatches[coreSwatchName as keyof typeof coreSwatches] ===
-            semanticSwatchAliases[
-              givenColorName as keyof typeof semanticSwatchAliases
-            ]
-        ) ?? null
-      : null;
+  const adjustableSwatchName = getAdjustableSwatchName(givenColorName);
 
   if (adjustableSwatchName === null) {
     return givenColorName;
   }
 
-  const [colorName, lightnessValue = 400] = adjustableSwatchName.split('--');
+  const [colorName, lightnessValue = 400, alphaValue = 100] =
+    adjustableSwatchName.split("--");
 
-  const newLightnessValue = ['+', '-'].includes(String(adjustment)[0])
-    ? clamp(Number(lightnessValue) + Number(adjustment), 100, 700)
-    : adjustment;
+  const newOpacityValue = alphaAdjustment
+    ? ["+", "-"].includes(String(alphaAdjustment)[0])
+      ? clamp(Number(alphaValue) + Number(alphaAdjustment), 10, 100)
+      : alphaAdjustment
+    : alphaValue;
 
-  return `${colorName}--${newLightnessValue}` as Color;
+  const newLightnessValue = lightnessAdjustment
+    ? ["+", "-"].includes(String(lightnessAdjustment)[0])
+      ? clamp(Number(lightnessValue) + Number(lightnessAdjustment), 100, 700)
+      : lightnessAdjustment
+    : lightnessValue;
+
+  return `${colorName}--${newLightnessValue}${
+    newOpacityValue === 100 ? "" : `--${newOpacityValue}`
+  }` as Color;
 };
 
-export { adjustColorLightness };
+export { adjustColor };

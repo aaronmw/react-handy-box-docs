@@ -1,31 +1,32 @@
-import { Box } from '@/components/Box';
-import { BoxProps } from '@/components/Box.types';
-import { forwardRef, Ref } from 'react';
+import { Box } from "@/components/Box";
+import { BoxProps } from "@/components/Box.types";
+import { forwardRef, Ref } from "react";
 
 const textStyles = {
-  'code': {
-    color: 'purple',
-    fontFamily: 'monospace',
+  "code": {
+    color: "purple",
+    fontFamily: "monospace",
   },
-  'heading--1': {
-    as: 'h1',
-    fontSize: 'xxlarge',
+  "heading--1": {
+    as: "h1",
+    fontSize: "xxlarge",
     fontWeight: 900,
   },
-  'heading--2': {
-    as: 'h2',
-    fontSize: 'xlarge',
-    fontWeight: 'bold',
+  "heading--2": {
+    as: "h2",
+    fontSize: "xlarge",
+    fontWeight: "bold",
   },
-  'heading--3': {
-    as: 'h3',
-    fontSize: 'large',
-    fontWeight: 'bold',
+  "heading--3": {
+    as: "h3",
+    fontSize: "large",
+    fontWeight: "bold",
   },
-  'label': {
-    color: 'purple--200',
+  "label": {
+    color: "textFaded",
+    fontSize: "small",
   },
-  'normal': {},
+  "normal": {},
 };
 
 type TextProps<TagName extends keyof JSX.IntrinsicElements> =
@@ -34,8 +35,8 @@ type TextProps<TagName extends keyof JSX.IntrinsicElements> =
   };
 
 const Text = forwardRef(
-  <TagName extends keyof JSX.IntrinsicElements = 'span'>(
-    { children, variant = 'normal', ...props }: TextProps<TagName>,
+  <TagName extends keyof JSX.IntrinsicElements = "span">(
+    { children, variant = "normal", ...props }: TextProps<TagName>,
     ref: Ref<HTMLElement>
   ) => (
     <Box
@@ -48,5 +49,7 @@ const Text = forwardRef(
     </Box>
   )
 );
+
+Text.displayName = "Text";
 
 export { Text };

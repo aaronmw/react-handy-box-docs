@@ -1,13 +1,16 @@
-import { Box } from '@/components/Box';
-import { BoxProps } from '@/components/Box.types';
-import { LabeledInputProps } from '@/components/LabeledInput';
-import mapValues from 'lodash/mapValues';
+import { Box } from "@/components/Box";
 import {
-  ChangeEvent,
+  FormContextObject,
+  FormFieldDescriptor,
+  FormFieldRegistry,
+  FormFieldRegistryEntry,
+  FormProps,
+} from "@/components/Form.types";
+import { useMultipleRefs } from "@/hooks/useMultipleRefs";
+import mapValues from "lodash/mapValues";
+import {
   createContext,
-  FocusEvent,
   FormEvent,
-  FormEventHandler,
   forwardRef,
   ReactNode,
   Ref,
@@ -15,84 +18,7 @@ import {
   useEffect,
   useRef,
   useState,
-} from 'react';
-import useMultipleRefs from '../hooks/useMultipleRefs';
-
-export type CommonFormInputProps = {
-  description?: ReactNode;
-  isRequired?: boolean;
-  label: ReactNode;
-  labelLocation?: 'above' | 'left' | 'hidden';
-  labelProps?: Partial<LabeledInputProps>;
-  name: string;
-  onChange?: FormFieldChangeHandler;
-  onFocus?: FormFieldFocusHandler;
-  onRead?: FormFieldReadHandler;
-  onReset?: FormFieldResetHandler;
-  onValidate?: FormFieldValidationHandler;
-};
-
-export type FormContextObject = {
-  getFieldValues: () => Record<string, unknown>;
-  registerFormField: (fieldRegistryEntry: FormFieldRegistryEntry) => void;
-  resetField: (fieldName: string) => void;
-  resetForm: () => void;
-  setFieldValue: (fieldName: string, value: unknown) => void;
-  setIsDirty: (newIsDirty: boolean) => void;
-};
-
-type FormFieldBlurHandler = (
-  event?: FormEvent,
-  formContext?: FormContextObject
-) => void;
-
-type FormFieldChangeHandler = (
-  event?: ChangeEvent<any>,
-  formContext?: FormContextObject
-) => void;
-
-type FormFieldDescriptor = {
-  isMultiValue?: boolean;
-  isRequired?: boolean;
-  ref: { current?: unknown };
-  name: string;
-  onBlur?: FormFieldBlurHandler;
-  onChange?: FormFieldChangeHandler;
-  onFocus?: FormFieldFocusHandler;
-  onRead?: FormFieldReadHandler;
-  onReset?: FormFieldResetHandler;
-  onValidate?: FormFieldValidationHandler;
-};
-
-type FormFieldFocusHandler = (
-  event?: FocusEvent<any>,
-  formContext?: FormContextObject
-) => void;
-
-type FormFieldReadHandler = (
-  valueOrValues: FormDataEntryValue | Array<FormDataEntryValue>,
-  formContext?: FormContextObject
-) => unknown | Array<unknown>;
-
-type FormFieldRegistry = Record<string, FormFieldRegistryEntry>;
-
-type FormFieldRegistryEntry = Required<FormFieldDescriptor>;
-
-type FormFieldResetHandler = (formContext?: FormContextObject) => void;
-
-type FormFieldValidationHandler = (
-  valueOrValues: unknown | Array<unknown>,
-  formContext?: FormContextObject
-) => true | ReactNode;
-
-type FormProps = Omit<BoxProps<'form'>, 'onSubmit'> & {
-  onDirtyStateChange?: (isStateDirty: boolean) => void;
-  onSubmit?: (
-    event: FormEvent<HTMLFormElement>,
-    formContext: FormContextObject
-  ) => void | Promise<void>;
-  onValidate?: FormFieldValidationHandler;
-};
+} from "react";
 
 const emptyFormContext: FormContextObject = {
   getFieldValues: () => ({}),
@@ -105,10 +31,9 @@ const emptyFormContext: FormContextObject = {
 
 const FormContext = createContext<FormContextObject>(emptyFormContext);
 
-export const useFormField = (fieldDescriptor: FormFieldDescriptor) => {
+const useFormField = (fieldDescriptor: FormFieldDescriptor) => {
   const formContext = useContext(FormContext);
   const timer = useRef<ReturnType<typeof setTimeout>>();
-  const [focused, setFocused] = useState(false);
   const [touched, setTouched] = useState(false);
   const [errorMessage, setErrorMessage] = useState<ReactNode>();
 
@@ -130,15 +55,17 @@ export const useFormField = (fieldDescriptor: FormFieldDescriptor) => {
     isMultiValue: fieldDescriptor.isMultiValue ?? false,
     isRequired: fieldDescriptor.isRequired ?? false,
     name: fieldDescriptor.name,
-    ref: fieldDescriptor.ref,
+    ref: fieldDescriptor.ref ?? null,
+
     onBlur: () => {
       formFieldRegistryEntry.onValidate(getFieldValue());
       setTouched(true);
     },
+
     onChange: (event) => {
       fieldDescriptor.onChange?.(event, formContext);
 
-      if (focused) {
+      if (touched) {
         formContext.setIsDirty(true);
 
         // Allow the field to re-render before validating
@@ -147,19 +74,20 @@ export const useFormField = (fieldDescriptor: FormFieldDescriptor) => {
         }, 1);
       }
     },
-    onFocus: () => {
-      setFocused(true);
-    },
+
     onRead: (fieldValue) =>
       fieldDescriptor.onRead?.(fieldValue, formContext) ?? fieldValue,
+
     onReset: () => {
-      setFocused(false);
       setTouched(false);
 
-      (fieldDescriptor.ref.current as HTMLFormElement).form?.reset();
+      setErrorMessage(null);
+
+      (fieldDescriptor.ref?.current as HTMLFormElement)?.form?.reset();
 
       fieldDescriptor?.onReset?.(formContext);
     },
+
     onValidate: (valueOrValues: unknown | Array<unknown>) => {
       if (
         fieldDescriptor.isRequired &&
@@ -167,7 +95,7 @@ export const useFormField = (fieldDescriptor: FormFieldDescriptor) => {
           !(valueOrValues as Array<unknown>).length) ||
           !valueOrValues)
       ) {
-        const newErrorMessage = 'Oops. This field is required!';
+        const newErrorMessage = "Oops. This field is required!";
 
         setErrorMessage(newErrorMessage);
 
@@ -186,13 +114,12 @@ export const useFormField = (fieldDescriptor: FormFieldDescriptor) => {
   formContext.registerFormField(formFieldRegistryEntry);
 
   return {
-    inputProps: {
+    propsForInput: {
       name: formFieldRegistryEntry.name,
       onBlur: formFieldRegistryEntry.onBlur,
       onChange: formFieldRegistryEntry.onChange,
-      onFocus: formFieldRegistryEntry.onFocus,
     },
-    labelProps: {
+    propsForLabel: {
       errorMessage,
       isRequired: formFieldRegistryEntry.isRequired,
     },
@@ -229,7 +156,7 @@ const Form = forwardRef(
         (fieldDescriptor, fieldName) => {
           const fieldValueOrValues = fieldDescriptor.isMultiValue
             ? formData.getAll(fieldName) ?? []
-            : formData.get(fieldName) ?? '';
+            : formData.get(fieldName) ?? "";
 
           return (
             fieldDescriptor.onRead(fieldValueOrValues) ?? fieldValueOrValues
@@ -265,7 +192,7 @@ const Form = forwardRef(
       setIsDirty(false);
     };
 
-    const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
       const fieldValues = getFieldValues();
@@ -319,4 +246,6 @@ const Form = forwardRef(
   }
 );
 
-export { Form };
+Form.displayName = "Form";
+
+export { Form, FormContext, useFormField };

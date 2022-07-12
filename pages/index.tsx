@@ -1,29 +1,29 @@
-import { Box } from '@/components/Box';
-import { BoxProps } from '@/components/Box.types';
-import { Demo } from '@/components/Demo';
-import { GlobalStyles } from '@/components/GlobalStyles';
-import { Markdown } from '@/components/Markdown';
-import { NavigationItem, NavigationTree } from '@/components/NavigationTree';
-import { Text } from '@/components/Text';
-import { select } from '@/utilities/select';
-import sortBy from 'lodash/sortBy';
-import type { NextPage } from 'next';
-import Head from 'next/head';
-import Router, { useRouter } from 'next/router';
-import Script from 'next/script';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheetManager } from 'styled-components';
+import { Box } from "@/components/Box";
+import { BoxProps } from "@/components/Box.types";
+import { Demo } from "@/components/Demo";
+import { GlobalStyles } from "@/components/GlobalStyles";
+import { HandyProviders } from "@/components/HandyProviders";
+import { Markdown } from "@/components/Markdown";
+import { NavigationItem, NavigationTree } from "@/components/NavigationTree";
+import { Text } from "@/components/Text";
+import { select } from "@/utilities/select";
+import startCase from "lodash/startCase";
+import type { NextPage } from "next";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import Script from "next/script";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type DocumentationPageDescriptor = {
   title: string;
-  description: string;
+  description?: string;
   demos: Array<DocumentationSectionDescriptor>;
 };
 
 type DocumentationSectionDescriptor = {
   description?: string;
   highlightLines?: Array<number> | ((value: any) => Array<number>);
-  propsForContainer?: BoxProps<'div'>;
+  propsForContainer?: BoxProps<"div">;
   renderDemo: (value: any) => JSX.Element;
   renderSnippet?: ((value: any) => string) | boolean;
   title: string;
@@ -37,9 +37,9 @@ const Home: NextPage<{
   const [pageData, setPageData] = useState<DocumentationPageDescriptor>();
   const isLoading = !pageData;
   const router = useRouter();
-  const { componentName = 'box' } = router.query;
-  const { pathname = '', hash = '' } =
-    typeof window !== 'undefined' ? window.location : {};
+  const { componentName = "box" } = router.query;
+  const { pathname = "", hash = "" } =
+    typeof window !== "undefined" ? window.location : {};
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -47,7 +47,7 @@ const Home: NextPage<{
 
       if (headingElement) {
         headingElement.scrollIntoView({
-          behavior: 'smooth',
+          behavior: "smooth",
         });
 
         clearInterval(timer);
@@ -63,7 +63,9 @@ const Home: NextPage<{
 
   useEffect(() => {
     const loadPageData = async () => {
-      const docFile = await import(`docs/${componentName}`);
+      const docFile = await import(
+        `docs/${startCase(componentName as string).replace(" ", "")}.docs`
+      );
 
       setPageData(docFile.default);
     };
@@ -76,15 +78,11 @@ const Home: NextPage<{
       return [];
     }
 
-    return sortBy(pageData.demos, 'title').map((demo, index) => (
-      <Demo key={index} {...demo} />
-    ));
+    return pageData.demos.map((demo, index) => <Demo key={index} {...demo} />);
   }, [pageData]);
 
   return (
-    <StyleSheetManager
-      disableVendorPrefixes={process.env.NODE_ENV === 'development'}
-    >
+    <HandyProviders>
       <>
         <Head>
           <title>Handy Box</title>
@@ -98,17 +96,19 @@ const Home: NextPage<{
 
         <GlobalStyles />
 
-        <Box columns={['250px', '1fr']} height="100vh">
+        <Box columns={["250px", "1fr"]} height="100vh">
           <Box
             as="nav"
             backgroundColor="shaded"
             borderRight="hairline"
             height="100%"
             overflowY="auto"
+            paddingBottom="xxloose"
           >
             <Box
               alignItems="center"
               backgroundColor="shaded"
+              backgroundColorOpacity={100}
               backgroundColorLightness={600}
               color="white"
               justifyContent="space-between"
@@ -124,9 +124,9 @@ const Home: NextPage<{
             <NavigationTree data={navigationTree} />
           </Box>
           <Box
-            alignItems={isLoading ? 'center' : undefined}
-            backgroundColor={isLoading ? 'shaded' : undefined}
-            justifyContent={isLoading ? 'center' : undefined}
+            alignItems={isLoading ? "center" : undefined}
+            backgroundColor={isLoading ? "shaded" : undefined}
+            justifyContent={isLoading ? "center" : undefined}
             height="100%"
             overflowY="auto"
             ref={scrollingContentElementRef}
@@ -153,11 +153,11 @@ const Home: NextPage<{
           </Box>
         </Box>
       </>
-    </StyleSheetManager>
+    </HandyProviders>
   );
 };
 
-export { getServerSideProps as getStaticProps } from '../utilities/getServerSideProps';
+export { getServerSideProps as getStaticProps } from "../utilities/getServerSideProps";
 export type { DocumentationPageDescriptor, DocumentationSectionDescriptor };
 
 export default Home;

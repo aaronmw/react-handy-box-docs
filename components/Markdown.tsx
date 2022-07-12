@@ -1,8 +1,8 @@
 import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
 import { Text } from '@/components/Text';
 import { forwardRef, Ref } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { BoxProps } from './Box.types';
 
 type MarkdownProps = Omit<BoxProps<'div'>, 'children' | 'ref'> & {
   children: string;
@@ -28,5 +28,7 @@ const Markdown = forwardRef(
     );
   }
 );
+
+Markdown.displayName = 'Markdown';
 
 export { Markdown };

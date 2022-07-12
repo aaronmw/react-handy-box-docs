@@ -1,7 +1,9 @@
+import { animationNames } from '@/tokens/animationNames';
+import { breakpoints } from '@/tokens/breakpoints';
+import { globalStyles } from '@/tokens/globalStyles';
 import get from 'lodash/get';
 import kebabCase from 'lodash/kebabCase';
 import { createGlobalStyle, CSSObject } from 'styled-components';
-import { animationNames, breakpoints, globalStyles } from '../tokens';
 
 const toCSSPropertyDefinitions = (styleObject: CSSObject) =>
   Object.entries(styleObject)

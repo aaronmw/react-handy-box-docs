@@ -64,4 +64,6 @@ const PhraseCycler = forwardRef(
   }
 );
 
+PhraseCycler.displayName = 'PhraseCycler';
+
 export { PhraseCycler };

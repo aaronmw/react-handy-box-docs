@@ -1,54 +1,50 @@
-import { Box } from '@/components/Box';
-import { BoxProps } from '@/components/Box.types';
-import { Text } from '@/components/Text';
-import { forwardRef, ReactNode, Ref } from 'react';
+import { Box } from "@/components/Box";
+import { BoxProps } from "@/components/Box.types";
+import { Text } from "@/components/Text";
+import { forwardRef, ReactNode, Ref } from "react";
 
 export type LabeledInputProps = {
   errorMessage?: ReactNode;
   isRequired?: boolean;
   label: ReactNode;
-  labelLocation?: 'above' | 'left' | 'hidden';
+  labelLocation?: "above" | "left" | "hidden";
 };
 
-type LabeledInputComponentProps = BoxProps<'label'> & LabeledInputProps;
+type LabeledInputComponentProps = BoxProps<"label"> & LabeledInputProps;
 
-const baseLabelProps: BoxProps<'label'> = {
+const baseLabelProps: BoxProps<"label"> = {
+  display: "block",
   flexGrow: 1,
   flexShrink: 1,
-  propsOnFocus: {
-    boxShadow: 'focusRing',
-  },
 };
 
 const labelLocationPropMap: {
-  [key in 'above' | 'left' | 'hidden']?: {
-    container?: Omit<BoxProps<'label'>, 'ref'>;
-    label?: Omit<BoxProps<'span'>, 'ref'>;
+  [key in "above" | "left" | "hidden"]: {
+    container?: Omit<BoxProps<"label">, "ref">;
+    label?: Omit<BoxProps<"span">, "ref">;
   };
 } = {
   above: {
     container: {
-      rowGap: 'tight',
-      width: '100%',
+      display: "flex",
+      rowGap: "xxtight",
+      width: "100%",
+    },
+  },
+  hidden: {
+    label: {
+      display: "none",
     },
   },
   left: {
     container: {
-      alignItems: 'baseline',
-      border: 'hairline',
-      borderColor: 'white',
-      borderRadius: 'small',
-      columnGap: 'tight',
-      paddingX: 'tight',
-      paddingY: 'xtight',
-      propsOnHover: {
-        border: 'hairline',
-        borderColor: 'border',
-      },
+      alignItems: "baseline",
+      columnGap: "tight",
+      display: "flex",
     },
     label: {
-      textAlign: 'right',
-      width: 50,
+      textAlign: "right",
+      whiteSpace: "nowrap",
     },
   },
 };
@@ -60,7 +56,7 @@ const LabeledInput = forwardRef(
       errorMessage,
       isRequired = false,
       label,
-      labelLocation = 'left',
+      labelLocation = "above",
       ...props
     }: LabeledInputComponentProps,
     ref: Ref<HTMLLabelElement>
@@ -73,12 +69,12 @@ const LabeledInput = forwardRef(
       {...labelLocationPropMap[labelLocation]?.container}
       {...props}
     >
-      {labelLocation !== 'hidden' && (
+      {labelLocation !== "hidden" && (
         <Text variant="label" {...labelLocationPropMap[labelLocation]?.label}>
           {label}
           {isRequired && (
             <>
-              {' '}
+              {" "}
               <Text color="red">*</Text>
             </>
           )}
@@ -95,5 +91,7 @@ const LabeledInput = forwardRef(
     </Box>
   )
 );
+
+LabeledInput.displayName = 'LabeledInput';
 
 export { LabeledInput };

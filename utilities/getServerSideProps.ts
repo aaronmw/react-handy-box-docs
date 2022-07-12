@@ -1,12 +1,11 @@
-import { NavigationItem } from '@/components/NavigationTree';
-import fs from 'fs';
-import kebabCase from 'lodash/kebabCase';
-import sortBy from 'lodash/sortBy';
-import path from 'path';
-import { DocumentationPageDescriptor } from '../pages';
+import { NavigationItem } from "@/components/NavigationTree";
+import fs from "fs";
+import kebabCase from "lodash/kebabCase";
+import path from "path";
+import { DocumentationPageDescriptor } from "../pages";
 
 export async function getServerSideProps() {
-  const docsDirectory = path.join(process.cwd(), 'docs');
+  const docsDirectory = path.join(process.cwd(), "docs");
 
   const docFiles = fs.readdirSync(docsDirectory);
 
@@ -17,15 +16,12 @@ export async function getServerSideProps() {
 
       return {
         href: `/docs/${kebabCase(docDescriptor.title)}`,
-        subSections: sortBy(
-          docDescriptor.demos.map((demo) => ({
-            href: `/docs/${kebabCase(docDescriptor.title)}#${kebabCase(
-              demo.title
-            )}`,
-            title: demo.title,
-          })),
-          'title'
-        ),
+        subSections: docDescriptor.demos.map((demo) => ({
+          href: `/docs/${kebabCase(docDescriptor.title)}#${kebabCase(
+            demo.title
+          )}`,
+          title: demo.title,
+        })),
         title: docDescriptor.title,
       } as NavigationItem;
     })

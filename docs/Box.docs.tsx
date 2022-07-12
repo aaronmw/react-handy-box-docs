@@ -1,6 +1,6 @@
-import { Box } from '@/components/Box';
-import { Text } from '@/components/Text';
-import { toJSXAttributeValue } from '@/utilities/toJSXAttributeValue';
+import { Box } from "@/components/Box";
+import { DocumentationPageDescriptor } from "@/pages/index";
+import { toJSXAttributeValue } from "@/utilities/toJSXAttributeValue";
 import {
   borderRadii,
   borderStyles,
@@ -8,16 +8,15 @@ import {
   fontSizes,
   transitionDurations,
   whiteSpaceNames,
-} from 'tokens';
-import { DocumentationPageDescriptor } from '../pages';
+} from "tokens";
 
 const docs: DocumentationPageDescriptor = {
-  title: 'Box',
-  description: 'The base of all other components.',
+  title: "Box",
+  description: "The base of all other components.",
   demos: [
     {
-      title: 'backgroundColor',
-      values: ['purple'],
+      title: "backgroundColor",
+      values: ["purple"],
       renderDemo: (colorName) => (
         <Box
           backgroundColor={colorName}
@@ -33,16 +32,20 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'backgroundColorLightness',
-      values: [100, '+100', '-100'],
-      renderDemo: (colorName) => (
+      title: "backgroundColorLightness",
+      values: [
+        { adjustment: 100, resultingSwatchName: "purple--100" },
+        { adjustment: "+100", resultingSwatchName: "purple--500" },
+        { adjustment: "-100", resultingSwatchName: "purple--300" },
+      ],
+      renderDemo: ({ adjustment, resultingSwatchName }) => (
         <Box
           backgroundColor="purple"
-          backgroundColorLightness={colorName}
+          backgroundColorLightness={adjustment}
           borderRadius="small"
           padding="xtight"
         >
-          {colorName}
+          {resultingSwatchName}
         </Box>
       ),
       renderSnippet: true,
@@ -50,7 +53,27 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'border',
+      title: "backgroundColorOpacity",
+      values: [
+        { adjustment: 50, resultingSwatchName: "purple--400--50" },
+        { adjustment: "-80", resultingSwatchName: "purple--400--20" },
+      ],
+      renderDemo: ({ adjustment, resultingSwatchName }) => (
+        <Box
+          backgroundColor="purple"
+          backgroundColorOpacity={adjustment}
+          borderRadius="small"
+          padding="xtight"
+        >
+          {resultingSwatchName}
+        </Box>
+      ),
+      renderSnippet: true,
+      highlightLines: [3],
+    },
+
+    {
+      title: "border",
       values: Object.keys(borderStyles),
       renderDemo: (borderStyle) => (
         <Box border={borderStyle} borderRadius="small" padding="normal">
@@ -62,14 +85,14 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'borderColor',
+      title: "borderColor",
       values: [
         {
           borderColor: undefined,
           highlightLines: [2],
         },
         {
-          borderColor: 'danger',
+          borderColor: "danger",
           highlightLines: [3],
         },
       ],
@@ -96,16 +119,20 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'borderColorLightness',
-      values: [100, '+100', '-100'],
-      renderDemo: (colorName) => (
+      title: "borderColorLightness",
+      values: [
+        { adjustment: 100, resultingSwatchName: "purple--100" },
+        { adjustment: "+100", resultingSwatchName: "purple--500" },
+        { adjustment: "-100", resultingSwatchName: "purple--300" },
+      ],
+      renderDemo: ({ adjustment, resultingSwatchName }) => (
         <Box
           borderColor="purple"
-          borderColorLightness={colorName}
+          borderColorLightness={adjustment}
           borderRadius="small"
           padding="xtight"
         >
-          purple--{colorName}
+          {resultingSwatchName}
         </Box>
       ),
       renderSnippet: true,
@@ -113,7 +140,27 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'borderRadius',
+      title: "borderColorOpacity",
+      values: [
+        { adjustment: 50, resultingSwatchName: "purple--400--50" },
+        { adjustment: "-80", resultingSwatchName: "purple--400--20" },
+      ],
+      renderDemo: ({ adjustment, resultingSwatchName }) => (
+        <Box
+          borderColor="purple"
+          borderColorOpacity={adjustment}
+          borderRadius="small"
+          padding="xtight"
+        >
+          {resultingSwatchName}
+        </Box>
+      ),
+      renderSnippet: true,
+      highlightLines: [3],
+    },
+
+    {
+      title: "borderRadius",
       values: ([] as Array<string | number>).concat(
         Object.keys(borderRadii),
         25
@@ -128,10 +175,10 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'boxShadow',
+      title: "boxShadow",
       values: ([] as Array<string | number>).concat(
         Object.keys(boxShadows),
-        '1px 1px 0 5px red'
+        "1px 1px 0 5px red"
       ),
       renderDemo: (boxShadow) => (
         <Box boxShadow={boxShadow} padding="normal">
@@ -143,8 +190,8 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'color',
-      values: [undefined, 'danger'],
+      title: "color",
+      values: [undefined, "danger"],
       renderDemo: (color) => (
         <Box {...(color ? { color } : {})}>{color ?? typeof color}</Box>
       ),
@@ -153,11 +200,55 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'colorLightness',
-      values: [100, '+100', '-100'],
-      renderDemo: (colorName) => (
-        <Box color="purple" colorLightness={colorName}>
-          {colorName}
+      title: "colorLightness",
+      values: [
+        {
+          adjustment: 400,
+          resultingSwatchName: "blue--400",
+          highlightLines: [1],
+        },
+        {
+          color: "purple",
+          adjustment: 100,
+          resultingSwatchName: "purple--100",
+          highlightLines: [3],
+        },
+        {
+          color: "purple",
+          adjustment: "+100",
+          resultingSwatchName: "purple--500",
+          highlightLines: [3],
+        },
+        {
+          color: "purple",
+          adjustment: "-100",
+          resultingSwatchName: "purple--300",
+          highlightLines: [3],
+        },
+      ],
+      renderDemo: ({
+        adjustment,
+        highlightLines,
+        resultingSwatchName,
+        ...color
+      }) => (
+        <Box colorLightness={adjustment} {...color}>
+          {resultingSwatchName}
+        </Box>
+      ),
+      renderSnippet: true,
+      highlightLines: ({ highlightLines }) => highlightLines,
+    },
+
+    {
+      title: "colorOpacity",
+      values: [
+        { adjustment: 50, resultingSwatchName: "purple--400--50" },
+        { adjustment: "-80", resultingSwatchName: "purple--400--20" },
+      ],
+      renderDemo: ({ adjustment, resultingSwatchName }) => (
+        <Box color="purple" colorOpacity={adjustment}>
+          {resultingSwatchName}
         </Box>
       ),
       renderSnippet: true,
@@ -165,16 +256,16 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'columnGap',
+      title: "columnGap",
       description:
-        'Setting this prop automatically sets `display: flex` for you.',
+        "Setting this prop automatically sets `display: flex` for you.",
       values: ([] as Array<string | number>).concat(
         Object.keys(whiteSpaceNames),
         1
       ),
       renderDemo: (whiteSpaceName) => (
         <Box columnGap={whiteSpaceName}>
-          {['A', 'B', 'C'].map((boxName) => (
+          {["A", "B", "C"].map((boxName) => (
             <Box backgroundColor="shaded" key={boxName} padding="tight">
               {boxName}
             </Box>
@@ -194,13 +285,13 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'columns',
+      title: "columns",
       description:
-        'Setting this prop automatically sets `display: grid` for you.',
-      values: [2, ['1fr', '2fr'], ['100px', '1fr']],
+        "Setting this prop automatically sets `display: grid` for you.",
+      values: [2, ["1fr", "2fr"], ["100px", "1fr"]],
       renderDemo: (columns) => (
         <Box columnGap="xtight" columns={columns}>
-          {['Left', 'Right'].map((boxName) => (
+          {["Left", "Right"].map((boxName) => (
             <Box backgroundColor="shaded" key={boxName} padding="tight">
               {boxName}
             </Box>
@@ -220,13 +311,13 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'flexDirection',
+      title: "flexDirection",
       description:
-        'Setting this prop automatically sets `display: flex` for you.',
-      values: ['column', 'column-reverse', 'row', 'row-reverse'],
+        "Setting this prop automatically sets `display: flex` for you.",
+      values: ["column", "column-reverse", "row", "row-reverse"],
       renderDemo: (flexDirection) => (
         <Box flexDirection={flexDirection}>
-          {['A', 'B', 'C'].map((boxName) => (
+          {["A", "B", "C"].map((boxName) => (
             <Box backgroundColor="shaded" key={boxName} padding="tight">
               {boxName}
             </Box>
@@ -246,9 +337,9 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'fontSize',
+      title: "fontSize",
       description:
-        'Check out the [Text](/docs/text) component for slightly nicer syntax.',
+        "Check out the [Text](/docs/text) component for slightly nicer syntax.",
       values: Object.keys(fontSizes),
       renderDemo: (fontSize) => <Box fontSize={fontSize}>{fontSize}</Box>,
       renderSnippet: true,
@@ -256,7 +347,7 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'margin/padding',
+      title: "margin/padding",
       values: Object.keys(whiteSpaceNames),
       renderDemo: (whiteSpaceName) => (
         <Box border="hairline" borderRadius="small" padding={whiteSpaceName}>
@@ -268,11 +359,11 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'propsForPhoneOnly',
+      title: "propsForPhoneOnly",
       renderDemo: () => (
         <Box
           propsForPhoneOnly={{
-            color: 'danger',
+            color: "danger",
           }}
         >
           Resize the Window
@@ -283,13 +374,13 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'propsForAfterElement / propsForBeforeElement',
+      title: "propsForAfterElement / propsForBeforeElement",
       values: [
         {
           renderDemo: () => (
             <Box
               propsForAfterElement={{
-                color: 'danger',
+                color: "danger",
                 content: ` (I'm inside ::after)`,
               }}
             >
@@ -304,11 +395,11 @@ const docs: DocumentationPageDescriptor = {
           renderDemo: () => (
             <Box
               propsForAfterElement={{
-                backgroundColor: 'danger',
-                borderRadius: 'circle',
-                display: 'inline-block',
+                backgroundColor: "danger",
+                borderRadius: "circle",
+                display: "inline-block",
                 height: 5,
-                position: 'relative',
+                position: "relative",
                 top: -10,
                 width: 5,
               }}
@@ -326,13 +417,13 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'propsOnHover',
+      title: "propsOnHover",
       values: [
         {
           props: {
-            padding: 'normal',
+            padding: "normal",
             propsOnHover: {
-              backgroundColor: 'shaded',
+              backgroundColor: "shaded",
             },
           },
           highlightLines: [3, 4, 5],
@@ -340,10 +431,10 @@ const docs: DocumentationPageDescriptor = {
 
         {
           props: {
-            padding: 'normal',
-            transitionDuration: 'normal',
+            padding: "normal",
+            transitionDuration: "normal",
             propsOnHover: {
-              backgroundColor: 'shaded',
+              backgroundColor: "shaded",
             },
           },
           highlightLines: [3, 4, 5, 6],
@@ -355,13 +446,13 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'transitionDuration',
+      title: "transitionDuration",
       values: Object.keys(transitionDurations),
       renderDemo: (transitionDuration) => (
         <Box
           padding="normal"
           propsOnHover={{
-            backgroundColor: 'shaded',
+            backgroundColor: "shaded",
           }}
           transitionDuration={transitionDuration}
         >
@@ -373,18 +464,18 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'transitionProperty',
+      title: "transitionProperty",
       values: [
         {
-          transitionProperty: 'opacity',
+          transitionProperty: "opacity",
           highlightLines: [10],
         },
         {
           transitionProperty: [
-            'background-color',
-            'border',
-            'opacity',
-            'width',
+            "background-color",
+            "border",
+            "opacity",
+            "width",
           ],
           highlightLines: [10, 11, 12, 13, 14, 15],
         },
@@ -394,10 +485,10 @@ const docs: DocumentationPageDescriptor = {
           opacity={0.5}
           padding="normal"
           propsOnHover={{
-            backgroundColor: 'shaded',
-            border: 'normal',
+            backgroundColor: "shaded",
+            border: "normal",
             opacity: 1,
-            width: '100%',
+            width: "100%",
           }}
           width="75%"
           transitionProperty={transitionProperty}

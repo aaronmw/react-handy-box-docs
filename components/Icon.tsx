@@ -18,4 +18,6 @@ const Icon = forwardRef(
   )
 );
 
+Icon.displayName = 'Icon';
+
 export { Icon };

@@ -1,114 +1,86 @@
-import { Box } from '@/components/Box';
-import { BoxProps } from '@/components/Box.types';
-import clamp from 'lodash/clamp';
-import { forwardRef, ReactNode, Ref, useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { useMultipleRefs } from '../hooks';
+import { Box } from "@/components/Box";
+import { BoxProps } from "@/components/Box.types";
+import { Popover } from "@/components/Popover";
+import { PopoverRenderProps } from "@/components/Popover.types";
+import React, { ReactNode, useRef } from "react";
 
 const variantPropMap = {
   normal: {
-    backgroundColor: 'text',
-    borderRadius: 'small',
-    color: 'white',
-    paddingX: 'tight',
-    paddingY: 'xtight',
+    backgroundColor: "text",
+    borderRadius: "small",
+    color: "white",
+    paddingX: "tight",
+    paddingY: "xtight",
   },
-} as const;
+};
 
-type TooltipProps = Omit<BoxProps<'div'>, 'content'> & {
+type TooltipProps = Omit<BoxProps<"div">, "content"> & {
   content: ReactNode;
   disabled?: boolean;
   variant?: keyof typeof variantPropMap;
 };
 
-const Tooltip = forwardRef(
-  (
-    {
-      children,
-      content,
-      disabled = false,
-      variant = 'normal',
-      ...props
-    }: TooltipProps,
-    ref: Ref<HTMLDivElement>
-  ) => {
-    const targetElementRef = useRef<HTMLDivElement>(null);
-    const tooltipElementRef = useRef<HTMLDivElement>(null);
-    const multipleRefs = useMultipleRefs(ref, targetElementRef);
-    const [isShowingTooltip, setIsShowingTooltip] = useState(false);
+const Tooltip = ({
+  children,
+  content,
+  variant = "normal",
+  ...otherProps
+}: TooltipProps) => {
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hoistedPropsForTrigger = useRef<PopoverRenderProps | null>(null);
 
-    useEffect(() => {
-      const targetElement = targetElementRef.current;
-      const tooltipElement = tooltipElementRef.current;
+  const scheduleTooltipReveal = () => {
+    cancelTooltipTimers();
+    timerRef.current = setTimeout(revealTooltip, 300);
+  };
 
-      if (disabled || !targetElement || !tooltipElement) {
-        return;
-      }
+  const scheduleTooltipDismissal = () => {
+    cancelTooltipTimers();
+    timerRef.current = setTimeout(dismissTooltip, 300);
+  };
 
-      const showTooltip = () => {
-        const targetElementRect = targetElement.getBoundingClientRect();
-        const tooltipElementHeight = tooltipElement.offsetHeight;
-        const tooltipElementWidth = tooltipElement.offsetWidth;
-        const targetLeft = targetElementRect.x + targetElementRect.width / 2;
-        const targetTop = targetElementRect.y - tooltipElementHeight;
+  const cancelTooltipTimers = () => {
+    timerRef.current ? clearTimeout(timerRef.current) : null;
+  };
 
-        const clampedLeft = clamp(
-          targetLeft,
-          10,
-          window.innerWidth - tooltipElementWidth / 2 - 10
-        );
-        const clampedTop = clamp(
-          targetTop,
-          10,
-          window.innerHeight - tooltipElementHeight / 2 - 10
-        );
+  const dismissTooltip = () => {
+    cancelTooltipTimers();
+    hoistedPropsForTrigger.current?.setIsOpen(false);
+  };
 
-        tooltipElement.style.left = `${clampedLeft}px`;
-        tooltipElement.style.top = `${clampedTop}px`;
+  const revealTooltip = () => {
+    cancelTooltipTimers();
+    hoistedPropsForTrigger.current?.setIsOpen(true);
+  };
 
-        setIsShowingTooltip(true);
-      };
+  return (
+    <Popover
+      disableBackdropClick={true}
+      popperPlacementOrder={["top", "bottom", "left", "right"]}
+      renderTrigger={(renderProps) => {
+        hoistedPropsForTrigger.current = renderProps;
 
-      const hideTooltip = () => {
-        setIsShowingTooltip(false);
-      };
-
-      targetElement.addEventListener('mouseenter', showTooltip);
-      targetElement.addEventListener('mouseleave', hideTooltip);
-
-      return () => {
-        targetElement.removeEventListener('mouseenter', showTooltip);
-        targetElement.removeEventListener('mouseleave', hideTooltip);
-      };
-    }, [disabled]);
-
-    return (
-      <>
-        <Box ref={multipleRefs} {...props}>
-          {children}
-        </Box>
-        {createPortal(
+        return (
           <Box
-            boxShadow="normal"
-            marginTop="calc(var(--whiteSpace--xtight) * -1)"
-            opacity={isShowingTooltip ? 1 : 0}
-            pointerEvents={isShowingTooltip ? 'all' : 'none'}
-            position="fixed"
-            ref={tooltipElementRef}
-            transform="translateX(-50%)"
-            transitionDelay={isShowingTooltip ? '0.3s' : '0'}
-            transitionProperty="opacity"
-            whiteSpace="nowrap"
-            zIndex="5000"
-            {...variantPropMap[variant]}
+            display="inline-block"
+            ref={renderProps.propsForTrigger.ref as any}
+            onMouseEnter={scheduleTooltipReveal}
+            onMouseLeave={scheduleTooltipDismissal}
+            {...otherProps}
           >
-            {content}
-          </Box>,
-          document.body
-        )}
-      </>
-    );
-  }
-);
+            {children}
+          </Box>
+        );
+      }}
+      onMouseEnter={cancelTooltipTimers}
+      onMouseLeave={scheduleTooltipDismissal}
+      {...(variantPropMap[variant] as any)}
+    >
+      {content}
+    </Popover>
+  );
+};
+
+Tooltip.displayName = "Tooltip";
 
 export { Tooltip };

@@ -1,47 +1,55 @@
-import { Box } from '@/components/Box';
-import { BoxProps } from '@/components/Box.types';
-import { CommonFormInputProps, useFormField } from '@/components/Form';
-import { LabeledInput } from '@/components/LabeledInput';
-import { FocusEvent, FocusEventHandler, forwardRef, Ref, useRef } from 'react';
-import { useMultipleRefs } from '../hooks';
+import { Box } from "@/components/Box";
+import { BoxProps } from "@/components/Box.types";
+import { useFormField } from "@/components/Form";
+import { CommonFormInputProps } from "@/components/Form.types";
+import { LabeledInput } from "@/components/LabeledInput";
+import { useMultipleRefs } from "@/hooks/useMultipleRefs";
+import omit from "lodash/omit";
+import { FocusEvent, FocusEventHandler, forwardRef, Ref, useRef } from "react";
 
 export type SupportedInputTypes =
-  | 'text'
-  | 'textarea'
-  | 'date'
-  | 'number'
-  | 'email'
-  | 'password'
-  | 'phone';
+  | "text"
+  | "textarea"
+  | "date"
+  | "number"
+  | "email"
+  | "password"
+  | "phone";
 
-export type TextInputElementRef<T extends SupportedInputTypes> =
-  T extends 'textarea' ? Ref<HTMLTextAreaElement> : Ref<HTMLInputElement>;
+export type TextInputElementRef<T extends SupportedInputTypes = "text"> =
+  T extends "textarea" ? Ref<HTMLTextAreaElement> : Ref<HTMLInputElement>;
 
-export type TextInputProps<T extends SupportedInputTypes> =
-  (T extends 'textarea'
-    ? Omit<BoxProps<'textarea'>, 'type' | 'as' | 'ref'> & {
-        type: 'textarea';
+export type TextInputProps<T extends SupportedInputTypes = "text"> =
+  (T extends "textarea"
+    ? Omit<BoxProps<"textarea">, "type" | "as" | "ref"> & {
+        type: "textarea";
       }
-    : Omit<BoxProps<'input'>, 'type' | 'as' | 'ref'> & { type: T }) &
+    : Omit<BoxProps<"input">, "type" | "as" | "ref"> & { type?: T }) &
     CommonFormInputProps;
 
-export const commonInputBoxProps = {
+export const commonInputBoxProps: BoxProps<"input"> = {
+  border: "normal",
+  borderRadius: "small",
+  boxShadow: "inset",
   flexGrow: 1,
   flexShrink: 1,
-  paddingX: 'tight',
-  paddingY: 'xtight',
-  resize: 'none',
-  width: '100%',
-} as const;
+  paddingX: "tight",
+  paddingY: "xtight",
+  propsOnFocus: {
+    boxShadow: "focusRing",
+  },
+  resize: "none",
+  width: "100%",
+};
 
 const TextInput = forwardRef(
-  <T extends SupportedInputTypes>(
+  <T extends SupportedInputTypes = "text">(
     {
       isRequired,
       label,
       labelLocation,
       name,
-      type,
+      type = "text",
       onChange,
       onRead,
       onReset,
@@ -54,7 +62,7 @@ const TextInput = forwardRef(
 
     const multipleRefs = useMultipleRefs(ref, inputElementRef);
 
-    const { inputProps, labelProps } = useFormField({
+    const { propsForInput, propsForLabel } = useFormField({
       isRequired,
       name,
       ref: inputElementRef,
@@ -71,24 +79,25 @@ const TextInput = forwardRef(
     };
 
     return (
-      <LabeledInput label={label} labelLocation={labelLocation} {...labelProps}>
+      <LabeledInput
+        label={label}
+        labelLocation={labelLocation}
+        {...propsForLabel}
+      >
         <Box
-          as={type === 'textarea' ? 'textarea' : 'input'}
+          as={type === "textarea" ? "textarea" : "input"}
           ref={multipleRefs}
-          type={type === 'textarea' ? undefined : type}
+          type={type === "textarea" ? undefined : type}
+          onFocus={handleFocus}
           {...commonInputBoxProps}
-          {...inputProps}
-          onFocus={(
-            event: FocusEvent<HTMLInputElement | HTMLTextAreaElement>
-          ) => {
-            inputProps?.onFocus();
-            handleFocus(event);
-          }}
+          {...propsForInput}
           {...props}
         />
       </LabeledInput>
     );
   }
 );
+
+TextInput.displayName = "TextInput";
 
 export { TextInput };

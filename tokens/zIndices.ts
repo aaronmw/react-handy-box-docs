@@ -1,7 +1,6 @@
 export const zIndices = {
-  '5000': 5000,
-  '1000': 1000,
-  '100': 100,
-  '10': 10,
-  '1': 1,
+  "1000--maximum": 1000,
+  "100--popoversAndTooltips": 100,
+  "10--modalWindows": 10,
+  "1--stickyElements": 1,
 };

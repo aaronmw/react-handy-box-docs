@@ -2,23 +2,22 @@ import {
   BorderStyle,
   BoxProps,
   Breakpoint,
-  Color,
   validStyleProps,
-} from '@/components/Box.types';
-import { animationNames } from '@/tokens/animationNames';
-import { borderRadii } from '@/tokens/borderRadii';
-import { borderStyles } from '@/tokens/borderStyles';
-import { boxShadows } from '@/tokens/boxShadows';
-import { breakpoints } from '@/tokens/breakpoints';
-import { colorPalette } from '@/tokens/colorPalette';
-import { transitionDurations } from '@/tokens/transitionDurations';
-import { fontNames } from '@/tokens/typography';
-import { whiteSpacesAsCSSVariables } from '@/tokens/whiteSpaces';
-import { zIndices } from '@/tokens/zIndices';
-import { adjustColorLightness } from '@/utilities/adjustColorLightness';
-import camelCase from 'lodash/camelCase';
-import upperFirst from 'lodash/upperFirst';
-import styled, { CSSObject } from 'styled-components';
+} from "@/components/Box.types";
+import { animationNames } from "@/tokens/animationNames";
+import { borderRadii } from "@/tokens/borderRadii";
+import { borderStyles } from "@/tokens/borderStyles";
+import { boxShadows } from "@/tokens/boxShadows";
+import { breakpoints } from "@/tokens/breakpoints";
+import { colorPalette } from "@/tokens/colorPalette";
+import { transitionDurations } from "@/tokens/transitionDurations";
+import { fontNames } from "@/tokens/typography";
+import { whiteSpacesAsCSSVariables } from "@/tokens/whiteSpaces";
+import { zIndices } from "@/tokens/zIndices";
+import { adjustColor } from "@/utilities/adjustColorLightness";
+import camelCase from "lodash/camelCase";
+import upperFirst from "lodash/upperFirst";
+import styled, { CSSObject } from "styled-components";
 
 type PropOptionResolver<TagName extends keyof JSX.IntrinsicElements> = <
   P extends string & keyof BoxProps<TagName>
@@ -41,21 +40,21 @@ type PropHandlers<TagName extends keyof JSX.IntrinsicElements> = {
 };
 
 const nestedSelectorPropAliases = {
-  propsForAfterElement: '&:after',
-  propsForBeforeElement: '&:before',
-  propsForFirstElement: '&:first-child',
-  propsOnFocus: '&:focus, &:focus-within',
-  propsOnHover: '&:hover, &:focus, &:focus-within',
-  propsForLastElement: '&:last-child',
+  propsForAfterElement: "&:after",
+  propsForBeforeElement: "&:before",
+  propsForFirstElement: "&:first-child",
+  propsOnFocus: "&:focus, &:focus-within",
+  propsOnHover: "&:hover, &:focus, &:focus-within",
+  propsForLastElement: "&:last-child",
 };
 
 const propHandlers: PropHandlers<any> = {
   alignItems: {
-    aliases: ['justifyContent'],
+    aliases: ["justifyContent"],
     setDefaults: {
-      display: 'flex',
+      display: "flex",
     },
-    options: ({ propName = 'alignItems', propValue }) => ({
+    options: ({ propName = "alignItems", propValue }) => ({
       [propName]: propValue,
     }),
   },
@@ -67,18 +66,18 @@ const propHandlers: PropHandlers<any> = {
   },
   borderRadius: {
     aliases: [
-      'borderBottomLeftRadius',
-      'borderBottomRightRadius',
-      'borderTopLeftRadius',
-      'borderTopRightRadius',
+      "borderBottomLeftRadius",
+      "borderBottomRightRadius",
+      "borderTopLeftRadius",
+      "borderTopRightRadius",
     ],
     options: borderRadii,
   },
   borderBottomRadius: {
-    aliases: ['borderLeftRadius', 'borderRightRadius', 'borderTopRadius'],
+    aliases: ["borderLeftRadius", "borderRightRadius", "borderTopRadius"],
     options: ({ propName, propValue }) => {
-      const edgeName = propName.replace(/(border|Radius)/g, '');
-      const isLeftOrRight = ['Left', 'Right'].includes(edgeName);
+      const edgeName = propName.replace(/(border|Radius)/g, "");
+      const isLeftOrRight = ["Left", "Right"].includes(edgeName);
       const propNameA = isLeftOrRight
         ? `borderBottom${edgeName}Radius`
         : `border${edgeName}LeftRadius`;
@@ -94,102 +93,103 @@ const propHandlers: PropHandlers<any> = {
   },
   border: {
     aliases: [
-      'borderTop',
-      'borderRight',
-      'borderBottom',
-      'borderLeft',
-      'borderColor',
-      'borderTopColor',
-      'borderRightColor',
-      'borderBottomColor',
-      'borderLeftColor',
+      "borderTop",
+      "borderRight",
+      "borderBottom",
+      "borderLeft",
+      "borderColor",
+      "borderTopColor",
+      "borderRightColor",
+      "borderBottomColor",
+      "borderLeftColor",
     ],
-    options: ({ props, propName = 'border' }) => {
-      const borderEdgeName = propName.replace('Color', '');
+    options: ({ props, propName = "border" }) => {
+      const borderEdgeName = propName.replace("Color", "");
       const borderStyleObject =
-        borderStyles[(props[borderEdgeName] ?? 'normal') as BorderStyle];
-      const borderColor = props[`${borderEdgeName}Color`] ?? 'border';
+        borderStyles[(props[borderEdgeName] ?? "normal") as BorderStyle];
+      const borderColor = props[`${borderEdgeName}Color`] ?? "border";
+      const adjustedBorderColor = adjustColor(
+        borderColor,
+        props[`${borderEdgeName}ColorLightness`],
+        props[`${borderEdgeName}ColorOpacity`]
+      );
 
       return {
-        [`${borderEdgeName}Color`]: colorPalette[borderColor as Color],
+        [`${borderEdgeName}Color`]: colorPalette[adjustedBorderColor],
         [`${borderEdgeName}Style`]: borderStyleObject.borderStyle,
         [`${borderEdgeName}Width`]: borderStyleObject.borderWidth,
       };
     },
   },
   bottom: {
-    aliases: ['left', 'right', 'top'],
+    aliases: ["left", "right", "top"],
     options: whiteSpacesAsCSSVariables,
   },
   boxShadow: {
     options: boxShadows,
   },
   color: {
-    aliases: ['backgroundColor'],
-    options: colorPalette,
+    aliases: ["backgroundColor"],
+    options: ({ props, propName, propValue }) => {
+      return {
+        [propName]:
+          colorPalette[
+            adjustColor(
+              propValue,
+              props[`${propName}Lightness`],
+              props[`${propName}Opacity`]
+            )
+          ],
+      };
+    },
   },
   colorLightness: {
-    aliases: [
-      'backgroundColorLightness',
-      'borderBottomColorLightness',
-      'borderColorLightness',
-      'borderLeftColorLightness',
-      'borderRightColorLightness',
-      'borderTopColorLightness',
-    ],
-    options: ({ props, propName, propValue }) => {
-      const colorProp = propName.replace('Lightness', '');
-
-      const isBorderProp = colorProp.startsWith('border');
-
-      const isColorProp = colorProp === 'color';
-
-      const colorName =
-        props[colorProp] ??
-        (isBorderProp ? 'border' : isColorProp ? 'text' : undefined);
-
-      const borderProp = colorProp.replace('Color', '');
-
-      return propsToStyleObject({
-        ...(isBorderProp
-          ? { [borderProp]: props[borderProp] ?? 'normal' }
-          : {}),
-        [colorProp]: adjustColorLightness(colorName, propValue),
-      });
+    aliases: ["colorOpacity"],
+    options: ({ props }) => {
+      return {
+        color:
+          colorPalette[
+            adjustColor(
+              props.color ?? "text",
+              props.colorLightness,
+              props.colorOpacity
+            )
+          ],
+      };
     },
   },
   columnGap: {
     setDefaults: {
-      display: 'flex',
-      flexDirection: 'row',
+      display: "flex",
+      flexDirection: "row",
     },
     options: whiteSpacesAsCSSVariables,
   },
   columns: {
-    aliases: ['rows'],
+    aliases: ["rows"],
     setDefaults: {
-      gridAutoRows: '1fr',
+      gridAutoRows: "1fr",
     },
-    options: ({ propName = 'columns', propValue }) => {
+    options: ({ propName = "columns", propValue }) => {
       let result;
 
-      if (typeof propValue === 'number') {
-        result = Array(propValue).fill('1fr').join(' ');
+      if (typeof propValue === "number") {
+        result = Array(propValue).fill("1fr").join(" ");
       } else if (Array.isArray(propValue)) {
-        result = propValue.join(' ');
+        result = propValue.join(" ");
       } else {
         result = propValue;
       }
 
       return {
-        display: 'grid',
+        display: "grid",
         [`gridTemplate${upperFirst(propName)}`]: result,
       };
     },
   },
   flexDirection: {
     setDefaults: {
-      display: 'flex',
+      display: "flex",
     },
     options: ({ propValue }) => ({
       flexDirection: propValue,
@@ -197,7 +197,7 @@ const propHandlers: PropHandlers<any> = {
   },
   flexWrap: {
     setDefaults: {
-      display: 'flex',
+      display: "flex",
     },
     options: ({ propValue }) => ({
       flexWrap: propValue,
@@ -214,71 +214,81 @@ const propHandlers: PropHandlers<any> = {
   },
   gap: {
     setDefaults: {
-      display: 'grid',
+      display: "grid",
     },
     options: whiteSpacesAsCSSVariables,
   },
   isOnlyForScreenReaders: {
     options: () => ({
-      clip: 'rect(0, 0, 0, 0)',
-      clipPath: 'inset(50%)',
-      height: '1px',
-      margin: '-1px',
-      overflow: 'hidden',
-      position: 'absolute',
-      whiteSpace: 'nowrap',
-      width: '1px',
+      clip: "rect(0, 0, 0, 0)",
+      clipPath: "inset(50%)",
+      height: "1px",
+      margin: "-1px",
+      overflow: "hidden",
+      position: "absolute",
+      whiteSpace: "nowrap",
+      width: "1px",
     }),
   },
   margin: {
     aliases: [
-      'padding',
-      'paddingLeft',
-      'paddingRight',
-      'paddingTop',
-      'paddingBottom',
-      'marginLeft',
-      'marginRight',
-      'marginTop',
-      'marginBottom',
+      "padding",
+      "paddingLeft",
+      "paddingRight",
+      "paddingTop",
+      "paddingBottom",
+      "marginLeft",
+      "marginRight",
+      "marginTop",
+      "marginBottom",
     ],
     options: whiteSpacesAsCSSVariables,
   },
   marginX: {
-    aliases: [
-      'borderX',
-      'borderXColor',
-      'borderXColorLightness',
-      'borderY',
-      'borderYColor',
-      'borderYColorLightness',
-      'marginY',
-      'paddingX',
-      'paddingY',
-    ],
-    options: ({ propName, propValue }) => {
-      const XorY = propName.includes('X') ? 'X' : 'Y';
-      const LeftOrBottom = XorY === 'X' ? 'Left' : 'Bottom';
-      const RightOrTop = XorY === 'X' ? 'Right' : 'Top';
+    aliases: ["marginY", "paddingX", "paddingY"],
+    options: ({ props, propName, propValue }) => {
+      const XorY = propName.includes("X") ? "X" : "Y";
+      const LeftOrBottom = XorY === "X" ? "Left" : "Bottom";
+      const RightOrTop = XorY === "X" ? "Right" : "Top";
       const propNameLeftOrBottom = propName.replace(XorY, LeftOrBottom);
       const propNameRightOrTop = propName.replace(XorY, RightOrTop);
 
+      const adjustmentProps = propName.endsWith("Color")
+        ? {
+            [`${propNameLeftOrBottom}Opacity`]: props[`${propName}Opacity`],
+            [`${propNameLeftOrBottom}Lightness`]: props[`${propName}Lightness`],
+            [`${propNameRightOrTop}Opacity`]: props[`${propName}Opacity`],
+            [`${propNameRightOrTop}Lightness`]: props[`${propName}Lightness`],
+          }
+        : {};
+
       return propsToStyleObject({
+        ...adjustmentProps,
         [`${propNameLeftOrBottom}`]: propValue,
         [`${propNameRightOrTop}`]: propValue,
       });
     },
   },
   propsForAfterElement: {
-    aliases: ['propsForBeforeElement'],
+    aliases: ["propsForBeforeElement"],
     options: ({ propName, propValue }) => ({
       [nestedSelectorPropAliases[
         propName as keyof typeof nestedSelectorPropAliases
       ]]: {
         ...propsToStyleObject(propValue),
-        content: `"${propValue.content ?? ''}"`,
+        content: `"${propValue.content ?? ""}"`,
       },
     }),
+  },
+  propsForCustomSelector: {
+    options: ({ propValue }) => {
+      return Object.fromEntries(
+        Object.entries(propValue).map(([customSelector, props]) => [
+          customSelector,
+          propsToStyleObject(props as any),
+        ])
+      );
+    },
   },
   propsForRoot: {
     aliases: Object.keys(breakpoints).map(
@@ -286,7 +296,7 @@ const propHandlers: PropHandlers<any> = {
     ),
     options: ({ propName, propValue }) => {
       const breakpointName = camelCase(
-        propName.replace('propsFor', '')
+        propName.replace("propsFor", "")
       ) as Breakpoint;
 
       const mediaQuery = breakpoints[breakpointName];
@@ -296,13 +306,8 @@ const propHandlers: PropHandlers<any> = {
       };
     },
   },
-  propsOnFocus: {
-    options: ({ propValue }) => ({
-      [nestedSelectorPropAliases.propsOnFocus]: propsToStyleObject(propValue),
-    }),
-  },
   propsOnHover: {
-    aliases: ['propsOnFocus', 'propsForFirstElement', 'propsForLastElement'],
+    aliases: ["propsOnFocus", "propsForFirstElement", "propsForLastElement"],
     options: ({ propName, propValue }) => {
       const propSelector =
         nestedSelectorPropAliases[
@@ -316,13 +321,13 @@ const propHandlers: PropHandlers<any> = {
   },
   rowGap: {
     setDefaults: {
-      display: 'flex',
-      flexDirection: 'column',
+      display: "flex",
+      flexDirection: "column",
     },
     options: whiteSpacesAsCSSVariables,
   },
   transitionDuration: {
-    aliases: ['transitionProperty', 'transitionTimingFunction'],
+    aliases: ["transitionProperty", "transitionTimingFunction"],
     options: ({
       props: {
         transitionDuration,
@@ -330,16 +335,16 @@ const propHandlers: PropHandlers<any> = {
         transitionTimingFunction,
       },
     }) => ({
-      transitionDuration: transitionDurations[transitionDuration ?? 'normal'],
+      transitionDuration: transitionDurations[transitionDuration ?? "normal"],
       transitionProperty: Array.isArray(transitionProperty)
-        ? transitionProperty.join(', ')
-        : transitionProperty ?? 'all',
-      transitionTimingFunction: transitionTimingFunction ?? 'ease',
+        ? transitionProperty.join(", ")
+        : transitionProperty ?? "all",
+      transitionTimingFunction: transitionTimingFunction ?? "ease",
     }),
   },
   zIndex: {
     setDefaults: {
-      position: 'relative',
+      position: "relative",
     },
     options: zIndices,
   },
@@ -356,12 +361,12 @@ const propsToStyleObject: (boxProps: BoxProps<any>) => CSSObject = (boxProps) =>
     const propHandler = propHandlers[propName];
     const propValue = boxProps[propName];
 
-    if (typeof propValue === 'undefined') {
+    if (typeof propValue === "undefined") {
       return acc;
     }
 
     if (!propHandler) {
-      if (propName === 'debug') {
+      if (propName === "debug") {
         console.log(acc);
       }
 
@@ -375,7 +380,7 @@ const propsToStyleObject: (boxProps: BoxProps<any>) => CSSObject = (boxProps) =>
 
     const defaults = propHandler.setDefaults ?? {};
 
-    if (typeof propHandler.options === 'function') {
+    if (typeof propHandler.options === "function") {
       return {
         ...defaults,
         ...acc,
@@ -385,7 +390,7 @@ const propsToStyleObject: (boxProps: BoxProps<any>) => CSSObject = (boxProps) =>
           propValue,
         }),
       };
-    } else if (typeof propHandler.options === 'object') {
+    } else if (typeof propHandler.options === "object") {
       return {
         ...defaults,
         ...acc,
@@ -396,16 +401,18 @@ const propsToStyleObject: (boxProps: BoxProps<any>) => CSSObject = (boxProps) =>
     return acc;
   }, {});
 
-const Box: <TagName extends keyof JSX.IntrinsicElements = 'div'>(
+const Box: <TagName extends keyof JSX.IntrinsicElements = "div">(
   props: BoxProps<TagName>
-) => JSX.Element = styled('div').withConfig({
+) => JSX.Element = styled("div").withConfig({
   shouldForwardProp: (prop, defaultValidatorFn) =>
-    !Object.keys(propHandlers).includes(prop) && defaultValidatorFn(prop),
-})`
-  ${<TagName extends keyof JSX.IntrinsicElements = 'div'>(
+    Object.keys(propHandlers).includes(prop) === false &&
+    validStyleProps.includes(prop) === false &&
+    defaultValidatorFn(prop),
+})(
+  <TagName extends keyof JSX.IntrinsicElements = "div">(
     props: BoxProps<TagName>
-  ) => propsToStyleObject(props)}
-`;
+  ) => propsToStyleObject(props)
+);
 
 export { Box };
 export { nestedSelectorPropAliases, propsToStyleObject };

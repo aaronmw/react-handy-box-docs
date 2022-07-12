@@ -1,16 +1,17 @@
-import { Box } from '@/components/Box';
+import { Box } from "@/components/Box";
 import {
   commonInputBoxProps,
   TextInput,
   TextInputProps,
-} from '@/components/TextInput';
-import { addMultipleEventListeners } from '@/utilities/addMultipleEventListeners';
-import { forwardRef, Ref, useEffect, useRef } from 'react';
-import { useKeyboardShortcuts, useMultipleRefs } from '../hooks';
+} from "@/components/TextInput";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { useMultipleRefs } from "@/hooks/useMultipleRefs";
+import { addMultipleEventListeners } from "@/utilities/addMultipleEventListeners";
+import { forwardRef, Ref, useEffect, useRef } from "react";
 
 const ElasticTextInput = forwardRef(
   (
-    { ...otherProps }: Omit<TextInputProps<'textarea'>, 'type'>,
+    { ...otherProps }: Omit<TextInputProps<"textarea">, "type">,
     ref: Ref<HTMLTextAreaElement>
   ): JSX.Element => {
     const ghostElementRef = useRef<HTMLDivElement>(null);
@@ -22,7 +23,7 @@ const ElasticTextInput = forwardRef(
         enter: (event) => {
           event.preventDefault();
           (event.target as HTMLTextAreaElement).form?.dispatchEvent(
-            new Event('submit', { bubbles: true })
+            new Event("submit", { bubbles: true })
           );
         },
       },
@@ -37,7 +38,7 @@ const ElasticTextInput = forwardRef(
         return;
       }
 
-      const events = ['change', 'keyup'];
+      const events = ["change", "keyup"];
 
       const resizeTextareaElement: EventListener = (event) => {
         const typedText = (event.target as HTMLTextAreaElement).value;
@@ -57,7 +58,7 @@ const ElasticTextInput = forwardRef(
         resizeTextareaElement
       );
 
-      textareaElement.dispatchEvent(new Event('change', { bubbles: true }));
+      textareaElement.dispatchEvent(new Event("change", { bubbles: true }));
 
       return removeAllListeners;
     }, []);
@@ -83,5 +84,7 @@ const ElasticTextInput = forwardRef(
     );
   }
 );
+
+ElasticTextInput.displayName = "ElasticTextInput";
 
 export { ElasticTextInput };

@@ -1,11 +1,9 @@
-import { Box } from '@/components/Box';
-import { BoxProps } from '@/components/Box.types';
-import { useLinkActivity } from '@/hooks/useLinkActivity';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { forwardRef, MouseEvent, Ref } from 'react';
+import { Box } from "@/components/Box";
+import { BoxProps } from "@/components/Box.types";
+import Link from "next/link";
+import { forwardRef, Ref } from "react";
 
-type AnchorProps = BoxProps<'a'> & {
+type AnchorProps = BoxProps<"a"> & {
   href: string;
   variant?: keyof typeof variantPropMap;
 };
@@ -13,26 +11,26 @@ type AnchorProps = BoxProps<'a'> & {
 const variantPropMap = {
   bare: {},
   normal: {
-    color: 'link',
-    fontWeight: 'bold',
-    textDecoration: 'underline',
+    color: "link",
+    fontWeight: "bold",
+    textDecoration: "underline",
     propsOnHover: {
-      color: 'link--hovered',
+      color: "link--hovered",
     },
   },
   subtle: {
-    color: 'text',
-    fontWeight: 'bold',
-    textDecoration: 'underline',
+    color: "text",
+    fontWeight: "bold",
+    textDecoration: "underline",
     propsOnHover: {
-      color: 'link--hovered',
+      color: "link--hovered",
     },
   },
 };
 
 const Anchor = forwardRef(
   (
-    { children, href, variant = 'normal', ...props }: AnchorProps,
+    { children, href, variant = "normal", ...props }: AnchorProps,
     ref: Ref<HTMLAnchorElement>
   ) => (
     <Link href={href} as={href} passHref={true} shallow={true}>
@@ -48,5 +46,7 @@ const Anchor = forwardRef(
     </Link>
   )
 );
+
+Anchor.displayName = "Anchor";
 
 export { Anchor };

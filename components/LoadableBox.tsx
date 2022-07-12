@@ -1,19 +1,19 @@
-import { Box } from '@/components/Box';
-import { BoxProps } from '@/components/Box.types';
-import { forwardRef, ReactNode, Ref } from 'react';
+import { Box } from "@/components/Box";
+import { BoxProps } from "@/components/Box.types";
+import { forwardRef, ReactNode, Ref } from "react";
 
-export type LoadableBoxProps = Omit<BoxProps<'div'>, 'ref'> & {
+export type LoadableBoxProps = Omit<BoxProps<"div">, "ref"> & {
   isLoading: boolean;
   loadingMessage?: ReactNode;
   unmountWhileLoading?: boolean;
 };
 
 const loadingProps = {
-  alignItems: 'center',
-  height: '100%',
-  justifyContent: 'center',
+  alignItems: "center",
+  height: "100%",
+  justifyContent: "center",
   opacity: 0.5,
-  width: '100%',
+  width: "100%",
 };
 
 const LoadableBox = forwardRef(
@@ -21,7 +21,7 @@ const LoadableBox = forwardRef(
     {
       children,
       isLoading,
-      loadingMessage = 'Loading...',
+      loadingMessage = "Loading...",
       unmountWhileLoading = true,
       ...props
     }: LoadableBoxProps,
@@ -33,7 +33,7 @@ const LoadableBox = forwardRef(
       ref={ref}
       transitionDuration="long"
       transitionProperty="opacity"
-      {...((isLoading ? loadingProps : {}) as BoxProps<'div'>)}
+      {...((isLoading ? loadingProps : {}) as BoxProps<"div">)}
       {...props}
     >
       {isLoading && (
@@ -46,14 +46,16 @@ const LoadableBox = forwardRef(
           position="absolute"
           top={0}
           width="100%"
-          zIndex="10"
+          zIndex="1000--maximum"
         >
           {loadingMessage}
         </Box>
       )}
-      {unmountWhileLoading && isLoading ? '.' : children}
+      {unmountWhileLoading && isLoading ? "." : children}
     </Box>
   )
 );
+
+LoadableBox.displayName = "LoadableBox";
 
 export { LoadableBox };
