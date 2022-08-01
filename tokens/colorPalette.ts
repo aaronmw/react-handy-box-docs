@@ -1,6 +1,5 @@
-import mapValues from "lodash/mapValues";
-import range from "lodash/range";
-import { parseToHsl, rgba, setLightness } from "polished";
+import mapValues from 'lodash/mapValues';
+import { parseToHsl, rgba, setLightness } from 'polished';
 
 const defaultLightnessLevels = {
   100: -0.925,
@@ -16,55 +15,55 @@ const opacityOptions = [10, 20, 30, 40, 50, 60, 70, 80, 90] as const;
 
 const coreColorDefinitions = {
   blue: {
-    code: "#1599FF",
+    code: '#1599FF',
     lightnessLevels: {
       ...defaultLightnessLevels,
     },
   },
   gray: {
-    code: "#958F8F",
+    code: '#958F8F',
     lightnessLevels: {
       ...defaultLightnessLevels,
     },
   },
   green: {
-    code: "#00C980",
+    code: '#00C980',
     lightnessLevels: {
       ...defaultLightnessLevels,
     },
   },
   orange: {
-    code: "#FF5C00",
+    code: '#FF5C00',
     lightnessLevels: {
       ...defaultLightnessLevels,
     },
   },
   pink: {
-    code: "#D566DB",
+    code: '#D566DB',
     lightnessLevels: {
       ...defaultLightnessLevels,
     },
   },
   purple: {
-    code: "#9B00E3",
+    code: '#9B00E3',
     lightnessLevels: {
       ...defaultLightnessLevels,
     },
   },
   red: {
-    code: "#FF002E",
+    code: '#FF002E',
     lightnessLevels: {
       ...defaultLightnessLevels,
     },
   },
   teal: {
-    code: "#32CCB1",
+    code: '#32CCB1',
     lightnessLevels: {
       ...defaultLightnessLevels,
     },
   },
   yellow: {
-    code: "#FFC700",
+    code: '#FFC700',
     lightnessLevels: {
       ...defaultLightnessLevels,
     },
@@ -130,28 +129,29 @@ const coreSwatches = Object.keys(coreColorDefinitions).reduce(
 );
 
 const semanticSwatchAliases = {
-  "border": coreSwatches["gray--200"],
-  "brand": coreSwatches["purple--400"],
-  "danger": coreSwatches["red--400"],
-  "highlighted": coreSwatches["purple--300"],
-  "link--hovered": coreSwatches["purple--200"],
-  "link": coreSwatches["blue--400"],
-  "selected": coreSwatches["purple--100"],
-  "shaded": coreSwatches["purple--100--40"],
-  "shadow": coreSwatches["gray--400--20"],
-  "text": coreSwatches["blue--700"],
-  "textFaded": coreSwatches["gray--400"],
+  'border': coreSwatches['gray--200'],
+  'brand': coreSwatches['purple--400'],
+  'danger': coreSwatches['red--400'],
+  'highlighted': coreSwatches['purple--300'],
+  'link--hovered': coreSwatches['purple--200'],
+  'link': coreSwatches['blue--400'],
+  'selected': coreSwatches['purple--100'],
+  'shaded': coreSwatches['purple--100--40'],
+  'shadow': coreSwatches['gray--400--20'],
+  'success': coreSwatches['green--400'],
+  'text': coreSwatches['blue--700'],
+  'textFaded': coreSwatches['gray--400'],
 };
 
-const coreColors = mapValues(coreColorDefinitions, "code") as {
+const coreColors = mapValues(coreColorDefinitions, 'code') as {
   [K in keyof typeof coreColorDefinitions]: string;
 };
 
 const utilityColors = {
-  "black": "rgba(0, 0, 0, 1)",
-  "transparent": "transparent",
-  "white": "rgba(255, 255, 255, 1)",
-  "white--translucent": "rgba(255, 255, 255, 0.3)",
+  'black': 'rgba(0, 0, 0, 1)',
+  'transparent': 'transparent',
+  'white': 'rgba(255, 255, 255, 1)',
+  'white--translucent': 'rgba(255, 255, 255, 0.3)',
 };
 
 const colorPalette = {

@@ -1,70 +1,70 @@
-import { Box } from "@/components/Box";
-import { BoxProps, Color } from "@/components/Box.types";
-import { Markdown } from "@/components/Markdown";
-import { DocumentationPageDescriptor } from "@/pages/index";
-import { toJSXAttributeValue } from "@/utilities/toJSXAttributeValue";
+import { Box } from '@/components/Box';
+import { BoxProps, Color } from '@/components/Box.types';
+import { Markdown } from '@/components/Markdown';
+import { DocumentationPageDescriptor } from '@/pages/index';
+import { toJSXAttributeValue } from '@/utilities/toJSXAttributeValue';
 import {
   coreColorDefinitions,
   semanticSwatchAliases,
   utilityColors,
-} from "tokens/colorPalette";
+} from 'tokens/colorPalette';
 
 const swatchDescriptions = {
-  "black": "Handy to have around, sometimes.",
-  "border": "The default `borderColor` if none is specified",
-  "brand":
-    "The primary color used for buttons and as the base for many other UI elements. Change this to make sweeping changes to the overall theme.",
-  "danger": "For dangerous buttons, warnings, errors, etc.",
-  "highlighted": "For highlighted text / elements",
-  "link--hovered": "Pretty self-explanatory.",
-  "link":
-    "The color of clickable text links. Often the same as `brand`, but can be configured separately.",
-  "shaded": "For darkening the background. Often a lighter version of `brand`",
-  "shadow": "The color of shadows cast by `boxShadow`",
-  "text": "The default color of all text on the page.",
-  "textFaded": "A lighter version of `text` for secondary or footnote copy.",
-  "transparent": "Description goes here...",
-  "white": "Description goes here...",
-  "white--translucent": "Description goes here...",
+  'black': 'Handy to have around, sometimes.',
+  'border': 'The default `borderColor` if none is specified',
+  'brand':
+    'The primary color used for buttons and as the base for many other UI elements. Change this to make sweeping changes to the overall theme.',
+  'danger': 'For dangerous buttons, warnings, errors, etc.',
+  'highlighted': 'For highlighted text / elements',
+  'link--hovered': 'Pretty self-explanatory.',
+  'link':
+    'The color of clickable text links. Often the same as `brand`, but can be configured separately.',
+  'shaded': 'For darkening the background. Often a lighter version of `brand`',
+  'shadow': 'The color of shadows cast by `boxShadow`',
+  'text': 'The default color of all text on the page.',
+  'textFaded': 'A lighter version of `text` for secondary or footnote copy.',
+  'transparent': 'Description goes here...',
+  'white': 'Description goes here...',
+  'white--translucent': 'Description goes here...',
 };
 
 const docs: DocumentationPageDescriptor = {
-  title: "Color",
-  description: "The core colors are generated from the `colorPalette` tokens.",
+  title: 'Color',
+  description: 'The core colors are generated from the `colorPalette` tokens.',
   demos: [
     {
-      title: "Adjusting Colors",
+      title: 'Adjusting Colors',
       values: [
         {
-          backgroundColor: "blue",
+          backgroundColor: 'blue',
           backgroundColorLightness: 100,
-          resultingSwatchName: "blue--100",
+          resultingSwatchName: 'blue--100',
           highlightLines: [3],
         },
         {
-          backgroundColor: "blue",
-          backgroundColorLightness: "-200",
-          resultingSwatchName: "blue--200",
+          backgroundColor: 'blue',
+          backgroundColorLightness: '-200',
+          resultingSwatchName: 'blue--200',
           highlightLines: [3],
         },
         {
-          backgroundColor: "brand",
-          backgroundColorOpacity: "-50",
-          resultingSwatchName: "purple--400--50",
+          backgroundColor: 'brand',
+          backgroundColorOpacity: '-50',
+          resultingSwatchName: 'purple--400--50',
           highlightLines: [3],
         },
         {
-          backgroundColor: "brand",
-          backgroundColorOpacity: "-50",
-          backgroundColorLightness: "-100",
-          resultingSwatchName: "purple--300--50",
+          backgroundColor: 'brand',
+          backgroundColorOpacity: '-50',
+          backgroundColorLightness: '-100',
+          resultingSwatchName: 'purple--300--50',
           highlightLines: [3, 4],
         },
         {
-          backgroundColor: "brand",
+          backgroundColor: 'brand',
           backgroundColorOpacity: 10,
           backgroundColorLightness: 300,
-          resultingSwatchName: "purple--300--10",
+          resultingSwatchName: 'purple--300--10',
           highlightLines: [3, 4],
         },
       ],
@@ -91,7 +91,7 @@ const docs: DocumentationPageDescriptor = {
               : ``
           }
         />
-      `.replace(/\n\s*?\n/g, "\n"),
+      `.replace(/\n\s*?\n/g, '\n'),
       renderDemo: ({ resultingSwatchName }) => (
         <ColorSwatch borderRadius="small" colorName={resultingSwatchName} />
       ),
@@ -99,7 +99,7 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: "Core Swatches",
+      title: 'Core Swatches',
       values: Object.keys(coreColorDefinitions),
       renderDemo: (colorName) => (
         <Box borderRadius="small" overflow="hidden" width="100%">
@@ -113,14 +113,14 @@ const docs: DocumentationPageDescriptor = {
       ),
       propsForContainer: {
         columns: 3,
-        gap: "normal",
-        alignContent: "stretch",
-        justifyContent: "stretch",
+        gap: 'normal',
+        alignContent: 'stretch',
+        justifyContent: 'stretch',
       },
     },
 
     {
-      title: "Semantic Swatches",
+      title: 'Semantic Swatches',
       values: Object.keys(semanticSwatchAliases).map((swatchName) => ({
         swatchName,
         description:
@@ -133,13 +133,13 @@ const docs: DocumentationPageDescriptor = {
             colorName={swatchName as Color}
             key={swatchName}
           />
-          <Markdown children={description} />
+          <Markdown>{description}</Markdown>
         </Box>
       ),
     },
 
     {
-      title: "Utility Colors",
+      title: 'Utility Colors',
       values: Object.keys(utilityColors),
       renderDemo: (utilityColorName) => (
         <Box
@@ -171,7 +171,7 @@ const docs: DocumentationPageDescriptor = {
 const ColorSwatch = ({
   colorName,
   ...otherProps
-}: BoxProps<"div"> & {
+}: BoxProps & {
   colorName: Color;
 }) => (
   <Box

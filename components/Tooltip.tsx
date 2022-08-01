@@ -1,20 +1,21 @@
-import { Box } from "@/components/Box";
-import { BoxProps } from "@/components/Box.types";
-import { Popover } from "@/components/Popover";
-import { PopoverRenderProps } from "@/components/Popover.types";
-import React, { ReactNode, useRef } from "react";
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
+import { Popover } from '@/components/Popover';
+import { PopoverRenderProps } from '@/components/Popover.types';
+import { ReactNode, useRef } from 'react';
 
 const variantPropMap = {
   normal: {
-    backgroundColor: "text",
-    borderRadius: "small",
-    color: "white",
-    paddingX: "tight",
-    paddingY: "xtight",
+    backgroundColor: 'text',
+    border: undefined,
+    borderRadius: 'small',
+    color: 'white',
+    paddingX: 'tight',
+    paddingY: 'xtight',
   },
 };
 
-type TooltipProps = Omit<BoxProps<"div">, "content"> & {
+type TooltipProps = Omit<BoxProps, 'content'> & {
   content: ReactNode;
   disabled?: boolean;
   variant?: keyof typeof variantPropMap;
@@ -23,7 +24,7 @@ type TooltipProps = Omit<BoxProps<"div">, "content"> & {
 const Tooltip = ({
   children,
   content,
-  variant = "normal",
+  variant = 'normal',
   ...otherProps
 }: TooltipProps) => {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -53,25 +54,28 @@ const Tooltip = ({
     hoistedPropsForTrigger.current?.setIsOpen(true);
   };
 
+  const innerRenderTrigger = (renderProps: PopoverRenderProps) => {
+    hoistedPropsForTrigger.current = renderProps;
+
+    return (
+      <Box
+        display="inline-block"
+        ref={renderProps.propsForTrigger.ref as any}
+        onMouseEnter={scheduleTooltipReveal}
+        onMouseLeave={scheduleTooltipDismissal}
+        {...otherProps}
+      >
+        {children}
+      </Box>
+    );
+  };
+
   return (
     <Popover
       disableBackdropClick={true}
-      popperPlacementOrder={["top", "bottom", "left", "right"]}
-      renderTrigger={(renderProps) => {
-        hoistedPropsForTrigger.current = renderProps;
-
-        return (
-          <Box
-            display="inline-block"
-            ref={renderProps.propsForTrigger.ref as any}
-            onMouseEnter={scheduleTooltipReveal}
-            onMouseLeave={scheduleTooltipDismissal}
-            {...otherProps}
-          >
-            {children}
-          </Box>
-        );
-      }}
+      popperPlacementOrder={['top', 'bottom', 'left', 'right']}
+      renderTrigger={innerRenderTrigger}
+      type="tooltip"
       onMouseEnter={cancelTooltipTimers}
       onMouseLeave={scheduleTooltipDismissal}
       {...(variantPropMap[variant] as any)}
@@ -81,6 +85,6 @@ const Tooltip = ({
   );
 };
 
-Tooltip.displayName = "Tooltip";
+Tooltip.displayName = 'Tooltip';
 
 export { Tooltip };

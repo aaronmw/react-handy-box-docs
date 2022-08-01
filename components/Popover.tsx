@@ -1,34 +1,41 @@
-import { ModalLayer } from "@/components/ModalLayer";
-import { ModalLayerRenderProps } from "@/components/ModalLayer.types";
-import { PopoverProps, PopoverRenderProps } from "@/components/Popover.types";
-import { useMultipleRefs } from "@/hooks/useMultipleRefs";
-import { Options, Placement } from "@popperjs/core";
-import { forwardRef, MutableRefObject, Ref, useEffect, useState } from "react";
-import { usePopper } from "react-popper";
+import { ModalLayer } from '@/components/ModalLayer';
+import { ModalLayerRenderProps } from '@/components/ModalLayer.types';
+import { PopoverProps, PopoverRenderProps } from '@/components/Popover.types';
+import { useMultipleRefs } from '@/hooks/useMultipleRefs';
+import { Options, Placement } from '@popperjs/core';
+import {
+  forwardRef,
+  MutableRefObject,
+  Ref,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
+import { usePopper } from 'react-popper';
 
 const DEFAULT_POPPER_PLACEMENT_ORDER = [
-  "bottom",
-  "top",
-  "left-start",
-  "right-start",
+  'bottom',
+  'top',
+  'left-start',
+  'right-start',
 ] as Array<Placement>;
 
 export const popperPlacementValues = [
-  "auto",
-  "auto-start",
-  "auto-end",
-  "top",
-  "top-start",
-  "top-end",
-  "bottom",
-  "bottom-start",
-  "bottom-end",
-  "right",
-  "right-start",
-  "right-end",
-  "left",
-  "left-start",
-  "left-end",
+  'auto',
+  'auto-start',
+  'auto-end',
+  'top',
+  'top-start',
+  'top-end',
+  'bottom',
+  'bottom-start',
+  'bottom-end',
+  'right',
+  'right-start',
+  'right-end',
+  'left',
+  'left-start',
+  'left-end',
 ];
 
 const Popover = forwardRef(
@@ -38,7 +45,7 @@ const Popover = forwardRef(
       popperOptions,
       popperPlacementOrder = DEFAULT_POPPER_PLACEMENT_ORDER,
       renderTrigger,
-      type = "popover",
+      type = 'popover',
       onBeforeClose,
       onBeforeOpen,
       onClose,
@@ -62,19 +69,19 @@ const Popover = forwardRef(
       ...(popperOptions ?? {}),
       modifiers: [
         {
-          name: "flip",
+          name: 'flip',
           options: {
             fallbackPlacementOrder: popperPlacementOrder.slice(1),
           },
         },
         {
-          name: "offset",
+          name: 'offset',
           options: {
             offset: [0, 10],
           },
         },
         {
-          name: "preventOverflow",
+          name: 'preventOverflow',
           options: {
             altAxis: true,
             padding: 12,
@@ -89,26 +96,65 @@ const Popover = forwardRef(
       updatePopper?.();
     }, [children, updatePopper]);
 
-    const addPopperRefToTriggerElement = (renderProps: ModalLayerRenderProps) =>
-      ({
-        ...renderProps,
-        propsForTrigger: {
-          ...renderProps.propsForTrigger,
-          ref: (ref) => {
-            if (!ref) {
-              return;
-            }
+    const addPopperRefToTriggerElement = useCallback(
+      (renderProps: ModalLayerRenderProps) =>
+        ({
+          ...renderProps,
+          propsForTrigger: {
+            ...renderProps.propsForTrigger,
+            ref: (ref) => {
+              if (!ref) {
+                return;
+              }
 
-            (
-              renderProps.propsForTrigger
-                .ref as MutableRefObject<HTMLButtonElement>
-            ).current = ref;
+              (
+                renderProps.propsForTrigger
+                  .ref as MutableRefObject<HTMLButtonElement>
+              ).current = ref;
 
-            setPopperReferenceElement(ref);
+              setPopperReferenceElement(ref);
+            },
           },
-        },
-        updatePopper,
-      } as PopoverRenderProps);
+          updatePopper,
+        } as PopoverRenderProps),
+      [updatePopper]
+    );
+
+    const renderTriggerCallback = useCallback(
+      (renderProps: PopoverRenderProps) =>
+        renderTrigger(addPopperRefToTriggerElement(renderProps)),
+      [addPopperRefToTriggerElement, renderTrigger]
+    );
+
+    const onBeforeCloseCallback = useCallback(
+      (renderProps: PopoverRenderProps) => {
+        onBeforeClose?.(addPopperRefToTriggerElement(renderProps!));
+      },
+      [addPopperRefToTriggerElement, onBeforeClose]
+    );
+
+    const onBeforeOpenCallback = useCallback(
+      (renderProps: PopoverRenderProps) => {
+        onBeforeOpen?.(addPopperRefToTriggerElement(renderProps!));
+      },
+      [addPopperRefToTriggerElement, onBeforeOpen]
+    );
+
+    const onCloseCallback = useCallback(
+      (renderProps: PopoverRenderProps) => {
+        popperReferenceElement?.focus();
+        onClose?.(addPopperRefToTriggerElement(renderProps!));
+      },
+      [addPopperRefToTriggerElement, onClose, popperReferenceElement]
+    );
+
+    const onOpenCallback = useCallback(
+      (renderProps: PopoverRenderProps) => {
+        onOpen?.(addPopperRefToTriggerElement(renderProps!));
+        updatePopper?.();
+      },
+      [addPopperRefToTriggerElement, onOpen, updatePopper]
+    );
 
     return (
       <ModalLayer
@@ -118,30 +164,18 @@ const Popover = forwardRef(
         boxShadow="normal"
         padding="tight"
         ref={multipleRefs}
-        renderTrigger={(renderProps) =>
-          renderTrigger(addPopperRefToTriggerElement(renderProps))
-        }
+        renderTrigger={renderTriggerCallback}
         style={popperStyles}
         type={type}
-        onBeforeClose={(renderProps) => {
-          onBeforeClose?.(addPopperRefToTriggerElement(renderProps!));
-        }}
-        onBeforeOpen={(renderProps) => {
-          onBeforeOpen?.(addPopperRefToTriggerElement(renderProps!));
-        }}
-        onClose={(renderProps) => {
-          popperReferenceElement?.focus();
-          onClose?.(addPopperRefToTriggerElement(renderProps!));
-        }}
-        onOpen={(renderProps) => {
-          onOpen?.(addPopperRefToTriggerElement(renderProps!));
-          updatePopper?.();
-        }}
+        onBeforeClose={onBeforeCloseCallback}
+        onBeforeOpen={onBeforeOpenCallback}
+        onClose={onCloseCallback}
+        onOpen={onOpenCallback}
         {...popperAttributes}
-        {...otherProps}
+        {...(otherProps as any)}
       >
         {(renderProps) => {
-          if (typeof children === "function") {
+          if (typeof children === 'function') {
             return children(addPopperRefToTriggerElement(renderProps));
           }
 
@@ -152,6 +186,6 @@ const Popover = forwardRef(
   }
 );
 
-Popover.displayName = "Popover";
+Popover.displayName = 'Popover';
 
 export { Popover };

@@ -1,5 +1,5 @@
-import { BoxProps } from "@/components/Box.types";
-import { LabeledInputProps } from "@/components/LabeledInput";
+import { BoxProps } from '@/components/Box.types';
+import { LabeledInputProps } from '@/components/LabeledInput';
 import {
   ChangeEvent,
   FocusEvent,
@@ -7,13 +7,13 @@ import {
   MouseEvent,
   ReactNode,
   RefObject,
-} from "react";
+} from 'react';
 
 export type CommonFormInputProps = {
   description?: ReactNode;
   isRequired?: boolean;
   label: ReactNode;
-  labelLocation?: "above" | "left" | "hidden";
+  labelLocation?: 'above' | 'left' | 'hidden';
   propsForLabel?: Partial<LabeledInputProps>;
   name: string;
   onChange?: FormFieldChangeHandler;
@@ -80,7 +80,7 @@ export type FormFieldValidationHandler = (
   formContext?: FormContextObject
 ) => true | ReactNode;
 
-export type FormProps = Omit<BoxProps<"form">, "onSubmit"> & {
+export type FormProps = Omit<BoxProps<'form'>, 'ref' | 'onSubmit'> & {
   onDirtyStateChange?: (isStateDirty: boolean) => void;
   onSubmit?: (
     event: FormEvent<HTMLFormElement>,

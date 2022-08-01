@@ -2,9 +2,9 @@ import {
   ModalLayerProps,
   ModalLayerRenderProps,
   ModalLayerType,
-} from "@/components/ModalLayer.types";
-import { Options } from "@popperjs/core";
-import { ReactNode } from "react";
+} from '@/components/ModalLayer.types';
+import { Options } from '@popperjs/core';
+import { ReactNode } from 'react';
 
 export type PopoverContextType = {
   stack: Array<{
@@ -28,7 +28,7 @@ type PopoverExclusiveProps = {
   children: ReactNode | PopoverRenderFunction;
   disabled?: boolean;
   popperOptions?: Partial<Options>;
-  popperPlacementOrder?: Array<Options["placement"]>;
+  popperPlacementOrder?: Array<Options['placement']>;
   renderTrigger: PopoverRenderFunction;
   type?: ModalLayerType;
   onBeforeClose?: PopoverEventHandler;

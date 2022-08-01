@@ -2,27 +2,27 @@ import {
   AbstractMultiSelectInput,
   AbstractMultiSelectInputProps,
   BaseOptionShape,
-} from "@/components/AbstractMultiSelectInput";
-import { Box } from "@/components/Box";
-import { BoxProps } from "@/components/Box.types";
-import { Icon } from "@/components/Icon";
-import { Menu } from "@/components/Menu";
-import { MenuItem } from "@/components/Menu.types";
-import { TextInput } from "@/components/TextInput";
-import { forwardRef, ReactNode, Ref } from "react";
+} from '@/components/AbstractMultiSelectInput';
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
+import { Icon } from '@/components/Icon';
+import { Menu } from '@/components/Menu';
+import { MenuItem } from '@/components/Menu.types';
+import { TextInput } from '@/components/TextInput';
+import { forwardRef, ReactNode, Ref } from 'react';
 
 type MultiSelectInputProps<T extends BaseOptionShape> = Omit<
-  BoxProps<"div">,
-  "children" | "ref"
+  BoxProps,
+  'children' | 'ref'
 > &
   Omit<
     AbstractMultiSelectInputProps<T, true>,
-    "isMultiValue" | "renderOptions"
+    'isMultiValue' | 'renderOptions'
   >;
 
 const MultiSelectInput = forwardRef(
   <T extends BaseOptionShape>(
-    { placeholder = "Select...", ...otherProps }: MultiSelectInputProps<T>,
+    { placeholder = 'Select...', ...otherProps }: MultiSelectInputProps<T>,
     ref: Ref<HTMLLabelElement>
   ): JSX.Element => {
     return (
@@ -39,7 +39,7 @@ const MultiSelectInput = forwardRef(
             ({ option, propsForOption }) =>
               ({
                 label: option.label,
-                type: "menu-item",
+                type: 'menu-item',
                 onClick: propsForOption.onClick,
               } as MenuItem)
           );
@@ -79,13 +79,13 @@ const MultiSelectInput = forwardRef(
   }
 );
 
-MultiSelectInput.displayName = "MultiSelectInput";
+MultiSelectInput.displayName = 'MultiSelectInput';
 
 const PillButton = ({
   label,
   onClick,
   ...otherProps
-}: BoxProps<"button"> & {
+}: BoxProps<'button'> & {
   label: ReactNode;
 }) => (
   <Box
@@ -93,11 +93,11 @@ const PillButton = ({
     backgroundColor="selected"
     borderRadius="small"
     cursor="pointer"
-    paddingX="xtight"
-    paddingY="xxtight"
+    paddingX="tight"
+    paddingY="xtight"
     propsOnHover={{
-      backgroundColor: "selected",
-      backgroundColorLightness: "+100",
+      backgroundColor: 'selected',
+      backgroundColorLightness: '+100',
     }}
     onClick={(event) => {
       event.stopPropagation();

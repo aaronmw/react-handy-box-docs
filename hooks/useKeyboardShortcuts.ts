@@ -1,32 +1,32 @@
-import Mousetrap, { ExtendedKeyboardEvent } from "mousetrap";
-import { RefObject, useEffect, useRef } from "react";
+import Mousetrap, { ExtendedKeyboardEvent } from 'mousetrap';
+import { RefObject, useEffect, useMemo, useRef } from 'react';
 
 type KeyName =
-  | "shift"
-  | "ctrl"
-  | "alt"
-  | "meta"
-  | "option"
-  | "command"
-  | "backspace"
-  | "tab"
-  | "enter"
-  | "return"
-  | "capslock"
-  | "esc"
-  | "escape"
-  | "space"
-  | "pageup"
-  | "pagedown"
-  | "end"
-  | "home"
-  | "left"
-  | "up"
-  | "right"
-  | "down"
-  | "ins"
-  | "del"
-  | "plus";
+  | 'shift'
+  | 'ctrl'
+  | 'alt'
+  | 'meta'
+  | 'option'
+  | 'command'
+  | 'backspace'
+  | 'tab'
+  | 'enter'
+  | 'return'
+  | 'capslock'
+  | 'esc'
+  | 'escape'
+  | 'space'
+  | 'pageup'
+  | 'pagedown'
+  | 'end'
+  | 'home'
+  | 'left'
+  | 'up'
+  | 'right'
+  | 'down'
+  | 'ins'
+  | 'del'
+  | 'plus';
 
 /**
    An object keyed by one or more key combos supported by
@@ -57,37 +57,38 @@ export type KeyMap = {
 
 export const useKeyboardShortcuts: (
   keyMap: KeyMap,
-  node?: HTMLElement | RefObject<HTMLElement> | null
-) => void = (keyMap, node) => {
-  const mousetrapInstance = useRef<Mousetrap.MousetrapInstance>();
+  nodeOrRefObject?: HTMLElement | RefObject<HTMLElement> | null
+) => void = (keyMap, nodeOrRefObject) => {
+  const mousetrapInstance = useRef<Mousetrap.MousetrapInstance | null>(null);
 
   useEffect(() => {
-    let parentNode = node;
-
-    if (parentNode && "current" in parentNode) {
-      if (!parentNode.current) {
-        return;
-      }
-
-      parentNode = parentNode.current as HTMLElement;
-    }
-
-    if (parentNode === null) {
+    // An unset ref? Wait for it to be set
+    if (
+      (typeof nodeOrRefObject !== 'undefined' && nodeOrRefObject === null) ||
+      (nodeOrRefObject as RefObject<HTMLElement>)?.current === null
+    ) {
       return;
     }
 
-    mousetrapInstance.current = new Mousetrap(parentNode ?? document.body);
+    const parentNode =
+      nodeOrRefObject instanceof HTMLElement
+        ? nodeOrRefObject
+        : nodeOrRefObject?.current instanceof HTMLElement
+        ? nodeOrRefObject.current
+        : document.body;
+
+    mousetrapInstance.current = new Mousetrap(parentNode);
 
     Object.entries(keyMap).forEach(([combo, handler]) => {
-      combo.split(",").map((singleCombo) => {
-        mousetrapInstance.current?.bind(singleCombo.trim(), handler);
+      combo.split(',').map((singleCombo) => {
+        mousetrapInstance.current!.bind(singleCombo.trim(), handler);
       });
     });
 
     return () => {
       mousetrapInstance.current?.reset();
     };
-  }, [keyMap, node]);
+  }, [keyMap, nodeOrRefObject]);
 
   return mousetrapInstance.current;
 };

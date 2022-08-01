@@ -1,109 +1,19 @@
-import { Box } from "@/components/Box";
-import { BoxProps } from "@/components/Box.types";
-import { FormContext } from "@/components/Form";
-import { FormFieldClickHandler } from "@/components/Form.types";
-import {
-  forwardRef,
-  MouseEvent,
-  MouseEventHandler,
-  Ref,
-  useContext,
-} from "react";
-
-type ButtonProps = Omit<BoxProps<"button">, "ref" | "onClick"> & {
-  disabled?: boolean;
-  stopClickPropagation?: boolean;
-  variant?: keyof typeof variantPropMap;
-  onClick?: MouseEventHandler | FormFieldClickHandler;
-};
-
-type ButtonPropBuilderFunction = (props: ButtonProps) => ButtonProps;
-
-const getBaseButtonProps: ButtonPropBuilderFunction = (props) => ({
-  borderRadius: "small",
-  cursor: "pointer",
-  display: "inline-block",
-  pointerEvents: props.disabled ? "none" : "all",
-  width: "fit-content",
-  whiteSpace: "nowrap",
-  propsOnFocus: {
-    boxShadow: "focusRing",
-  },
-});
-
-const getPrimaryButtonProps: ButtonPropBuilderFunction = (props) => {
-  const renderedBaseButtonProps = getBaseButtonProps(props);
-
-  return {
-    ...renderedBaseButtonProps,
-    backgroundColor: "brand",
-    borderRadius: "small",
-    boxSizing: "content-box",
-    color: "white",
-    paddingX: "tight",
-    paddingY: "xtight",
-    transform: "scale(1)",
-    transitionProperty: ["transform"].concat(props.transitionProperty ?? []),
-    propsOnHover: {
-      ...props.propsOnHover,
-      backgroundColor: "purple",
-      color: "white",
-      transform: "scale(1.1)",
-    },
-  };
-};
-
-const variantPropMap: {
-  [key: string]: ButtonPropBuilderFunction;
-} = {
-  bare: getBaseButtonProps,
-
-  caution: (props) => {
-    const renderedPrimaryButtonProps = getPrimaryButtonProps(props);
-
-    return Object.assign(renderedPrimaryButtonProps, {
-      borderColor: "transparent",
-      color: "danger",
-      propsOnHover: {
-        ...props.propsOnHover,
-        ...renderedPrimaryButtonProps.propsOnHover,
-        borderColor: "danger",
-      },
-    });
-  },
-
-  danger: (props) => {
-    const renderedPrimaryButtonProps = getPrimaryButtonProps(props);
-
-    return {
-      ...renderedPrimaryButtonProps,
-      borderColor: "danger",
-      borderStyle: "thick",
-      color: "danger",
-      propsOnHover: {
-        ...props.propsOnHover,
-        ...renderedPrimaryButtonProps.propsOnHover,
-        backgroundColor: "danger",
-        borderColor: "danger",
-        color: "white",
-      },
-    };
-  },
-
-  iconOnly: getBaseButtonProps,
-
-  primary: getPrimaryButtonProps,
-};
+import { Box } from '@/components/Box';
+import { ButtonComponentProps } from '@/components/Button.types';
+import { FormContext } from '@/components/Form';
+import { FormFieldClickHandler } from '@/components/Form.types';
+import { buttonStyles } from '@/tokens/buttonStyles';
+import { forwardRef, MouseEvent, Ref, useContext } from 'react';
 
 const Button = forwardRef(
   (
     {
       children,
       stopClickPropagation = false,
-      variant = "primary",
+      variant = 'primary',
       onClick,
       ...props
-    }: ButtonProps,
+    }: ButtonComponentProps<'button'>,
     ref: Ref<HTMLButtonElement>
   ) => {
     const formContext = useContext(FormContext);
@@ -119,7 +29,7 @@ const Button = forwardRef(
 
           return (onClick as FormFieldClickHandler)?.(event, formContext);
         }}
-        {...variantPropMap[variant](props)}
+        {...(buttonStyles[variant](props) as any)}
         {...props}
       >
         {children}
@@ -128,7 +38,21 @@ const Button = forwardRef(
   }
 );
 
-Button.displayName = "Button";
+Button.displayName = 'Button';
 
-export { Button };
-export { variantPropMap as buttonVariants };
+const AnchorButton = forwardRef(
+  (
+    { children, variant = 'primary', ...props }: ButtonComponentProps<'a'>,
+    ref: Ref<HTMLAnchorElement>
+  ) => {
+    return (
+      <Box as="a" ref={ref} {...buttonStyles[variant](props as any)} {...props}>
+        {children}
+      </Box>
+    );
+  }
+);
+
+AnchorButton.displayName = 'AnchorButton';
+
+export { AnchorButton, Button };

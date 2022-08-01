@@ -1,15 +1,16 @@
-import { Box } from "@/components/Box";
-import { BoxProps } from "@/components/Box.types";
-import { useDOMWatcher } from "@/hooks/useDOMWatcher";
-import { useMultipleRefs } from "@/hooks/useMultipleRefs";
-import { forwardRef, ReactNode, Ref, useEffect, useRef, useState } from "react";
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
+import { useDOMWatcher } from '@/hooks/useDOMWatcher';
+import { useMultipleRefs } from '@/hooks/useMultipleRefs';
+import { forwardRef, ReactNode, Ref, useEffect, useRef, useState } from 'react';
 
-const OverflowIndicator = (props: BoxProps<"div">) => (
+const OverflowIndicator = (props: BoxProps) => (
   <Box
     height={10}
     left={0}
     marginTop={-10}
     overflow="hidden"
+    pointerEvents="none"
     position="sticky"
     right={0}
     transitionProperty="opacity"
@@ -26,15 +27,15 @@ const OverflowIndicator = (props: BoxProps<"div">) => (
   </Box>
 );
 
-type ScrollableBoxProps<TagName extends keyof JSX.IntrinsicElements> =
-  BoxProps<TagName> & {
+type ScrollableBoxProps<TagName extends keyof JSX.IntrinsicElements = 'div'> =
+  Omit<BoxProps<TagName>, 'children' | 'ref'> & {
     children: ReactNode;
     offsetBottomOverflowIndicator?: number;
     offsetTopOverflowIndicator?: number;
   };
 
 const ScrollableBox = forwardRef(
-  <TagName extends keyof JSX.IntrinsicElements = "div">(
+  <TagName extends keyof JSX.IntrinsicElements = 'div'>(
     {
       children,
       height,
@@ -50,7 +51,7 @@ const ScrollableBox = forwardRef(
     const [isScrolledToTop, setIsScrolledToTop] = useState(false);
     const [isOverflowing, setIsOverflowing] = useState(false);
     const scrollingElementRef = useRef<HTMLElement>(null);
-    const refs = useMultipleRefs(outerRef, scrollingElementRef);
+    const multipleRefs = useMultipleRefs(outerRef, scrollingElementRef);
 
     useEffect(() => {
       const scrollingElement = scrollingElementRef.current;
@@ -59,14 +60,15 @@ const ScrollableBox = forwardRef(
         const updateScrollInfo = () => {
           const originalOverflow = scrollingElement.style.overflow;
 
-          scrollingElement.style.overflow = "auto";
+          scrollingElement.style.overflow = 'auto';
 
           const elementHeight = scrollingElement.clientHeight;
           const scrollHeight = scrollingElement.scrollHeight;
           const scrollTop = scrollingElement.scrollTop;
           const newIsOverflowing = scrollHeight > elementHeight;
-          const newIsScrolledToBottom =
-            scrollTop + elementHeight === scrollHeight;
+          const scrollProgress =
+            ((scrollTop + elementHeight) / scrollHeight) * 100;
+          const newIsScrolledToBottom = scrollProgress >= 99;
           const newIsScrolledToTop = scrollTop === 0;
 
           scrollingElement.style.overflow = originalOverflow;
@@ -86,16 +88,15 @@ const ScrollableBox = forwardRef(
 
         updateScrollInfo();
 
-        scrollingElement.addEventListener("scroll", updateScrollInfo);
-
-        scrollingElement.addEventListener("transitionend", updateScrollInfo);
+        scrollingElement.addEventListener('scroll', updateScrollInfo);
+        scrollingElement.addEventListener('transitionend', updateScrollInfo);
 
         addDOMWatcher(updateScrollInfo);
 
         return () => {
-          scrollingElement.removeEventListener("scroll", updateScrollInfo);
+          scrollingElement.removeEventListener('scroll', updateScrollInfo);
           scrollingElement.removeEventListener(
-            "transitionend",
+            'transitionend',
             updateScrollInfo
           );
           removeDOMWatcher(updateScrollInfo);
@@ -107,10 +108,10 @@ const ScrollableBox = forwardRef(
       <Box
         height={height}
         maxHeight={maxHeight}
-        overflow={isOverflowing ? "auto" : undefined}
+        overflow={isOverflowing ? 'auto' : undefined}
         position="relative"
-        ref={refs}
-        {...otherProps}
+        ref={multipleRefs}
+        {...(otherProps as any)}
       >
         <OverflowIndicator
           opacity={isScrolledToTop ? 0 : 1}
@@ -127,6 +128,6 @@ const ScrollableBox = forwardRef(
   }
 );
 
-ScrollableBox.displayName = "ScrollableBox";
+ScrollableBox.displayName = 'ScrollableBox';
 
 export { ScrollableBox };

@@ -1,9 +1,9 @@
-import { Anchor } from "@/components/Anchor";
-import { Box } from "@/components/Box";
-import { BoxProps } from "@/components/Box.types";
-import { Icon } from "@/components/Icon";
-import { useLinkActivity } from "@/hooks/useLinkActivity";
-import { forwardRef, Ref } from "react";
+import { Anchor } from '@/components/Anchor';
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
+import { Icon } from '@/components/Icon';
+import { useLinkActivity } from '@/hooks/useLinkActivity';
+import { forwardRef, Ref } from 'react';
 
 type NavigationItem = {
   href: string;
@@ -12,12 +12,12 @@ type NavigationItem = {
   level?: number;
 };
 
-type NavigationTreeProps = Omit<BoxProps<"ul">, "children" | "data" | "ref"> & {
+type NavigationTreeProps = Omit<BoxProps<'ul'>, 'children' | 'data' | 'ref'> & {
   data: Array<NavigationItem>;
   level?: number;
 };
 
-type NavigationItemProps = Omit<BoxProps<"li">, "children" | "title" | "ref"> &
+type NavigationItemProps = Omit<BoxProps<'li'>, 'children' | 'ref' | 'title'> &
   NavigationItem;
 
 const NavigationItem = forwardRef(
@@ -30,22 +30,22 @@ const NavigationItem = forwardRef(
     return (
       <Box
         as="li"
-        marginTop={level === 0 ? "xtight" : undefined}
+        marginTop={level === 0 ? 'xtight' : undefined}
         ref={ref}
         {...otherProps}
       >
         <Anchor
           alignItems="center"
-          backgroundColor={isActive ? "selected" : undefined}
+          backgroundColor={isActive ? 'selected' : undefined}
           columnGap="tight"
           display="flex"
-          fontSize={level >= 1 ? "small" : undefined}
-          fontWeight={level === 0 || isActive ? "bold" : undefined}
+          fontSize={level >= 1 ? 'small' : undefined}
+          fontWeight={level === 0 || isActive ? 'bold' : undefined}
           href={href}
           paddingX="tight"
           paddingY="xxtight"
           propsOnHover={{
-            backgroundColor: "selected",
+            backgroundColor: 'selected',
           }}
           variant="bare"
         >
@@ -61,7 +61,7 @@ const NavigationItem = forwardRef(
   }
 );
 
-NavigationItem.displayName = "NavigationItem";
+NavigationItem.displayName = 'NavigationItem';
 
 const NavigationTree = forwardRef(
   (
@@ -78,7 +78,7 @@ const NavigationTree = forwardRef(
   }
 );
 
-NavigationTree.displayName = "NavigationTree";
+NavigationTree.displayName = 'NavigationTree';
 
 export type { NavigationItem };
 export { NavigationTree };

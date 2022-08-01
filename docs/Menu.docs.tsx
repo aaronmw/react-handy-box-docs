@@ -1,27 +1,28 @@
-import { Button } from "@/components/Button";
-import { Menu } from "@/components/Menu";
-import { useModalWindow } from "@/hooks/useModalWindow";
-import range from "lodash/range";
-import { DocumentationPageDescriptor } from "../pages";
+import { Button } from '@/components/Button';
+import { Menu } from '@/components/Menu';
+import { ModalWindow } from '@/components/ModalWindow';
+import range from 'lodash/range';
+import { useState } from 'react';
+import { DocumentationPageDescriptor } from '../pages';
 
 const docs: DocumentationPageDescriptor = {
-  title: "Menu",
+  title: 'Menu',
   demos: [
     {
-      title: "Single-Level",
+      title: 'Single-Level',
       renderDemo: () => (
         <Menu
           options={[
             {
-              icon: "pencil",
-              label: "Edit",
-              type: "menu-item",
+              icon: 'pencil',
+              label: 'Edit',
+              type: 'menu-item',
               onClick: () => console.log(`Clicked "Edit"`),
             },
             {
-              icon: "floppy-disk",
-              label: "Save",
-              type: "menu-item",
+              icon: 'floppy-disk',
+              label: 'Save',
+              type: 'menu-item',
               onClick: () => console.log(`Clicked "Save"`),
             },
           ]}
@@ -56,30 +57,30 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: "Multi-Level",
+      title: 'Multi-Level',
       renderDemo: () => (
         <Menu
           options={[
             {
-              icon: "pencil",
-              label: "Edit",
-              type: "menu-item",
+              icon: 'pencil',
+              label: 'Edit',
+              type: 'menu-item',
               onClick: () => console.log(`Clicked "Edit"`),
             },
             {
-              icon: "floppy-disk",
-              label: "Save",
-              type: "menu-item",
+              icon: 'floppy-disk',
+              label: 'Save',
+              type: 'menu-item',
               onClick: () => console.log(`Clicked "Save"`),
             },
             {
-              label: "More actions...",
-              type: "child-menu",
+              label: 'More actions...',
+              type: 'child-menu',
               options: [
                 {
-                  icon: "trash",
-                  label: "Delete",
-                  type: "menu-item",
+                  icon: 'trash',
+                  label: 'Delete',
+                  type: 'menu-item',
                   onClick: () =>
                     console.log(`Clicked "More actions... -> Delete"`),
                 },
@@ -133,34 +134,34 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: "Item Groups",
+      title: 'Item Groups',
       renderDemo: () => (
         <Menu
           options={[
             {
-              label: "Safe Actions",
-              type: "group-label",
+              label: 'Safe Actions',
+              type: 'group-label',
             },
             {
-              icon: "pencil",
-              label: "Edit",
-              type: "menu-item",
+              icon: 'pencil',
+              label: 'Edit',
+              type: 'menu-item',
               onClick: () => console.log(`Clicked "Edit"`),
             },
             {
-              icon: "floppy-disk",
-              label: "Save",
-              type: "menu-item",
+              icon: 'floppy-disk',
+              label: 'Save',
+              type: 'menu-item',
               onClick: () => console.log(`Clicked "Save"`),
             },
             {
-              label: "Dangerous Actions",
-              type: "group-label",
+              label: 'Dangerous Actions',
+              type: 'group-label',
             },
             {
-              icon: "trash",
-              label: "Delete",
-              type: "menu-item",
+              icon: 'trash',
+              label: 'Delete',
+              type: 'menu-item',
               onClick: () => console.log(`Clicked "Delete"`),
             },
           ]}
@@ -210,29 +211,29 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: "Dividing Lines",
+      title: 'Dividing Lines',
       renderDemo: () => (
         <Menu
           options={[
             {
-              icon: "pencil",
-              label: "Edit",
-              type: "menu-item",
+              icon: 'pencil',
+              label: 'Edit',
+              type: 'menu-item',
               onClick: () => console.log(`Clicked "Edit"`),
             },
             {
-              icon: "floppy-disk",
-              label: "Save",
-              type: "menu-item",
+              icon: 'floppy-disk',
+              label: 'Save',
+              type: 'menu-item',
               onClick: () => console.log(`Clicked "Save"`),
             },
             {
-              type: "dividing-line",
+              type: 'dividing-line',
             },
             {
-              icon: "trash",
-              label: "Delete",
-              type: "menu-item",
+              icon: 'trash',
+              label: 'Delete',
+              type: 'menu-item',
               onClick: () => console.log(`Clicked "Delete"`),
             },
           ]}
@@ -275,7 +276,7 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: "Triggering Modals",
+      title: 'Triggering Modals',
       renderDemo: () => <ModalLaunchingMenuDemo />,
       renderSnippet: () => `
         const ModalLaunchingMenuDemo = () => {
@@ -317,16 +318,16 @@ const docs: DocumentationPageDescriptor = {
 };
 
 const ModalLaunchingMenuDemo = () => {
-  const { ModalWindow, setIsModalWindowOpen } = useModalWindow();
+  const [isModalWindowOpen, setIsModalWindowOpen] = useState(false);
 
   return (
     <>
       <Menu
         options={[
           {
-            icon: "up-right-from-square",
-            label: "Launch a Modal...",
-            type: "menu-item",
+            icon: 'up-right-from-square',
+            label: 'Launch a Modal...',
+            type: 'menu-item',
             onClick: () => {
               console.log(`Opening modal...`);
               setIsModalWindowOpen(true);
@@ -337,7 +338,9 @@ const ModalLaunchingMenuDemo = () => {
           <Button {...propsForTrigger}>Open Menu</Button>
         )}
       />
-      <ModalWindow>I am remote-controlled!</ModalWindow>
+      <ModalWindow isOpen={isModalWindowOpen}>
+        I am remote-controlled!
+      </ModalWindow>
     </>
   );
 };

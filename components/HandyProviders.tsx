@@ -1,13 +1,21 @@
-import { ModalLayerProvider } from "@/components/ModalLayer";
-import { ReactNode } from "react";
-import { StyleSheetManager } from "styled-components";
+import { GlobalStyles } from '@/components/GlobalStyles';
+import { ModalLayerProvider } from '@/components/ModalLayer';
+import { DOMWatcherProvider } from '@/hooks/useDOMWatcher';
+import { ReactNode } from 'react';
+import { StyleSheetManager } from 'styled-components';
 
 const HandyProviders = ({ children }: { children: ReactNode }) => {
   return (
     <StyleSheetManager
-      disableVendorPrefixes={process.env.NODE_ENV === "development"}
+      disableVendorPrefixes={process.env.NODE_ENV === 'development'}
     >
-      <ModalLayerProvider>{children}</ModalLayerProvider>
+      <DOMWatcherProvider>
+        <ModalLayerProvider>
+          <GlobalStyles />
+
+          {children}
+        </ModalLayerProvider>
+      </DOMWatcherProvider>
     </StyleSheetManager>
   );
 };

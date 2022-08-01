@@ -1,14 +1,14 @@
-import { Box } from "@/components/Box";
-import { BoxProps } from "@/components/Box.types";
-import { Button } from "@/components/Button";
-import { Form } from "@/components/Form";
-import { Icon } from "@/components/Icon";
-import { ModalLayer, ModalLayerContext } from "@/components/ModalLayer";
-import { ModalWindowProps } from "@/components/ModalLayer.types";
-import { ScrollableBox } from "@/components/ScrollableBox";
-import { useDOMWatcher } from "@/hooks/useDOMWatcher";
-import { useMultipleRefs } from "@/hooks/useMultipleRefs";
-import { whiteSpacesAsCSSVariables } from "@/tokens/whiteSpaces";
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
+import { Button } from '@/components/Button';
+import { Form } from '@/components/Form';
+import { Icon } from '@/components/Icon';
+import { ModalLayer, ModalLayerContext } from '@/components/ModalLayer';
+import { ModalWindowProps } from '@/components/ModalLayer.types';
+import { ScrollableBox } from '@/components/ScrollableBox';
+import { useDOMWatcher } from '@/hooks/useDOMWatcher';
+import { useMultipleRefs } from '@/hooks/useMultipleRefs';
+import { whiteSpacesAsCSSVariables } from '@/tokens/whiteSpaces';
 import {
   forwardRef,
   MouseEvent,
@@ -16,7 +16,7 @@ import {
   useContext,
   useEffect,
   useRef,
-} from "react";
+} from 'react';
 
 export const variantPropMap = {
   small: {
@@ -29,8 +29,8 @@ export const variantPropMap = {
     width: 800,
   },
   fullscreen: {
-    height: "100vh",
-    width: "100vw",
+    height: '100vh',
+    width: '100vw',
   },
 } as const;
 
@@ -42,8 +42,8 @@ const ModalWindow = forwardRef(
       propsForForm,
       renderFooter,
       renderHeader,
-      type = "window",
-      variant = "normal",
+      type = 'window',
+      variant = 'normal',
       ...otherProps
     }: ModalWindowProps,
     outerRef: Ref<HTMLElement>
@@ -56,19 +56,17 @@ const ModalWindow = forwardRef(
 
     const { addDOMWatcher, removeDOMWatcher } = useDOMWatcher();
 
-    const isLowestModalWindowInStack = modalLayerStack
-      .filter((modalLayer) =>
-        modalLayer.element.matches('[data-modal-layer-type="window"]')
-      )?.[0]
-      ?.element?.isSameNode(innerRef.current);
+    const modalWindowsInStack = modalLayerStack.current.filter(
+      (layer) => layer.type === 'window'
+    );
+
+    const isLowestModalWindowInStack =
+      modalWindowsInStack.length === 0 ||
+      modalWindowsInStack[0].element.isSameNode(innerRef.current);
 
     useEffect(() => {
       if (isLowestModalWindowInStack) {
         const positionMultipleWindows = () => {
-          const modalWindowsInStack = modalLayerStack.filter((layer) =>
-            layer.element.matches('[data-modal-layer-type="window"]')
-          );
-
           modalWindowsInStack.reverse().forEach((modalLayer, windowIndex) => {
             const offset = `calc(${whiteSpacesAsCSSVariables.normal} * -${windowIndex})`;
 
@@ -87,13 +85,14 @@ const ModalWindow = forwardRef(
       addDOMWatcher,
       isLowestModalWindowInStack,
       modalLayerStack,
+      modalWindowsInStack,
       removeDOMWatcher,
     ]);
 
     const propsForBackdrop = {
-      ...(isLowestModalWindowInStack ? { backgroundColor: "shadow" } : {}),
-      ...(disableBackdropClick === true ? { pointerEvents: "none" } : {}),
-    } as BoxProps<"div">;
+      ...(isLowestModalWindowInStack ? { backgroundColor: 'shadow' } : {}),
+      ...(disableBackdropClick === true ? { pointerEvents: 'none' } : {}),
+    } as Omit<BoxProps, 'ref'>;
 
     const WrapperComponent = propsForForm ? Form : Box;
 
@@ -116,15 +115,15 @@ const ModalWindow = forwardRef(
           top="50%"
           transform="translate(-50%, -50%)"
           transitionProperty={[
-            "filter",
-            "margin-left",
-            "margin-top",
-            "opacity",
-            "transform",
+            'filter',
+            'margin-left',
+            'margin-top',
+            'opacity',
+            'transform',
           ]}
           type={type}
           {...variantPropMap[variant]}
-          {...otherProps}
+          {...(otherProps as any)}
         >
           {(renderProps) => (
             <WrapperComponent
@@ -134,7 +133,9 @@ const ModalWindow = forwardRef(
               flexGrow={1}
               flexShrink={1}
               justifyContent="stretch"
-              {...(propsForForm ?? {})}
+              {...((typeof propsForForm === 'function'
+                ? propsForForm(renderProps)
+                : propsForForm) ?? {})}
             >
               <Box
                 alignSelf="flex-end"
@@ -172,11 +173,11 @@ const ModalWindow = forwardRef(
                 id="modalWindowContent"
                 flexGrow={1}
                 flexShrink={1}
-                paddingBottom={renderFooter ? undefined : "normal"}
-                paddingTop={renderHeader ? undefined : "normal"}
+                paddingBottom={renderFooter ? undefined : 'normal'}
+                paddingTop={renderHeader ? undefined : 'normal'}
                 paddingX="normal"
               >
-                {typeof children === "function"
+                {typeof children === 'function'
                   ? children(renderProps)
                   : children}
               </ScrollableBox>
@@ -194,6 +195,6 @@ const ModalWindow = forwardRef(
   }
 );
 
-ModalWindow.displayName = "ModalWindow";
+ModalWindow.displayName = 'ModalWindow';
 
 export { ModalWindow };

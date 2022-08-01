@@ -1,12 +1,12 @@
-import { Box } from "@/components/Box";
-import { BoxProps } from "@/components/Box.types";
-import { KeyMap, useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
-import { useMultipleRefs } from "@/hooks/useMultipleRefs";
-import { getFocusableElements } from "@/utilities/getFocusableElements";
-import { isOrContainsFocusedElement } from "@/utilities/isOrContainsFocusedElement";
-import last from "lodash/last";
-import sortBy from "lodash/sortBy";
-import { ExtendedKeyboardEvent } from "mousetrap";
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
+import { KeyMap, useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useMultipleRefs } from '@/hooks/useMultipleRefs';
+import { getFocusableElements } from '@/utilities/getFocusableElements';
+import { isOrContainsFocusedElement } from '@/utilities/isOrContainsFocusedElement';
+import last from 'lodash/last';
+import sortBy from 'lodash/sortBy';
+import { ExtendedKeyboardEvent } from 'mousetrap';
 import {
   CSSProperties,
   FocusEvent,
@@ -14,8 +14,8 @@ import {
   Ref,
   useEffect,
   useMemo,
-  useRef
-} from "react";
+  useRef,
+} from 'react';
 
 type FocusTrappedElements = { current: Array<HTMLElement> };
 
@@ -24,9 +24,9 @@ const getRealFocusTrappedElements = (element?: HTMLElement) =>
     ? []
     : sortBy(
         getFocusableElements(element).filter(
-          (el) => !el.matches("[data-is-focus-trap]")
+          (el) => !el.matches('[data-is-focus-trap]')
         ),
-        "tabIndex"
+        'tabIndex'
       );
 
 const focusTrappedElements: FocusTrappedElements = { current: [] };
@@ -80,35 +80,27 @@ const enforceFocusTraps = (event?: FocusEvent) => {
 };
 
 const setIsEnforcingFocusTraps = (newIsEnforcingFocusTraps: boolean) => {
-  const addOrRemove = newIsEnforcingFocusTraps ? "add" : "remove";
+  const addOrRemove = newIsEnforcingFocusTraps ? 'add' : 'remove';
 
-  window[`${addOrRemove}EventListener`]("focusin", enforceFocusTraps as any);
+  window[`${addOrRemove}EventListener`]('focusin', enforceFocusTraps as any);
 };
 
 const stylesForHiddenFocusableInput = {
-  pointerEvents: "none",
-  position: "absolute",
-  width: "1px",
-  height: "1px",
+  pointerEvents: 'none',
+  position: 'absolute',
+  width: '1px',
+  height: '1px',
   opacity: 0.01,
 } as CSSProperties;
 
-type FocusTrapProps<T extends keyof JSX.IntrinsicElements = "div"> = Omit<
-  BoxProps<T>,
-  "disabled"
-> & {
+type FocusTrapProps = Omit<BoxProps, 'disabled' | 'ref'> & {
   disabled?: boolean;
   enforceOnBlur?: boolean;
 };
 
 const FocusTrap = forwardRef(
-  <T extends keyof JSX.IntrinsicElements>(
-    {
-      enforceOnBlur = true,
-      children,
-      disabled,
-      ...otherProps
-    }: FocusTrapProps<T>,
+  (
+    { children, disabled, enforceOnBlur = true, ...otherProps }: FocusTrapProps,
     outerRef: Ref<HTMLElement>
   ) => {
     const focusTrappedElementRef = useRef<HTMLElement>();
@@ -116,13 +108,13 @@ const FocusTrap = forwardRef(
     const multipleRefs = useMultipleRefs(outerRef, focusTrappedElementRef);
 
     const memoizedKeyMap = useMemo<KeyMap>(() => {
-      const keysToListenFor = ["up", "down"];
+      const keysToListenFor = ['up', 'down'];
 
       const handler = (event: ExtendedKeyboardEvent, combo: string) => {
         const focusTrappedElement = focusTrappedElementRef.current;
 
         if (
-          ["input", "select", "textarea"].includes(
+          ['input', 'select', 'textarea'].includes(
             (event.target as HTMLElement).tagName.toLowerCase()
           ) ||
           (event.target as HTMLElement).isContentEditable === true ||
@@ -141,13 +133,13 @@ const FocusTrap = forwardRef(
         const indexOfActiveElement = focusableElements.indexOf(activeElement);
 
         switch (combo) {
-          case "down":
+          case 'down':
             focusableElements[
               Math.min(maxIndex, indexOfActiveElement + 1)
             ]?.focus();
             break;
 
-          case "up":
+          case 'up':
             focusableElements[Math.max(0, indexOfActiveElement - 1)]?.focus();
             break;
         }
@@ -185,11 +177,7 @@ const FocusTrap = forwardRef(
     }, [children]);
 
     return (
-      <Box
-        position="relative"
-        ref={multipleRefs}
-        {...otherProps}
-      >
+      <Box position="relative" ref={multipleRefs} {...otherProps}>
         <input
           data-is-focus-trap="true"
           type="text"

@@ -1,10 +1,12 @@
 import { BoxProps } from '@/components/Box.types';
 
-export type IconProps = BoxProps<'span'> &
+export type IconVariants = 'solid' | 'regular' | 'light' | 'thin' | 'duotone';
+
+export type IconProps = Omit<BoxProps<'span'>, 'children' | 'name' | 'ref'> &
   (
     | {
         name: IconName;
-        variant?: 'solid' | 'regular' | 'light' | 'thin' | 'duotone';
+        variant?: IconVariants;
       }
     | {
         name: BrandIconName;

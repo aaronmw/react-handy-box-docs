@@ -1,14 +1,12 @@
 import { Box } from "@/components/Box";
 import { DocumentationPageDescriptor } from "@/pages/index";
+import { borderRadii } from "@/tokens/borderRadii";
+import { borderStyles } from "@/tokens/borderStyles";
+import { boxShadows } from "@/tokens/boxShadows";
+import { transitionDurations } from "@/tokens/transitionDurations";
+import { fontSizes } from "@/tokens/typography";
+import { whiteSpaceNames } from "@/tokens/whiteSpaces";
 import { toJSXAttributeValue } from "@/utilities/toJSXAttributeValue";
-import {
-  borderRadii,
-  borderStyles,
-  boxShadows,
-  fontSizes,
-  transitionDurations,
-  whiteSpaceNames,
-} from "tokens";
 
 const docs: DocumentationPageDescriptor = {
   title: "Box",

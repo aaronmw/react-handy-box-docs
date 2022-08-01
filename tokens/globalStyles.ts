@@ -1,6 +1,6 @@
-import { colorPalette } from './colorPalette';
-import { fontNames, fontSizes, lineHeights } from './typography';
-import { whiteSpaceNames } from './whiteSpaces';
+import { colorPalette } from '@/tokens/colorPalette';
+import { fontNames, fontSizes, lineHeights } from '@/tokens/typography';
+import { whiteSpaceNames } from '@/tokens/whiteSpaces';
 
 export const globalStyles = {
   phoneOnly: {

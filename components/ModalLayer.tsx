@@ -1,51 +1,52 @@
-import { Box } from "@/components/Box";
-import { BoxProps } from "@/components/Box.types";
-import { FocusTrap } from "@/components/FocusTrap";
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
+import { FocusTrap } from '@/components/FocusTrap';
 import {
   ModalLayerContextObject,
   ModalLayerProps,
   ModalLayerRenderProps,
   ModalLayerStack,
-} from "@/components/ModalLayer.types";
-import { KeyMap, useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
-import { useMultipleRefs } from "@/hooks/useMultipleRefs";
-import { zIndices } from "@/tokens/zIndices";
-import last from "lodash/last";
-import omit from "lodash/omit";
-import { ExtendedKeyboardEvent } from "mousetrap";
+} from '@/components/ModalLayer.types';
+import { KeyMap, useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useMultipleRefs } from '@/hooks/useMultipleRefs';
+import { zIndices } from '@/tokens/zIndices';
+import last from 'lodash/last';
+import omit from 'lodash/omit';
+import { ExtendedKeyboardEvent } from 'mousetrap';
 import {
   createContext,
   forwardRef,
   MouseEvent,
+  ReactNode,
+  Ref,
   useCallback,
   useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
-} from "react";
-import { createPortal } from "react-dom";
+} from 'react';
+import { createPortal } from 'react-dom';
 
 export const ModalLayerContext = createContext<ModalLayerContextObject>({
-  modalLayerStack: [],
-  setModalLayerStack: () => null,
+  modalLayerStack: { current: [] },
 });
 
-const ModalLayerProvider = ({ children }: { children: React.ReactNode }) => {
-  const [modalLayerStack, setModalLayerStack] = useState<ModalLayerStack>([]);
+const ModalLayerProvider = ({ children }: { children: ReactNode }) => {
+  const modalLayerStack = useRef<ModalLayerStack>([]);
 
   const memoizedKeyMap = useMemo<KeyMap>(() => {
-    const keysToListenFor = ["escape"];
+    const keysToListenFor = ['escape'];
 
     const handler = (event: ExtendedKeyboardEvent, combo: string) => {
-      if (!modalLayerStack.length) {
+      if (!modalLayerStack.current.length) {
         return;
       }
 
       switch (combo) {
-        case "escape":
+        case 'escape':
           event.preventDefault();
-          last(modalLayerStack)?.setIsOpen(false);
+          last(modalLayerStack.current)?.setIsOpen(false);
           break;
       }
 
@@ -55,14 +56,16 @@ const ModalLayerProvider = ({ children }: { children: React.ReactNode }) => {
     return Object.fromEntries(
       keysToListenFor.map((key) => [key, handler])
     ) as KeyMap;
-  }, [modalLayerStack]);
+  }, []);
 
   useKeyboardShortcuts(memoizedKeyMap);
 
-  const modalLayerContext = {
-    modalLayerStack,
-    setModalLayerStack,
-  } as ModalLayerContextObject;
+  const modalLayerContext = useMemo(
+    () => ({
+      modalLayerStack,
+    }),
+    []
+  );
 
   return (
     <ModalLayerContext.Provider value={modalLayerContext}>
@@ -71,7 +74,7 @@ const ModalLayerProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const BackdroppedBox = ({ children, ...otherProps }: BoxProps<"div">) => {
+const BackdroppedBox = ({ children, ...otherProps }: BoxProps) => {
   return (
     <>
       <Box
@@ -96,6 +99,7 @@ const ModalLayer = forwardRef(
       disableBackdropClick = false,
       disableFocusTrap = false,
       initialIsOpen = false,
+      isOpen = initialIsOpen,
       renderTrigger,
       type,
       onBeforeClose,
@@ -104,34 +108,41 @@ const ModalLayer = forwardRef(
       onOpen,
       ...otherProps
     }: ModalLayerProps,
-    outerRef
+    outerRef: Ref<HTMLDivElement>
   ) => {
-    const [externalOpenState, setExternalOpenState] = useState(initialIsOpen);
+    const [desiredOpenState, setDesiredOpenState] = useState(isOpen);
+
     const [internalOpenState, setInternalOpenState] = useState<
-      "opening" | "open" | "closing" | "closed"
-    >("closed");
+      'opening' | 'open' | 'closing' | 'closed'
+    >('closed');
+
     const [opacity, setOpacity] = useState(0);
+
     const [modalLayerElement, setModalLayerElement] =
       useState<HTMLElement | null>(null);
+
     const triggerElementRef = useRef<HTMLButtonElement | null>(null);
+
     const multipleRefs = useMultipleRefs(outerRef, setModalLayerElement);
 
-    const { modalLayerStack, setModalLayerStack } =
-      useContext(ModalLayerContext);
+    const { modalLayerStack } = useContext(ModalLayerContext);
 
-    const modalLayerStackIndex = modalLayerStack.findIndex((modalLayer) =>
-      modalLayerElement
-        ? modalLayer.element.isSameNode(modalLayerElement)
-        : false
+    const modalLayerStackIndex = Math.max(
+      0,
+      modalLayerStack.current.findIndex((modalLayer) =>
+        modalLayerElement
+          ? modalLayer.element.isSameNode(modalLayerElement)
+          : false
+      )
     );
 
     const renderProps = useMemo<ModalLayerRenderProps>(
       () =>
         ({
           closeModal: () => {
-            setExternalOpenState(false);
+            setDesiredOpenState(false);
           },
-          isOpen: externalOpenState,
+          isOpen: desiredOpenState,
           modalLayerElementRef: {
             current: modalLayerElement,
           },
@@ -139,57 +150,61 @@ const ModalLayer = forwardRef(
             ref: triggerElementRef,
             onClick: (event: MouseEvent) => {
               event.preventDefault();
-              setExternalOpenState(!externalOpenState);
+              setDesiredOpenState(!desiredOpenState);
             },
           },
-          setIsOpen: setExternalOpenState,
+          setIsOpen: setDesiredOpenState,
           triggerElementRef,
         } as ModalLayerRenderProps),
-      [externalOpenState, modalLayerElement]
+      [desiredOpenState, modalLayerElement]
     );
+
+    useEffect(() => {
+      if (typeof isOpen === 'boolean') {
+        setDesiredOpenState(isOpen);
+      }
+    }, [isOpen]);
 
     useEffect(() => {
       if (!modalLayerElement) {
         return;
       }
 
-      setModalLayerStack((currentModalLayerStack) => [
-        ...currentModalLayerStack,
-        {
-          element: modalLayerElement,
-          setIsOpen: setExternalOpenState,
-          type,
-        },
-      ]);
+      modalLayerStack.current.push({
+        element: modalLayerElement,
+        setIsOpen: setDesiredOpenState,
+        type,
+      });
 
       return () => {
-        setModalLayerStack((currentModalLayerStack) =>
-          currentModalLayerStack.filter(
-            (modalLayer) =>
-              modalLayer.element.isSameNode(modalLayerElement) === false
-          )
+        modalLayerStack.current = modalLayerStack.current.filter(
+          (modalLayer) =>
+            modalLayer.element.isSameNode(modalLayerElement) === false
         );
       };
-    }, [modalLayerElement, setModalLayerStack, type]);
+    }, [modalLayerElement, modalLayerStack, type]);
 
     useEffect(() => {
       if (
-        (externalOpenState === false && internalOpenState === "closed") ||
-        (externalOpenState === true && internalOpenState === "open")
+        (desiredOpenState === false &&
+          ['closed', 'closing'].includes(internalOpenState)) ||
+        (desiredOpenState === true &&
+          ['open', 'opening'].includes(internalOpenState))
       ) {
         return;
       }
 
       const nextInternalOpenState =
-        externalOpenState === true ? "opening" : "closing";
+        desiredOpenState === true ? 'opening' : 'closing';
 
       const eventHandler =
-        externalOpenState === true ? onBeforeOpen : onBeforeClose;
+        desiredOpenState === true ? onBeforeOpen : onBeforeClose;
 
       setInternalOpenState(nextInternalOpenState);
+
       eventHandler?.(renderProps);
     }, [
-      externalOpenState,
+      desiredOpenState,
       internalOpenState,
       onBeforeClose,
       onBeforeOpen,
@@ -197,52 +212,58 @@ const ModalLayer = forwardRef(
     ]);
 
     useEffect(() => {
-      if (["opening", "closing"].includes(internalOpenState) === false) {
+      if (['opening', 'closing'].includes(internalOpenState) === false) {
         return;
       }
 
-      setOpacity(internalOpenState === "opening" ? 1 : 0);
+      setOpacity(internalOpenState === 'opening' ? 1 : 0);
     }, [internalOpenState]);
 
     const handleTransitionEnd = useCallback(() => {
-      if (["opening", "closing"].includes(internalOpenState) === false) {
+      if (['opening', 'closing'].includes(internalOpenState) === false) {
         return;
       }
 
       const nextInternalOpenState =
-        internalOpenState === "closing" ? "closed" : "open";
-      const eventHandler = internalOpenState === "closing" ? onClose : onOpen;
+        internalOpenState === 'closing' ? 'closed' : 'open';
+
+      const eventHandler = internalOpenState === 'closing' ? onClose : onOpen;
 
       setInternalOpenState(nextInternalOpenState);
+
       eventHandler?.(renderProps);
     }, [internalOpenState, onClose, onOpen, renderProps]);
 
+    const handleClickBackdrop = (event: MouseEvent<HTMLDivElement>) => {
+      if (!disableBackdropClick) {
+        renderProps.closeModal();
+        propsForBackdrop?.onClick?.(event);
+      }
+    };
+
     const backdropOpacity = opacity ? propsForBackdrop?.opacity ?? opacity : 0;
 
-    const zIndex = zIndices["10--modalWindows"] + modalLayerStackIndex;
+    const zIndex = zIndices['10--modalWindows'] + modalLayerStackIndex;
 
     return (
       <>
         {renderTrigger?.(renderProps)}
-        {internalOpenState !== "closed" &&
+        {internalOpenState !== 'closed' &&
           createPortal(
             <BackdroppedBox
               cursor="default"
               opacity={backdropOpacity}
-              pointerEvents={disableBackdropClick ? "none" : "all"}
+              pointerEvents={disableBackdropClick ? 'none' : 'all'}
               transitionProperty="opacity"
               zIndex={zIndex - 1}
-              onClick={() => {
-                setExternalOpenState(false);
-              }}
-              {...omit(propsForBackdrop, "opacity")}
+              {...omit(propsForBackdrop, 'opacity')}
+              onClick={handleClickBackdrop}
             >
               <FocusTrap
-                as="section"
                 data-modal-layer-type={type}
                 disabled={Boolean(
                   disableFocusTrap ||
-                    ["closing", "closed"].includes(internalOpenState)
+                    ['closing', 'closed'].includes(internalOpenState)
                 )}
                 opacity={opacity}
                 ref={multipleRefs}
@@ -253,7 +274,7 @@ const ModalLayer = forwardRef(
                 onTransitionEnd={handleTransitionEnd}
                 {...otherProps}
               >
-                {typeof children === "function"
+                {typeof children === 'function'
                   ? children(renderProps)
                   : children}
               </FocusTrap>
@@ -265,6 +286,6 @@ const ModalLayer = forwardRef(
   }
 );
 
-ModalLayer.displayName = "ModalLayer";
+ModalLayer.displayName = 'ModalLayer';
 
 export { ModalLayer, ModalLayerProvider };

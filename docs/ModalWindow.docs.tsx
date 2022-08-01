@@ -1,56 +1,81 @@
-import { Button } from "@/components/Button";
-import { useModalWindow } from "@/hooks/useModalWindow";
-import { DocumentationPageDescriptor } from "@/pages/index";
+import { Button } from '@/components/Button';
+import { ModalWindow } from '@/components/ModalWindow';
+import { DocumentationPageDescriptor } from '@/pages/index';
+import range from 'lodash/range';
+import { useState } from 'react';
 
-const ModalWindowDemo = () => {
-  const { ModalWindow, setIsModalWindowOpen, modalWindowTriggerElementRef } =
-    useModalWindow();
+const ManualModalWindowDemo = () => {
+  const [isModalWindowOpen, setIsModalWindowOpen] = useState(false);
 
   return (
     <>
-      <Button
-        ref={modalWindowTriggerElementRef}
-        onClick={() => setIsModalWindowOpen(true)}
+      <Button onClick={() => setIsModalWindowOpen(true)}>Open a Modal</Button>
+      <ModalWindow
+        isOpen={isModalWindowOpen}
+        onClose={() => setIsModalWindowOpen(false)}
       >
-        Open a Modal
-      </Button>
-      <ModalWindow>I am a modal window.</ModalWindow>
+        I am a modal window.
+      </ModalWindow>
     </>
   );
 };
 
 const docs: DocumentationPageDescriptor = {
-  title: "ModalWindow",
+  title: 'ModalWindow',
   demos: [
     {
-      title: "Usage",
-      renderDemo: () => <ModalWindowDemo />,
+      title: 'Trigger Controlled',
+      renderDemo: () => (
+        <ModalWindow
+          renderTrigger={({ propsForTrigger }) => (
+            <Button {...propsForTrigger}>Open a Modal</Button>
+          )}
+        >
+          I am a modal window.
+        </ModalWindow>
+      ),
+      renderSnippet: () => `
+        <ModalWindow
+          renderTrigger={({ propsForTrigger }) => (
+            <Button {...propsForTrigger}>
+              Open a Modal
+            </Button>
+          )}
+        >
+          I am a modal window.
+        </ModalWindow>
+      `,
+    },
+    {
+      title: 'Manually Controlled',
+      renderDemo: () => <ManualModalWindowDemo />,
       renderSnippet: () => `
         const ModalWindowDemo = () => {
-          const {
-            ModalWindow,
+          const [
+            isModalWindowOpen,
             setIsModalWindowOpen,
-            modalWindowTriggerElementRef,
-          } = useModalWindow();
+          ] = useState(false);
 
           return (
             <>
-              <Button
-                ref={modalWindowTriggerElementRef}
-                onClick={() =>
-                  setIsModalWindowOpen(true)
-                }
+              <Button onClick={
+                setIsModalWindowOpen.bind(null, true)}
               >
                 Open a Modal
               </Button>
-              <ModalWindow>
+              <ModalWindow
+                isOpen={isModalWindowOpen}
+                onClose={
+                  setIsModalWindowOpen.bind(null, false)
+                }
+              >
                 I am a modal window.
               </ModalWindow>
             </>
           );
         };
       `,
-      highlightLines: [6],
+      highlightLines: [...range(2, 6), ...range(9, 12), ...range(16, 19)],
     },
   ],
 };

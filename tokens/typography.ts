@@ -22,3 +22,30 @@ export const lineHeights = {
   small: '1.2rem',
   xsmall: '1rem',
 };
+
+export const textStyles = {
+  'code': {
+    color: 'purple',
+    fontFamily: 'monospace',
+  },
+  'heading--1': {
+    as: 'h1',
+    fontSize: 'xxlarge',
+    fontWeight: 900,
+  },
+  'heading--2': {
+    as: 'h2',
+    fontSize: 'xlarge',
+    fontWeight: 'bold',
+  },
+  'heading--3': {
+    as: 'h3',
+    fontSize: 'large',
+    fontWeight: 'bold',
+  },
+  'label': {
+    color: 'textFaded',
+    fontSize: 'small',
+  },
+  'normal': {},
+};

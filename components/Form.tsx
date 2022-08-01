@@ -1,13 +1,13 @@
-import { Box } from "@/components/Box";
+import { Box } from '@/components/Box';
 import {
   FormContextObject,
   FormFieldDescriptor,
   FormFieldRegistry,
   FormFieldRegistryEntry,
   FormProps,
-} from "@/components/Form.types";
-import { useMultipleRefs } from "@/hooks/useMultipleRefs";
-import mapValues from "lodash/mapValues";
+} from '@/components/Form.types';
+import { useMultipleRefs } from '@/hooks/useMultipleRefs';
+import mapValues from 'lodash/mapValues';
 import {
   createContext,
   FormEvent,
@@ -18,7 +18,7 @@ import {
   useEffect,
   useRef,
   useState,
-} from "react";
+} from 'react';
 
 const emptyFormContext: FormContextObject = {
   getFieldValues: () => ({}),
@@ -95,7 +95,7 @@ const useFormField = (fieldDescriptor: FormFieldDescriptor) => {
           !(valueOrValues as Array<unknown>).length) ||
           !valueOrValues)
       ) {
-        const newErrorMessage = "Oops. This field is required!";
+        const newErrorMessage = 'Oops. This field is required!';
 
         setErrorMessage(newErrorMessage);
 
@@ -156,7 +156,7 @@ const Form = forwardRef(
         (fieldDescriptor, fieldName) => {
           const fieldValueOrValues = fieldDescriptor.isMultiValue
             ? formData.getAll(fieldName) ?? []
-            : formData.get(fieldName) ?? "";
+            : formData.get(fieldName) ?? '';
 
           return (
             fieldDescriptor.onRead(fieldValueOrValues) ?? fieldValueOrValues
@@ -246,6 +246,6 @@ const Form = forwardRef(
   }
 );
 
-Form.displayName = "Form";
+Form.displayName = 'Form';
 
 export { Form, FormContext, useFormField };

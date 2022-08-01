@@ -1,14 +1,14 @@
-import { Box } from "@/components/Box";
-import { BoxProps } from "@/components/Box.types";
-import { CodeSnippet } from "@/components/CodeSnippet";
-import { Markdown } from "@/components/Markdown";
-import { Text } from "@/components/Text";
-import { DocumentationSectionDescriptor } from "@/pages/index";
-import kebabCase from "lodash/kebabCase";
-import { forwardRef, Ref } from "react";
-import reactElementToJSXString from "react-element-to-jsx-string";
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
+import { CodeSnippet } from '@/components/CodeSnippet';
+import { Markdown } from '@/components/Markdown';
+import { Text } from '@/components/Text';
+import { DocumentationSectionDescriptor } from '@/pages/index';
+import kebabCase from 'lodash/kebabCase';
+import { forwardRef, Ref } from 'react';
+import reactElementToJSXString from 'react-element-to-jsx-string';
 
-type DemoProps = Omit<BoxProps<"div">, "ref" | "title"> &
+type DemoProps = Omit<BoxProps, 'ref' | 'title'> &
   DocumentationSectionDescriptor;
 
 const Demo = forwardRef(
@@ -31,7 +31,7 @@ const Demo = forwardRef(
           {title}
         </Text>
 
-        {description && <Markdown children={description} />}
+        {description && <Markdown>{description}</Markdown>}
 
         <Box
           backgroundColor="shaded"
@@ -52,17 +52,16 @@ const Demo = forwardRef(
             >
               {renderSnippet && (
                 <CodeSnippet
-                  children={
-                    typeof renderSnippet === "function"
-                      ? renderSnippet?.(value)
-                      : reactElementToJSXString(renderDemo(value))
-                  }
                   highlightLines={
-                    typeof highlightLines === "function"
+                    typeof highlightLines === 'function'
                       ? highlightLines(value)
                       : highlightLines
                   }
-                />
+                >
+                  {typeof renderSnippet === 'function'
+                    ? renderSnippet?.(value)
+                    : reactElementToJSXString(renderDemo(value))}
+                </CodeSnippet>
               )}
 
               <Box flexGrow={1}>{renderDemo(value)}</Box>
@@ -74,6 +73,6 @@ const Demo = forwardRef(
   }
 );
 
-Demo.displayName = "Demo";
+Demo.displayName = 'Demo';
 
 export { Demo };

@@ -1,8 +1,8 @@
-import { Box } from "@/components/Box";
-import { BoxProps } from "@/components/Box.types";
-import { useFormField } from "@/components/Form";
-import { CommonFormInputProps } from "@/components/Form.types";
-import { LabeledInput } from "@/components/LabeledInput";
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
+import { useFormField } from '@/components/Form';
+import { CommonFormInputProps } from '@/components/Form.types';
+import { LabeledInput } from '@/components/LabeledInput';
 import {
   forwardRef,
   ReactNode,
@@ -10,7 +10,7 @@ import {
   useCallback,
   useEffect,
   useState,
-} from "react";
+} from 'react';
 
 export type BaseOptionShape = {
   id: string | number;
@@ -21,7 +21,7 @@ export type BaseOptionShape = {
 export type AbstractMultiSelectInputProps<
   T extends BaseOptionShape,
   IsMulti extends boolean
-> = Omit<BoxProps<"div">, "defaultValue" | "ref"> & {
+> = Omit<BoxProps, 'defaultValue' | 'ref'> & {
   defaultValue?: IsMulti extends true
     ? Array<string | number>
     : string | number;
@@ -31,7 +31,7 @@ export type AbstractMultiSelectInputProps<
   renderOptions: (props: {
     options: Array<{
       option: BaseOptionShape;
-      propsForOption: BoxProps<"button">;
+      propsForOption: BoxProps<'button'>;
       isSelected: boolean;
     }>;
   }) => JSX.Element | Array<JSX.Element>;
@@ -141,7 +141,7 @@ const AbstractMultiSelectInput = forwardRef(
             options: options.map((option) => ({
               option,
               propsForOption: {
-                cursor: "pointer",
+                cursor: 'pointer',
                 key: option.id,
                 tabIndex: 1,
                 onBlur: propsForInput.onBlur,
@@ -165,6 +165,6 @@ const AbstractMultiSelectInput = forwardRef(
   }
 );
 
-AbstractMultiSelectInput.displayName = "AbstractMultiSelectInput";
+AbstractMultiSelectInput.displayName = 'AbstractMultiSelectInput';
 
 export { AbstractMultiSelectInput };

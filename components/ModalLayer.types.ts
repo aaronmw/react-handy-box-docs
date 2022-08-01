@@ -1,14 +1,20 @@
-import { BoxProps } from "@/components/Box.types";
-import { FormProps } from "@/components/Form.types";
-import { variantPropMap } from "@/components/ModalWindow";
-import { MouseEventHandler, ReactNode, Ref, RefObject } from "react";
+import { BoxProps } from '@/components/Box.types';
+import { FormProps } from '@/components/Form.types';
+import { variantPropMap } from '@/components/ModalWindow';
+import {
+  MouseEventHandler,
+  MutableRefObject,
+  ReactNode,
+  Ref,
+  RefObject,
+} from 'react';
 
 export type ModalLayerType =
-  | "dialog"
-  | "menu"
-  | "popover"
-  | "tooltip"
-  | "window";
+  | 'dialog'
+  | 'menu'
+  | 'popover'
+  | 'tooltip'
+  | 'window';
 
 export type ModalLayerStackEntry = {
   element: HTMLElement;
@@ -19,8 +25,7 @@ export type ModalLayerStackEntry = {
 export type ModalLayerStack = Array<ModalLayerStackEntry>;
 
 export type ModalLayerContextObject = {
-  modalLayerStack: ModalLayerStack;
-  setModalLayerStack: React.Dispatch<React.SetStateAction<ModalLayerStack>>;
+  modalLayerStack: MutableRefObject<ModalLayerStack>;
 };
 
 export type ModalLayerEventHandler = (
@@ -43,16 +48,11 @@ export type ModalLayerRenderProps = {
   };
 };
 
-export type ModalLayerProps = Omit<
-  BoxProps<"section">,
-  "children" | "ref" | "type"
-> & {
+type BasicModalLayerProps = Omit<BoxProps, 'children' | 'ref' | 'type'> & {
   children: ReactNode | ModalLayerRenderFunction;
   disableBackdropClick?: boolean;
   disableFocusTrap?: boolean;
-  initialIsOpen?: boolean;
-  propsForBackdrop?: BoxProps<"div">;
-  renderTrigger?: ModalLayerRenderFunction;
+  propsForBackdrop?: Omit<BoxProps, 'ref'>;
   type: ModalLayerType;
   onBeforeClose?: ModalLayerEventHandler;
   onBeforeOpen?: ModalLayerEventHandler;
@@ -60,12 +60,27 @@ export type ModalLayerProps = Omit<
   onOpen?: ModalLayerEventHandler;
 };
 
-export type ModalWindowProps = Omit<ModalLayerProps, "type"> & {
+type RemoteControlledModalLayerProps = {
+  initialIsOpen?: never;
+  isOpen: boolean;
+  renderTrigger?: never;
+};
+
+type TriggerControlledModalLayerProps = {
+  initialIsOpen?: boolean;
+  isOpen?: never;
+  renderTrigger?: ModalLayerRenderFunction;
+};
+
+export type ModalLayerProps = BasicModalLayerProps &
+  (RemoteControlledModalLayerProps | TriggerControlledModalLayerProps);
+
+export type ModalWindowProps = Omit<ModalLayerProps, 'type'> & {
   propsForForm?:
-    | Omit<FormProps, "children" | "ref">
+    | Omit<FormProps, 'children'>
     | ((
         renderProps: ModalLayerRenderProps
-      ) => Omit<FormProps, "children" | "ref">);
+      ) => Omit<FormProps, 'children' | 'ref'>);
   renderFooter?: ModalLayerRenderFunction;
   renderHeader?: ModalLayerRenderFunction;
   type?: ModalLayerType;

@@ -1,11 +1,11 @@
-import { NavigationItem } from "@/components/NavigationTree";
-import fs from "fs";
-import kebabCase from "lodash/kebabCase";
-import path from "path";
-import { DocumentationPageDescriptor } from "../pages";
+import { NavigationItem } from '@/components/NavigationTree';
+import { DocumentationPageDescriptor } from '@/pages/index';
+import fs from 'fs';
+import kebabCase from 'lodash/kebabCase';
+import path from 'path';
 
 export async function getServerSideProps() {
-  const docsDirectory = path.join(process.cwd(), "docs");
+  const docsDirectory = path.join(process.cwd(), 'docs');
 
   const docFiles = fs.readdirSync(docsDirectory);
 

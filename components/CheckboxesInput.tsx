@@ -2,19 +2,19 @@ import {
   AbstractMultiSelectInput,
   AbstractMultiSelectInputProps,
   BaseOptionShape,
-} from "@/components/AbstractMultiSelectInput";
-import { Box } from "@/components/Box";
-import { BoxProps } from "@/components/Box.types";
-import { Button } from "@/components/Button";
-import { Icon } from "@/components/Icon";
-import { IconName } from "@/components/Icon.types";
-import { forwardRef, MouseEvent, Ref } from "react";
+} from '@/components/AbstractMultiSelectInput';
+import { Box } from '@/components/Box';
+import { BoxProps } from '@/components/Box.types';
+import { Button } from '@/components/Button';
+import { Icon } from '@/components/Icon';
+import { IconName } from '@/components/Icon.types';
+import { forwardRef, MouseEvent, Ref } from 'react';
 
 type CheckboxesOrRadioInputProps<
   T extends BaseOptionShape,
   IsMultiValue extends boolean
-> = Omit<BoxProps<"div">, "children" | "ref"> &
-  Omit<AbstractMultiSelectInputProps<T, IsMultiValue>, "renderOptions"> & {
+> = Omit<BoxProps, 'children' | 'ref'> &
+  Omit<AbstractMultiSelectInputProps<T, IsMultiValue>, 'renderOptions'> & {
     iconWhenSelected: IconName;
     iconWhenNotSelected: IconName;
   };
@@ -49,9 +49,9 @@ const CheckboxesOrRadioInput = forwardRef(
                 }}
               >
                 <Icon
-                  color={isSelected ? "brand" : "textFaded"}
+                  color={isSelected ? 'brand' : 'textFaded'}
                   name={isSelected ? iconWhenSelected : iconWhenNotSelected}
-                  variant={isSelected ? "solid" : undefined}
+                  variant={isSelected ? 'solid' : undefined}
                 />
                 {option.label}
               </Button>
@@ -64,7 +64,7 @@ const CheckboxesOrRadioInput = forwardRef(
   )
 );
 
-CheckboxesOrRadioInput.displayName = "CheckboxesOrRadiosInput";
+CheckboxesOrRadioInput.displayName = 'CheckboxesOrRadiosInput';
 
 const CheckboxesInput = forwardRef(
   <T extends BaseOptionShape>(
@@ -72,7 +72,7 @@ const CheckboxesInput = forwardRef(
       ...otherProps
     }: Omit<
       CheckboxesOrRadioInputProps<T, true>,
-      "isMultiValue" | "iconWhenNotSelected" | "iconWhenSelected"
+      'isMultiValue' | 'iconWhenNotSelected' | 'iconWhenSelected'
     >,
     ref: Ref<HTMLLabelElement>
   ): JSX.Element => (
@@ -86,7 +86,7 @@ const CheckboxesInput = forwardRef(
   )
 );
 
-CheckboxesInput.displayName = "CheckboxesInput";
+CheckboxesInput.displayName = 'CheckboxesInput';
 
 const RadioInput = forwardRef(
   <T extends BaseOptionShape>(
@@ -94,7 +94,7 @@ const RadioInput = forwardRef(
       ...otherProps
     }: Omit<
       CheckboxesOrRadioInputProps<T, false>,
-      "isMultiValue" | "iconWhenNotSelected" | "iconWhenSelected"
+      'isMultiValue' | 'iconWhenNotSelected' | 'iconWhenSelected'
     >,
     ref: Ref<HTMLLabelElement>
   ): JSX.Element => (
@@ -108,6 +108,6 @@ const RadioInput = forwardRef(
   )
 );
 
-RadioInput.displayName = "RadioInput";
+RadioInput.displayName = 'RadioInput';
 
 export { CheckboxesInput, RadioInput };
