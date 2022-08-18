@@ -1,9 +1,9 @@
-import { Box } from '@/components/Box';
-import { BoxProps } from '@/components/Box.types';
 import { CodeSnippet } from '@/components/CodeSnippet';
 import { Markdown } from '@/components/Markdown';
-import { Text } from '@/components/Text';
 import { DocumentationSectionDescriptor } from '@/pages/index';
+import { Box } from '@/react-handy-box/components/Box';
+import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { Text } from '@/react-handy-box/components/Text';
 import kebabCase from 'lodash/kebabCase';
 import { forwardRef, Ref } from 'react';
 import reactElementToJSXString from 'react-element-to-jsx-string';

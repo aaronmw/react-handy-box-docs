@@ -1,6 +1,6 @@
-import { Button } from '@/components/Button';
-import { ModalWindow } from '@/components/ModalWindow';
 import { DocumentationPageDescriptor } from '@/pages/index';
+import { Button } from '@/react-handy-box/components/Button';
+import { ModalWindow } from '@/react-handy-box/components/ModalWindow';
 import range from 'lodash/range';
 import { useState } from 'react';
 

@@ -1,11 +1,11 @@
-import { Tooltip } from "@/components/Tooltip";
-import { DocumentationPageDescriptor } from "../pages";
+import { Tooltip } from '@/react-handy-box/components/Tooltip';
+import { DocumentationPageDescriptor } from '../pages';
 
 const docs: DocumentationPageDescriptor = {
-  title: "Tooltip",
+  title: 'Tooltip',
   demos: [
     {
-      title: "Usage",
+      title: 'Usage',
       renderDemo: () => <Tooltip content="I'm a tooltip!">Hover me.</Tooltip>,
       renderSnippet: true,
     },

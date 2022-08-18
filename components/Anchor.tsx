@@ -1,5 +1,5 @@
-import { Box } from '@/components/Box';
-import { BoxProps } from '@/components/Box.types';
+import { Box } from '@/react-handy-box/components/Box';
+import { BoxProps } from '@/react-handy-box/components/Box.types';
 import Link from 'next/link';
 import { forwardRef, Ref } from 'react';
 

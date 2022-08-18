@@ -1,12 +1,12 @@
-import { Box } from '@/components/Box';
-import { BoxProps } from '@/components/Box.types';
 import { Demo } from '@/components/Demo';
-import { GlobalStyles } from '@/components/GlobalStyles';
-import { HandyProviders } from '@/components/HandyProviders';
 import { Markdown } from '@/components/Markdown';
 import { NavigationItem, NavigationTree } from '@/components/NavigationTree';
-import { Text } from '@/components/Text';
-import { select } from '@/utilities/select';
+import { Box } from '@/react-handy-box/components/Box';
+import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { GlobalStyles } from '@/react-handy-box/components/GlobalStyles';
+import { HandyProviders } from '@/react-handy-box/components/HandyProviders';
+import { Text } from '@/react-handy-box/components/Text';
+import { select } from '@/react-handy-box/utilities/select';
 import startCase from 'lodash/startCase';
 import type { NextPage } from 'next';
 import Head from 'next/head';

@@ -1,0 +1,23 @@
+import { Box } from '@/react-handy-box/components/Box';
+import { IconProps } from '@/react-handy-box/components/Icon.types';
+import { forwardRef, Ref } from 'react';
+
+const Icon = forwardRef(
+  (
+    { name = 'face-sad-sweat', variant = 'regular', ...props }: IconProps,
+    ref: Ref<HTMLSpanElement>
+  ) => (
+    <Box
+      as="span"
+      className={`fa-${variant} fa-${name} fa-1x fa-fw`}
+      display="inline-block"
+      key={`${name}-${variant}`}
+      ref={ref}
+      {...props}
+    />
+  )
+);
+
+Icon.displayName = 'Icon';
+
+export { Icon };

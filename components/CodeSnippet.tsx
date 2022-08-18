@@ -1,5 +1,5 @@
-import { Box } from '@/components/Box';
-import { BoxProps } from '@/components/Box.types';
+import { Box } from '@/react-handy-box/components/Box';
+import { BoxProps } from '@/react-handy-box/components/Box.types';
 import { colorPalette } from '@/tokens/colorPalette';
 import { trimEnd } from 'lodash';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';

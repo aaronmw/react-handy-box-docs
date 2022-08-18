@@ -1,4 +1,4 @@
-import { BoxProps } from '@/components/Box.types';
+import { BoxProps } from '@/react-handy-box/components/Box.types';
 
 const inputStyles: BoxProps<'input'> = {
   backgroundColor: 'white',

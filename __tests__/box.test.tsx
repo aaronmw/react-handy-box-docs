@@ -1,167 +1,167 @@
 import {
   nestedSelectorPropAliases,
   propsToStyleObject,
-} from "@/components/Box";
-import { BoxProps } from "@/components/Box.types";
-import { borderRadii } from "@/tokens/borderRadii";
-import { borderStyles } from "@/tokens/borderStyles";
-import { breakpoints } from "@/tokens/breakpoints";
-import { colorPalette } from "@/tokens/colorPalette";
-import { transitionDurations } from "@/tokens/transitionDurations";
-import { zIndices } from "@/tokens/zIndices";
-import { CSSObject } from "styled-components";
+} from '@/react-handy-box/components/Box';
+import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { borderRadii } from '@/tokens/borderRadii';
+import { borderStyles } from '@/tokens/borderStyles';
+import { breakpoints } from '@/tokens/breakpoints';
+import { colorPalette } from '@/tokens/colorPalette';
+import { transitionDurations } from '@/tokens/transitionDurations';
+import { zIndices } from '@/tokens/zIndices';
+import { CSSObject } from 'styled-components';
 
 type TestDescriptor = [
   description: string,
-  tests: Array<[it: string, given: BoxProps<"div">, expect: CSSObject]>
+  tests: Array<[it: string, given: BoxProps<'div'>, expect: CSSObject]>
 ];
 
 const tests: Array<TestDescriptor> = [
   [
-    "Box Tests",
+    'Box Tests',
     [
       [
-        "resolves swatch name",
+        'resolves swatch name',
         {
-          backgroundColor: "black",
+          backgroundColor: 'black',
         },
         {
           backgroundColor: colorPalette.black,
         },
       ],
       [
-        "adjusts lightness value of semantic swatch",
+        'adjusts lightness value of semantic swatch',
         {
-          color: "shaded",
+          color: 'shaded',
           colorLightness: 200,
         },
         {
-          color: colorPalette["purple--200--40"],
+          color: colorPalette['purple--200--40'],
         },
       ],
       [
-        "adjusts alpha value of semantic swatch",
+        'adjusts alpha value of semantic swatch',
         {
-          color: "shaded",
+          color: 'shaded',
           colorOpacity: 100,
         },
         {
-          color: colorPalette["purple--100"],
+          color: colorPalette['purple--100'],
         },
       ],
       [
-        "adjusts lightness value of default text color",
+        'adjusts lightness value of default text color',
         {
           colorLightness: 200,
         },
         {
-          color: colorPalette["blue--200"],
+          color: colorPalette['blue--200'],
         },
       ],
       [
-        "adjusts a swatch to absolute lightness value",
+        'adjusts a swatch to absolute lightness value',
         {
-          backgroundColor: "orange--500",
+          backgroundColor: 'orange--500',
           backgroundColorLightness: 200,
         },
         {
-          backgroundColor: colorPalette["orange--200"],
+          backgroundColor: colorPalette['orange--200'],
         },
       ],
       [
-        "adjusts a swatch to relative lightness value",
+        'adjusts a swatch to relative lightness value',
         {
-          backgroundColor: "orange--500",
-          backgroundColorLightness: "+200",
+          backgroundColor: 'orange--500',
+          backgroundColorLightness: '+200',
         },
         {
-          backgroundColor: colorPalette["orange--700"],
-        },
-      ],
-      [
-        "adjusts a swatch to safest relative lightness value",
-        {
-          backgroundColor: "orange--500",
-          backgroundColorLightness: "+700",
-        },
-        {
-          backgroundColor: colorPalette["orange--700"],
+          backgroundColor: colorPalette['orange--700'],
         },
       ],
       [
-        "adjusts a swatch to relative alpha value",
+        'adjusts a swatch to safest relative lightness value',
         {
-          backgroundColor: "orange--500",
-          backgroundColorOpacity: "-10",
+          backgroundColor: 'orange--500',
+          backgroundColorLightness: '+700',
         },
         {
-          backgroundColor: colorPalette["orange--500--90"],
+          backgroundColor: colorPalette['orange--700'],
         },
       ],
       [
-        "adjusts a swatch to absolute alpha value",
+        'adjusts a swatch to relative alpha value',
         {
-          backgroundColor: "orange--500",
+          backgroundColor: 'orange--500',
+          backgroundColorOpacity: '-10',
+        },
+        {
+          backgroundColor: colorPalette['orange--500--90'],
+        },
+      ],
+      [
+        'adjusts a swatch to absolute alpha value',
+        {
+          backgroundColor: 'orange--500',
           backgroundColorOpacity: 50,
         },
         {
-          backgroundColor: colorPalette["orange--500--50"],
+          backgroundColor: colorPalette['orange--500--50'],
         },
       ],
       [
-        "adjusts a swatch to both relative lightness and alpha",
+        'adjusts a swatch to both relative lightness and alpha',
         {
-          backgroundColor: "orange--500",
-          backgroundColorLightness: "-100",
-          backgroundColorOpacity: "-10",
+          backgroundColor: 'orange--500',
+          backgroundColorLightness: '-100',
+          backgroundColorOpacity: '-10',
         },
         {
-          backgroundColor: colorPalette["orange--400--90"],
+          backgroundColor: colorPalette['orange--400--90'],
         },
       ],
       [
-        "adjusts a swatch for border edge, no color specified",
+        'adjusts a swatch for border edge, no color specified',
         {
-          borderLeft: "normal",
-          borderLeftColorLightness: "+200",
+          borderLeft: 'normal',
+          borderLeftColorLightness: '+200',
         },
         {
-          borderLeftColor: colorPalette["gray--400"],
+          borderLeftColor: colorPalette['gray--400'],
           borderLeftStyle: borderStyles.normal.borderStyle as any,
           borderLeftWidth: borderStyles.normal.borderWidth,
         },
       ],
       [
-        "adjusts a swatch for border edge of specific color",
+        'adjusts a swatch for border edge of specific color',
         {
-          borderLeft: "normal",
-          borderLeftColor: "blue",
-          borderLeftColorLightness: "+200",
+          borderLeft: 'normal',
+          borderLeftColor: 'blue',
+          borderLeftColorLightness: '+200',
         },
         {
-          borderLeftColor: colorPalette["blue--600"],
+          borderLeftColor: colorPalette['blue--600'],
           borderLeftStyle: borderStyles.normal.borderStyle as any,
           borderLeftWidth: borderStyles.normal.borderWidth,
         },
       ],
       [
-        "adjusts a swatch for border edge of non-normal style",
+        'adjusts a swatch for border edge of non-normal style',
         {
-          borderLeft: "thick",
-          borderLeftColor: "blue",
-          borderLeftColorLightness: "+200",
+          borderLeft: 'thick',
+          borderLeftColor: 'blue',
+          borderLeftColorLightness: '+200',
         },
         {
-          borderLeftColor: colorPalette["blue--600"],
+          borderLeftColor: colorPalette['blue--600'],
           borderLeftStyle: borderStyles.thick.borderStyle as any,
           borderLeftWidth: borderStyles.thick.borderWidth,
         },
       ],
       [
-        "sets individual borders",
+        'sets individual borders',
         {
-          borderLeft: "hairline",
-          borderTop: "dashed",
+          borderLeft: 'hairline',
+          borderTop: 'dashed',
         },
         {
           borderLeftColor: colorPalette.border,
@@ -173,10 +173,10 @@ const tests: Array<TestDescriptor> = [
         },
       ],
       [
-        "sets border radii",
+        'sets border radii',
         {
-          borderRadius: "circle",
-          borderTopLeftRadius: "normal",
+          borderRadius: 'circle',
+          borderTopLeftRadius: 'normal',
         },
         {
           borderRadius: borderRadii.circle,
@@ -184,9 +184,9 @@ const tests: Array<TestDescriptor> = [
         },
       ],
       [
-        "sets aliased border radii",
+        'sets aliased border radii',
         {
-          borderTopRadius: "normal",
+          borderTopRadius: 'normal',
         },
         {
           borderTopRightRadius: borderRadii.normal,
@@ -196,52 +196,52 @@ const tests: Array<TestDescriptor> = [
       [
         'sets "implied" props',
         {
-          alignItems: "center",
+          alignItems: 'center',
         },
         {
-          alignItems: "center",
-          display: "flex",
-        },
-      ],
-      [
-        "sets padding shorthand",
-        {
-          padding: "normal",
-        },
-        {
-          padding: "var(--whiteSpace--normal)",
+          alignItems: 'center',
+          display: 'flex',
         },
       ],
       [
-        "sets padding when mixing shorthand and edge-specific",
+        'sets padding shorthand',
         {
-          padding: "normal",
-          paddingTop: "tight",
+          padding: 'normal',
         },
         {
-          padding: "var(--whiteSpace--normal)",
-          paddingTop: "var(--whiteSpace--tight)",
+          padding: 'var(--whiteSpace--normal)',
         },
       ],
       [
-        "sets padding via aliases",
+        'sets padding when mixing shorthand and edge-specific',
         {
-          paddingX: "normal",
-          paddingY: "tight",
+          padding: 'normal',
+          paddingTop: 'tight',
         },
         {
-          paddingBottom: "var(--whiteSpace--tight)",
-          paddingLeft: "var(--whiteSpace--normal)",
-          paddingRight: "var(--whiteSpace--normal)",
-          paddingTop: "var(--whiteSpace--tight)",
+          padding: 'var(--whiteSpace--normal)',
+          paddingTop: 'var(--whiteSpace--tight)',
         },
       ],
       [
-        "resolves propsOnHover",
+        'sets padding via aliases',
         {
-          color: "black",
+          paddingX: 'normal',
+          paddingY: 'tight',
+        },
+        {
+          paddingBottom: 'var(--whiteSpace--tight)',
+          paddingLeft: 'var(--whiteSpace--normal)',
+          paddingRight: 'var(--whiteSpace--normal)',
+          paddingTop: 'var(--whiteSpace--tight)',
+        },
+      ],
+      [
+        'resolves propsOnHover',
+        {
+          color: 'black',
           propsOnHover: {
-            color: "white",
+            color: 'white',
           },
         },
         {
@@ -252,12 +252,12 @@ const tests: Array<TestDescriptor> = [
         },
       ],
       [
-        "resolves propsForAfterElement",
+        'resolves propsForAfterElement',
         {
-          color: "white",
+          color: 'white',
           propsForAfterElement: {
-            backgroundColor: "black",
-            display: "block",
+            backgroundColor: 'black',
+            display: 'block',
           },
         },
         {
@@ -265,17 +265,17 @@ const tests: Array<TestDescriptor> = [
           [nestedSelectorPropAliases.propsForAfterElement]: {
             backgroundColor: colorPalette.black,
             content: '""',
-            display: "block",
+            display: 'block',
           },
         },
       ],
       [
-        "resolves propsForBeforeElement",
+        'resolves propsForBeforeElement',
         {
-          color: "black",
+          color: 'black',
           propsForBeforeElement: {
-            backgroundColor: "white",
-            display: "block",
+            backgroundColor: 'white',
+            display: 'block',
           },
         },
         {
@@ -283,16 +283,16 @@ const tests: Array<TestDescriptor> = [
           [nestedSelectorPropAliases.propsForBeforeElement]: {
             backgroundColor: colorPalette.white,
             content: '""',
-            display: "block",
+            display: 'block',
           },
         },
       ],
       [
-        "resolves propsForFirstElement",
+        'resolves propsForFirstElement',
         {
-          color: "black",
+          color: 'black',
           propsForFirstElement: {
-            color: "white",
+            color: 'white',
           },
         },
         {
@@ -303,29 +303,29 @@ const tests: Array<TestDescriptor> = [
         },
       ],
       [
-        "resolves propsForCustomSelector",
+        'resolves propsForCustomSelector',
         {
-          color: "black",
+          color: 'black',
           propsForCustomSelector: {
-            "&:hover": { color: "white" },
+            '&:hover': { color: 'white' },
           },
         },
         {
-          "color": colorPalette.black,
-          "&:hover": {
+          'color': colorPalette.black,
+          '&:hover': {
             color: colorPalette.white,
           },
         },
       ],
       [
-        "resolves responsive props (propsFor{breakpointName})",
+        'resolves responsive props (propsFor{breakpointName})',
         {
-          color: "black",
+          color: 'black',
           propsForTabletOrLarger: {
-            color: "white",
+            color: 'white',
           },
           propsForPhoneOnly: {
-            color: "white",
+            color: 'white',
           },
         },
         {
@@ -339,47 +339,47 @@ const tests: Array<TestDescriptor> = [
         },
       ],
       [
-        "resolves transitionDuration and sets other transition props",
+        'resolves transitionDuration and sets other transition props',
         {
-          transitionDuration: "short",
+          transitionDuration: 'short',
         },
         {
           transitionDuration: transitionDurations.short,
-          transitionProperty: "all",
-          transitionTimingFunction: "ease",
+          transitionProperty: 'all',
+          transitionTimingFunction: 'ease',
         },
       ],
       [
-        "resolves transitionDuration and sets unspecified transition props",
+        'resolves transitionDuration and sets unspecified transition props',
         {
-          transitionDuration: "short",
-          transitionTimingFunction: "ease-in-out",
+          transitionDuration: 'short',
+          transitionTimingFunction: 'ease-in-out',
         },
         {
           transitionDuration: transitionDurations.short,
-          transitionProperty: "all",
-          transitionTimingFunction: "ease-in-out",
+          transitionProperty: 'all',
+          transitionTimingFunction: 'ease-in-out',
         },
       ],
       [
-        "resolves transitionProperty list",
+        'resolves transitionProperty list',
         {
-          transitionProperty: ["color", "opacity"],
+          transitionProperty: ['color', 'opacity'],
         },
         {
           transitionDuration: transitionDurations.normal,
-          transitionProperty: "color, opacity",
-          transitionTimingFunction: "ease",
+          transitionProperty: 'color, opacity',
+          transitionTimingFunction: 'ease',
         },
       ],
       [
-        "resolves zIndex and sets pos: relative",
+        'resolves zIndex and sets pos: relative',
         {
-          zIndex: "1--stickyElements",
+          zIndex: '1--stickyElements',
         },
         {
-          position: "relative",
-          zIndex: zIndices["1--stickyElements"],
+          position: 'relative',
+          zIndex: zIndices['1--stickyElements'],
         },
       ],
     ],

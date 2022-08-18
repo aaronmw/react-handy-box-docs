@@ -1,8 +1,8 @@
 import { Anchor } from '@/components/Anchor';
-import { Box } from '@/components/Box';
-import { BoxProps } from '@/components/Box.types';
-import { Icon } from '@/components/Icon';
 import { useLinkActivity } from '@/hooks/useLinkActivity';
+import { Box } from '@/react-handy-box/components/Box';
+import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { Icon } from '@/react-handy-box/components/Icon';
 import { forwardRef, Ref } from 'react';
 
 type NavigationItem = {

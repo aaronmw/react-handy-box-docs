@@ -1,4 +1,4 @@
-import { BoxProps } from '@/components/Box.types';
+import { BoxProps } from '@/react-handy-box/components/Box.types';
 
 type ButtonPropGenerator<TagName extends 'a' | 'button' = 'button'> = (
   props: BoxProps<TagName>

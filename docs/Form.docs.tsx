@@ -1,22 +1,25 @@
-import { Box } from "@/components/Box";
-import { Button } from "@/components/Button";
-import { CheckboxesInput, RadioInput } from "@/components/CheckboxesInput";
-import { Form } from "@/components/Form";
-import { MultiSelectInput } from "@/components/MultiSelectInput";
-import { TextInput } from "@/components/TextInput";
-import { DocumentationPageDescriptor } from "../pages";
+import { Box } from '@/react-handy-box/components/Box';
+import { Button } from '@/react-handy-box/components/Button';
+import {
+  CheckboxesInput,
+  RadioInput,
+} from '@/react-handy-box/components/CheckboxesInput';
+import { Form } from '@/react-handy-box/components/Form';
+import { MultiSelectInput } from '@/react-handy-box/components/MultiSelectInput';
+import { TextInput } from '@/react-handy-box/components/TextInput';
+import { DocumentationPageDescriptor } from '../pages';
 
 const dummyOptions = [
-  { id: 1, label: "Apples", value: "apples" },
-  { id: 2, label: "Bananas", value: "bananas" },
-  { id: 3, label: "Cherries", value: "cherries" },
+  { id: 1, label: 'Apples', value: 'apples' },
+  { id: 2, label: 'Bananas', value: 'bananas' },
+  { id: 3, label: 'Cherries', value: 'cherries' },
 ];
 
 const docs: DocumentationPageDescriptor = {
-  title: "Form",
+  title: 'Form',
   demos: [
     {
-      title: "Usage",
+      title: 'Usage',
       renderDemo: () => (
         <Form
           rowGap="normal"

@@ -1,13 +1,13 @@
-import { Box } from '@/components/Box';
-import { BoxProps, Color } from '@/components/Box.types';
 import { Markdown } from '@/components/Markdown';
 import { DocumentationPageDescriptor } from '@/pages/index';
-import { toJSXAttributeValue } from '@/utilities/toJSXAttributeValue';
+import { Box } from '@/react-handy-box/components/Box';
+import { BoxProps, Color } from '@/react-handy-box/components/Box.types';
 import {
   coreColorDefinitions,
   semanticSwatchAliases,
   utilityColors,
-} from 'tokens/colorPalette';
+} from '@/tokens/colorPalette';
+import { toJSXAttributeValue } from '@/utilities/toJSXAttributeValue';
 
 const swatchDescriptions = {
   'black': 'Handy to have around, sometimes.',
