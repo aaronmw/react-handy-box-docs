@@ -15,8 +15,8 @@ const ElasticTextInput = forwardRef(
     ref: Ref<HTMLLabelElement>
   ): JSX.Element => {
     const ghostElementRef = useRef<HTMLDivElement>(null);
-    const textareaElementRef = useRef<HTMLTextAreaElement>(null);
-    const multipleRefs = useMultipleRefs(ref, textareaElementRef);
+    const labelElementRef = useRef<HTMLLabelElement>(null);
+    const multipleRefs = useMultipleRefs(ref, labelElementRef);
 
     useKeyboardShortcuts(
       {
@@ -27,12 +27,12 @@ const ElasticTextInput = forwardRef(
           );
         },
       },
-      textareaElementRef
+      labelElementRef
     );
 
     useEffect(() => {
       const ghostElement = ghostElementRef.current;
-      const textareaElement = textareaElementRef.current;
+      const textareaElement = labelElementRef.current;
 
       if (!textareaElement || !ghostElement) {
         return;
@@ -71,7 +71,7 @@ const ElasticTextInput = forwardRef(
         }}
       >
         <TextInput
-          ref={multipleRefs}
+          ref={multipleRefs as any}
           styles={{
             overflow: 'hidden',
             ...styles,

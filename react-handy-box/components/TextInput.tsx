@@ -41,8 +41,6 @@ const TextInput = forwardRef(
   ): JSX.Element => {
     const inputElementRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
 
-    const multipleRefs = useMultipleRefs(ref, inputElementRef);
-
     const { propsForInput, propsForLabel } = useFormField({
       disabled,
       isRequired,
@@ -60,30 +58,21 @@ const TextInput = forwardRef(
       event.target.select();
     };
 
-    const boxProps = {
-      ref: multipleRefs,
-      styles: { ...inputStyles, ...styles },
-      onFocus: handleFocus,
-      ...propsForInput,
-      ...otherProps,
-    };
-
     return (
       <LabeledInput
         label={label}
         labelLocation={labelLocation}
+        ref={ref}
         {...propsForLabel}
       >
         <Box
           as={type === 'textarea' ? 'textarea' : 'input'}
-          ref={multipleRefs}
+          ref={inputElementRef as any}
           styles={inputStyles}
           type={type === 'textarea' ? undefined : type ?? 'text'}
           onFocus={handleFocus}
           {...propsForInput}
-          {...(type === 'textarea'
-            ? (otherProps as BoxProps<'textarea'>)
-            : (otherProps as BoxProps<'input'>))}
+          {...(otherProps as any)}
         />
       </LabeledInput>
     );
