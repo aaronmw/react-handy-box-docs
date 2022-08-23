@@ -96,19 +96,25 @@ const stylesForHiddenFocusableInput = {
   opacity: 0.01,
 } as CSSProperties;
 
-type FocusTrapProps = Omit<BoxProps, 'disabled' | 'ref'> & {
+type FocusTrapProps = Omit<BoxProps, 'disabled'> & {
   disabled?: boolean;
   enforceOnBlur?: boolean;
 };
 
 const FocusTrap = forwardRef(
   (
-    { children, disabled, enforceOnBlur = true, ...otherProps }: FocusTrapProps,
-    outerRef: Ref<HTMLElement>
+    {
+      children,
+      disabled,
+      enforceOnBlur = true,
+      styles,
+      ...otherProps
+    }: FocusTrapProps,
+    ref: Ref<HTMLDivElement>
   ) => {
     const focusTrappedElementRef = useRef<HTMLElement>();
 
-    const multipleRefs = useMultipleRefs(outerRef, focusTrappedElementRef);
+    const multipleRefs = useMultipleRefs(ref, focusTrappedElementRef);
 
     const memoizedKeyMap = useMemo<KeyMap>(() => {
       const keysToListenFor = ['up', 'down'];
@@ -180,7 +186,14 @@ const FocusTrap = forwardRef(
     }, [children]);
 
     return (
-      <Box position="relative" ref={multipleRefs} {...otherProps}>
+      <Box
+        ref={multipleRefs}
+        styles={{
+          position: 'relative',
+          ...styles,
+        }}
+        {...otherProps}
+      >
         <input
           data-is-focus-trap="true"
           type="text"

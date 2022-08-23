@@ -29,7 +29,7 @@ export type AbstractMultiSelectInputRenderProps<T extends BaseOptionShape> = {
 export type AbstractMultiSelectInputProps<
   T extends BaseOptionShape,
   IsMultiValue extends boolean
-> = Omit<BoxProps, 'children' | 'defaultValue' | 'ref'> & {
+> = {
   defaultValue?: IsMultiValue extends true ? Array<string> : string;
   isMultiValue: IsMultiValue;
   name: string;
@@ -37,9 +37,9 @@ export type AbstractMultiSelectInputProps<
   renderOptions: (
     props: AbstractMultiSelectInputRenderProps<T>
   ) => JSX.Element | Array<JSX.Element>;
-} & CommonFormInputProps;
+} & CommonFormInputProps &
+  BoxProps<'label'>;
 
-// eslint-disable-next-line react/display-name
 const AbstractMultiSelectInput = forwardRef(
   <T extends BaseOptionShape, IsMultiValue extends boolean>(
     {
@@ -145,8 +145,8 @@ const AbstractMultiSelectInput = forwardRef(
             options: options.map((option) => ({
               option,
               propsForOption: {
-                cursor: 'pointer',
                 key: option.id,
+                styles: { cursor: 'pointer' },
                 tabIndex: 0,
                 onBlur: propsForInput.onBlur,
                 onClick: handleClickOption.bind(null, option),
@@ -167,12 +167,8 @@ const AbstractMultiSelectInput = forwardRef(
       </LabeledInput>
     );
   }
-) as <T extends BaseOptionShape, IsMultiValue extends boolean>(
-  props: AbstractMultiSelectInputProps<T, IsMultiValue> & {
-    ref?: Ref<HTMLLabelElement>;
-  }
-) => JSX.Element;
+);
 
-(AbstractMultiSelectInput as any).displayName = 'AbstractMultiSelectInput';
+AbstractMultiSelectInput.displayName = 'AbstractMultiSelectInput';
 
 export { AbstractMultiSelectInput };

@@ -9,15 +9,15 @@ type BaseRowShape = {
 };
 
 export type ColumnDescriptor<T extends BaseRowShape, K extends keyof T> = {
-  cellProps?: Omit<BoxProps<'td'>, 'ref'>;
   columnKey: K;
   customSortFunction?: (args?: {
     rowObjects?: Array<T>;
     sortDirection?: SortDirection;
   }) => Array<T>;
-  label: ReactNode;
   initialSortDirection?: SortDirection;
   isSortable?: boolean;
+  label: ReactNode;
+  propsForCell?: BoxProps<'td'>;
 };
 
 type SortDirection = 'ASC' | 'DESC';
@@ -31,13 +31,13 @@ type TableProps<
   rowObjects: Array<T>;
 };
 
-// eslint-disable-next-line react/display-name
 const Table = forwardRef(
   <T extends BaseRowShape, K extends keyof T>(
     {
       columnDescriptors,
       initialSortedColumnKey,
       rowObjects,
+      styles,
       ...otherProps
     }: TableProps<T, K>,
     ref: Ref<HTMLTableElement>
@@ -102,15 +102,17 @@ const Table = forwardRef(
     return (
       <Box
         as="table"
-        backgroundColor="white"
-        border="normal"
-        borderColor="white"
-        borderRadius="small"
-        cellPadding={0}
-        cellSpacing={0}
-        overflow="hidden"
         ref={ref}
-        width="100%"
+        styles={{
+          backgroundColor: 'white',
+          border: 'normal',
+          borderColor: 'white',
+          borderCollapse: 'collapse',
+          borderRadius: 'small',
+          overflow: 'hidden',
+          width: '100%',
+          ...styles,
+        }}
         {...otherProps}
       >
         <Box as="thead">
@@ -118,17 +120,24 @@ const Table = forwardRef(
             {columnDescriptors.map((columnDescriptor) => (
               <Box
                 as="th"
-                borderBottom="hairline"
-                cursor="pointer"
                 key={String(columnDescriptor.columnKey)}
-                paddingX="tight"
-                paddingY="xxtight"
-                textAlign={columnDescriptor.cellProps?.textAlign}
+                styles={{
+                  borderBottom: 'hairline',
+                  cursor: 'pointer',
+                  paddingX: 'tight',
+                  paddingY: 'xxtight',
+                  textAlign: columnDescriptor.propsForCell?.styles?.textAlign,
+                }}
                 onClick={
                   handleClickColumnHeading.bind(null, columnDescriptor) as any
                 }
               >
-                <Text color="textFaded" variant="label">
+                <Text
+                  styles={{
+                    color: 'textFaded',
+                  }}
+                  variant="label"
+                >
                   {columnDescriptor.label}
                 </Text>
               </Box>
@@ -140,19 +149,24 @@ const Table = forwardRef(
           {sortedAndFilteredRowObjects.map((rowObject, index) => (
             <Box
               as="tr"
-              backgroundColor={index % 2 === 0 ? 'shaded' : undefined}
               key={rowObject.id}
-              propsOnHover={{
-                backgroundColor: 'shaded',
+              styles={{
+                backgroundColor: index % 2 === 0 ? 'shaded' : undefined,
+                propsOnHover: {
+                  backgroundColor: 'shaded',
+                },
               }}
             >
               {columnDescriptors.map((columnDescriptor) => (
                 <Box
                   as="td"
                   key={String(columnDescriptor.columnKey)}
-                  paddingX="tight"
-                  paddingY="xxtight"
-                  {...columnDescriptor?.cellProps}
+                  {...columnDescriptor?.propsForCell}
+                  styles={{
+                    paddingX: 'tight',
+                    paddingY: 'xxtight',
+                    ...columnDescriptor?.propsForCell?.styles,
+                  }}
                 >
                   {rowObject[columnDescriptor.columnKey] as any}
                 </Box>
@@ -163,10 +177,8 @@ const Table = forwardRef(
       </Box>
     );
   }
-) as <T extends BaseRowShape, K extends keyof T>(
-  props: TableProps<T, K>
-) => JSX.Element;
+);
 
-(Table as any).displayName = 'Table';
+Table.displayName = 'Table';
 
 export { Table };

@@ -14,7 +14,6 @@ import {
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
 import { zIndices } from '@/tokens/zIndices';
 import last from 'lodash/last';
-import omit from 'lodash/omit';
 import { ExtendedKeyboardEvent } from 'mousetrap';
 import {
   createContext,
@@ -77,22 +76,28 @@ const ModalLayerProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const BackdroppedBox = ({ children, ...otherProps }: BoxProps) => {
-  return (
+const BackdroppedBox = forwardRef(
+  ({ children, styles, ...otherProps }: BoxProps, ref: Ref<HTMLDivElement>) => (
     <>
       <Box
-        height="100vh"
-        left={0}
-        position="fixed"
-        top={0}
-        width="100vw"
+        ref={ref}
+        styles={{
+          height: '100vh',
+          left: 0,
+          position: 'fixed',
+          top: 0,
+          width: '100vw',
+          ...styles,
+        }}
         {...otherProps}
       />
 
       {children}
     </>
-  );
-};
+  )
+);
+
+BackdroppedBox.displayName = 'BackdroppedBox';
 
 const ModalLayer = forwardRef(
   (
@@ -104,6 +109,7 @@ const ModalLayer = forwardRef(
       initialIsOpen = false,
       isOpen = initialIsOpen,
       renderTrigger,
+      styles,
       type,
       onBeforeClose,
       onBeforeOpen,
@@ -111,7 +117,7 @@ const ModalLayer = forwardRef(
       onOpen,
       ...otherProps
     }: ModalLayerProps,
-    outerRef: Ref<HTMLDivElement>
+    ref: Ref<HTMLDivElement>
   ) => {
     const [desiredOpenState, setDesiredOpenState] = useState(isOpen);
 
@@ -126,7 +132,7 @@ const ModalLayer = forwardRef(
 
     const triggerElementRef = useRef<HTMLButtonElement | null>(null);
 
-    const multipleRefs = useMultipleRefs(outerRef, setModalLayerElement);
+    const multipleRefs = useMultipleRefs(ref, setModalLayerElement);
 
     const { modalLayerStack } = useContext(ModalLayerContext);
 
@@ -244,7 +250,9 @@ const ModalLayer = forwardRef(
       }
     };
 
-    const backdropOpacity = opacity ? propsForBackdrop?.opacity ?? opacity : 0;
+    const backdropOpacity = opacity
+      ? propsForBackdrop?.styles?.opacity ?? opacity
+      : 0;
 
     const zIndex = zIndices['10--modalWindows'] + modalLayerStackIndex;
 
@@ -254,12 +262,15 @@ const ModalLayer = forwardRef(
         {internalOpenState !== 'closed' &&
           createPortal(
             <BackdroppedBox
-              cursor="default"
-              opacity={backdropOpacity}
-              pointerEvents={disableBackdropClick ? 'none' : 'all'}
-              transitionProperty="opacity"
-              zIndex={zIndex - 1}
-              {...omit(propsForBackdrop, 'opacity')}
+              {...propsForBackdrop}
+              styles={{
+                cursor: 'default',
+                opacity: backdropOpacity,
+                pointerEvents: disableBackdropClick ? 'none' : 'all',
+                transitionProperty: 'opacity',
+                zIndex: zIndex - 1,
+                ...propsForBackdrop?.styles,
+              }}
               onClick={handleClickBackdrop}
             >
               <FocusTrap
@@ -268,12 +279,15 @@ const ModalLayer = forwardRef(
                   disableFocusTrap ||
                     ['closing', 'closed'].includes(internalOpenState)
                 )}
-                opacity={opacity}
                 ref={multipleRefs}
                 role="dialog"
                 tabIndex={0}
-                transitionProperty="opacity"
-                zIndex={zIndex}
+                styles={{
+                  opacity,
+                  transitionProperty: 'opacity',
+                  zIndex,
+                  ...styles,
+                }}
                 onTransitionEnd={handleTransitionEnd}
                 {...otherProps}
               >

@@ -2,7 +2,7 @@ import { Box } from '@/react-handy-box/components/Box';
 import { BoxProps } from '@/react-handy-box/components/Box.types';
 import { forwardRef, ReactNode, Ref } from 'react';
 
-export type LoadableBoxProps = Omit<BoxProps, 'ref'> & {
+export type LoadableBoxProps = BoxProps & {
   isLoading: boolean;
   loadingMessage?: ReactNode;
   unmountWhileLoading?: boolean;
@@ -14,7 +14,7 @@ const loadingProps = {
   justifyContent: 'center',
   opacity: 0.5,
   width: '100%',
-};
+} as const;
 
 const LoadableBox = forwardRef(
   (
@@ -22,31 +22,37 @@ const LoadableBox = forwardRef(
       children,
       isLoading,
       loadingMessage = 'Loading...',
+      styles,
       unmountWhileLoading = true,
-      ...props
+      ...otherProps
     }: LoadableBoxProps,
     ref: Ref<HTMLDivElement>
   ) => (
     <Box
-      opacity={isLoading ? loadingProps.opacity : 1}
-      position="relative"
       ref={ref}
-      transitionDuration="long"
-      transitionProperty="opacity"
-      {...((isLoading ? loadingProps : {}) as BoxProps)}
-      {...props}
+      styles={{
+        opacity: isLoading ? loadingProps.opacity : 1,
+        position: 'relative',
+        transitionDuration: 'long',
+        transitionProperty: 'opacity',
+        ...styles,
+      }}
+      {...(isLoading ? loadingProps : {})}
+      {...otherProps}
     >
       {isLoading && (
         <Box
-          alignItems="center"
-          backgroundColor="shaded"
-          height="100%"
-          justifyContent="center"
-          left={0}
-          position="absolute"
-          top={0}
-          width="100%"
-          zIndex="1000--maximum"
+          styles={{
+            alignItems: 'center',
+            backgroundColor: 'shaded',
+            height: '100%',
+            justifyContent: 'center',
+            left: 0,
+            position: 'absolute',
+            top: 0,
+            width: '100%',
+            zIndex: '1000--maximum',
+          }}
         >
           {loadingMessage}
         </Box>

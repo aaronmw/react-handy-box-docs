@@ -45,17 +45,18 @@ const ModalWindow = forwardRef(
       propsForForm,
       renderFooter,
       renderHeader,
+      styles,
       type = 'window',
       variant = 'normal',
       ...otherProps
     }: ModalWindowProps,
-    outerRef: Ref<HTMLElement>
+    ref: Ref<HTMLDivElement>
   ) => {
     const { modalLayerStack } = useContext(ModalLayerContext);
 
     const innerRef = useRef<HTMLElement>(null);
 
-    const multipleRefs = useMultipleRefs(outerRef, innerRef);
+    const multipleRefs = useMultipleRefs(ref, innerRef);
 
     const { addDOMWatcher, removeDOMWatcher } = useDOMWatcher();
 
@@ -93,9 +94,11 @@ const ModalWindow = forwardRef(
     ]);
 
     const propsForBackdrop = {
-      ...(isLowestModalWindowInStack ? { backgroundColor: 'shadow' } : {}),
-      ...(disableBackdropClick === true ? { pointerEvents: 'none' } : {}),
-    } as Omit<BoxProps, 'ref'>;
+      styles: {
+        ...(isLowestModalWindowInStack ? { backgroundColor: 'shadow' } : {}),
+        ...(disableBackdropClick === true ? { pointerEvents: 'none' } : {}),
+      },
+    } as BoxProps;
 
     const WrapperComponent = propsForForm ? Form : Box;
 
@@ -105,94 +108,116 @@ const ModalWindow = forwardRef(
           aria-describedby="modalWindowContent"
           aria-labelledby="modalWindowTitle"
           propsForBackdrop={propsForBackdrop}
-          backgroundColor="white"
-          border="normal"
-          borderRadius="normal"
-          boxShadow="normal"
-          display="flex"
-          left="50%"
-          maxHeight={`calc(100vh - ${whiteSpacesAsCSSVariables.normal} * 2)`}
-          maxWidth={`calc(100vw - ${whiteSpacesAsCSSVariables.normal} * 2)`}
-          position="fixed"
           ref={multipleRefs}
-          top="50%"
-          transform="translate(-50%, -50%)"
-          transitionProperty={[
-            'filter',
-            'margin-left',
-            'margin-top',
-            'opacity',
-            'transform',
-          ]}
+          styles={{
+            backgroundColor: 'white',
+            border: 'normal',
+            borderRadius: 'normal',
+            boxShadow: 'normal',
+            display: 'flex',
+            left: '50%',
+            maxHeight: `calc(100vh - ${whiteSpacesAsCSSVariables.normal} * 2)`,
+            maxWidth: `calc(100vw - ${whiteSpacesAsCSSVariables.normal} * 2)`,
+            position: 'fixed',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+            transitionProperty: [
+              'filter',
+              'margin-left',
+              'margin-top',
+              'opacity',
+              'transform',
+            ],
+            ...variantPropMap[variant],
+            ...styles,
+          }}
           type={type}
-          {...variantPropMap[variant]}
           {...(otherProps as any)}
         >
-          {(renderProps) => (
-            <WrapperComponent
-              alignItems="stretch"
-              display="flex"
-              flexDirection="column"
-              flexGrow={1}
-              flexShrink={1}
-              justifyContent="stretch"
-              {...((typeof propsForForm === 'function'
+          {(renderProps) => {
+            const resolvedPropsForForm =
+              (typeof propsForForm === 'function'
                 ? propsForForm(renderProps)
-                : propsForForm) ?? {})}
-            >
-              <Box
-                alignSelf="flex-end"
-                position="absolute"
-                top="tight"
-                right="tight"
-                zIndex="1--stickyElements"
+                : propsForForm) ?? {};
+
+            return (
+              <WrapperComponent
+                styles={{
+                  alignItems: 'stretch',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  flexGrow: 1,
+                  flexShrink: 1,
+                  justifyContent: 'stretch',
+                  ...resolvedPropsForForm.styles,
+                }}
+                {...resolvedPropsForForm}
               >
-                <Button
-                  aria-label="Close Window"
-                  variant="iconOnly"
-                  onClick={(event: MouseEvent) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    renderProps.closeModal();
+                <Box
+                  styles={{
+                    alignSelf: 'flex-end',
+                    position: 'absolute',
+                    right: 'tight',
+                    top: 'tight',
+                    zIndex: '1--stickyElements',
                   }}
                 >
-                  <Icon name="xmark" />
-                </Button>
-              </Box>
+                  <Button
+                    aria-label="Close Window"
+                    variant="iconOnly"
+                    onClick={(event: MouseEvent) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      renderProps.closeModal();
+                    }}
+                  >
+                    <Icon name="xmark" />
+                  </Button>
+                </Box>
 
-              {renderHeader && (
-                <Box
-                  alignItems="center"
-                  as="header"
-                  justifyContent="space-between"
-                  padding="normal"
+                {renderHeader && (
+                  <Box
+                    as="header"
+                    styles={{
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: 'normal',
+                    }}
+                  >
+                    {renderHeader(renderProps)}
+                  </Box>
+                )}
+
+                <ScrollableBox
+                  as="main"
+                  className="js-modal-window-scrolling-element"
+                  id="modalWindowContent"
+                  styles={{
+                    flexGrow: 1,
+                    flexShrink: 1,
+                    paddingBottom: renderFooter ? undefined : 'normal',
+                    paddingTop: renderHeader ? undefined : 'normal',
+                    paddingX: 'normal',
+                  }}
                 >
-                  {renderHeader(renderProps)}
-                </Box>
-              )}
+                  {typeof children === 'function'
+                    ? children(renderProps)
+                    : children}
+                </ScrollableBox>
 
-              <ScrollableBox
-                as="main"
-                className="js-modal-window-scrolling-element"
-                id="modalWindowContent"
-                flexGrow={1}
-                flexShrink={1}
-                paddingBottom={renderFooter ? undefined : 'normal'}
-                paddingTop={renderHeader ? undefined : 'normal'}
-                paddingX="normal"
-              >
-                {typeof children === 'function'
-                  ? children(renderProps)
-                  : children}
-              </ScrollableBox>
-
-              {renderFooter && (
-                <Box as="footer" padding="normal">
-                  {renderFooter(renderProps)}
-                </Box>
-              )}
-            </WrapperComponent>
-          )}
+                {renderFooter && (
+                  <Box
+                    as="footer"
+                    styles={{
+                      padding: 'normal',
+                    }}
+                  >
+                    {renderFooter(renderProps)}
+                  </Box>
+                )}
+              </WrapperComponent>
+            );
+          }}
         </ModalLayer>
       </>
     );

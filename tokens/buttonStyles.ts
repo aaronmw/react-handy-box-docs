@@ -1,14 +1,15 @@
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxProps, StyleProps } from '@/react-handy-box/components/Box.types';
+import { ButtonComponentProps } from '@/react-handy-box/components/Button.types';
 
-type ButtonPropGenerator<TagName extends 'a' | 'button' = 'button'> = (
-  props: BoxProps<TagName>
-) => BoxProps<TagName>;
+type ButtonPropGenerator = (
+  props: ButtonComponentProps<'a' | 'button'>
+) => StyleProps;
 
 const getBaseButtonProps: ButtonPropGenerator = (props) => ({
   borderRadius: 'small',
   cursor: 'pointer',
   display: 'inline-block',
-  pointerEvents: props.disabled ? 'none' : 'all',
+  pointerEvents: (props as any).disabled ? 'none' : 'all',
   width: 'fit-content',
   whiteSpace: 'nowrap',
   propsOnFocus: {
@@ -28,9 +29,11 @@ const getPrimaryButtonProps: ButtonPropGenerator = (props) => {
     paddingX: 'tight',
     paddingY: 'xtight',
     transform: 'scale(1)',
-    transitionProperty: ['transform'].concat(props.transitionProperty ?? []),
+    transitionProperty: ['transform'].concat(
+      props.styles?.transitionProperty ?? []
+    ),
     propsOnHover: {
-      ...props.propsOnHover,
+      ...props.styles?.propsOnHover,
       backgroundColor: 'purple',
       color: 'white',
       transform: 'scale(1.1)',
@@ -38,9 +41,7 @@ const getPrimaryButtonProps: ButtonPropGenerator = (props) => {
   };
 };
 
-const buttonStyles: {
-  [K: string]: ButtonPropGenerator;
-} = {
+const buttonStyles: Record<string, ButtonPropGenerator> = {
   bare: getBaseButtonProps,
 
   caution: (props) => {
@@ -50,7 +51,7 @@ const buttonStyles: {
       borderColor: 'transparent',
       color: 'danger',
       propsOnHover: {
-        ...props.propsOnHover,
+        ...props.styles?.propsOnHover,
         ...renderedPrimaryButtonProps.propsOnHover,
         borderColor: 'danger',
       },
@@ -66,7 +67,7 @@ const buttonStyles: {
       borderStyle: 'thick',
       color: 'danger',
       propsOnHover: {
-        ...props.propsOnHover,
+        ...props.styles?.propsOnHover,
         ...renderedPrimaryButtonProps.propsOnHover,
         backgroundColor: 'danger',
         borderColor: 'danger',

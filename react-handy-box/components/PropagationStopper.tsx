@@ -2,7 +2,7 @@ import { Box } from '@/react-handy-box/components/Box';
 import { BoxProps } from '@/react-handy-box/components/Box.types';
 import { forwardRef, MouseEventHandler, Ref } from 'react';
 
-type PropagationStopperProps = Omit<BoxProps<'div'>, 'ref'> & {
+type PropagationStopperProps = BoxProps & {
   disabled?: boolean;
 };
 
@@ -18,8 +18,8 @@ const PropagationStopper = forwardRef(
 
     return (
       <Box
-        onClick={!disabled ? handleClick : undefined}
         ref={ref}
+        onClick={!disabled ? handleClick : undefined}
         {...otherProps}
       >
         {children}

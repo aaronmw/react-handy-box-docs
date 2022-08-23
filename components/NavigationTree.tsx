@@ -3,7 +3,6 @@ import { useLinkActivity } from '@/hooks/useLinkActivity';
 import { Box } from '@/react-handy-box/components/Box';
 import { BoxProps } from '@/react-handy-box/components/Box.types';
 import { Icon } from '@/react-handy-box/components/Icon';
-import { forwardRef, Ref } from 'react';
 
 type NavigationItem = {
   href: string;
@@ -20,65 +19,68 @@ type NavigationTreeProps = Omit<BoxProps<'ul'>, 'children' | 'data' | 'ref'> & {
 type NavigationItemProps = Omit<BoxProps<'li'>, 'children' | 'ref' | 'title'> &
   NavigationItem;
 
-const NavigationItem = forwardRef(
-  (
-    { title, href, subSections, level = 0, ...otherProps }: NavigationItemProps,
-    ref: Ref<HTMLLIElement>
-  ): JSX.Element => {
-    const { isActive } = useLinkActivity(href);
+const NavigationItem = ({
+  title,
+  href,
+  styles,
+  subSections,
+  level = 0,
+  ...otherProps
+}: NavigationItemProps): JSX.Element => {
+  const { isActive } = useLinkActivity(href);
 
-    return (
-      <Box
-        as="li"
-        marginTop={level === 0 ? 'xtight' : undefined}
-        ref={ref}
-        {...otherProps}
-      >
-        <Anchor
-          alignItems="center"
-          backgroundColor={isActive ? 'selected' : undefined}
-          columnGap="tight"
-          display="flex"
-          fontSize={level >= 1 ? 'small' : undefined}
-          fontWeight={level === 0 || isActive ? 'bold' : undefined}
-          href={href}
-          paddingX="tight"
-          paddingY="xxtight"
-          propsOnHover={{
+  return (
+    <Box
+      as="li"
+      styles={{
+        marginTop: level === 0 ? 'xtight' : undefined,
+        ...styles,
+      }}
+      {...otherProps}
+    >
+      <Anchor
+        href={href}
+        styles={{
+          alignItems: 'center',
+          backgroundColor: isActive ? 'selected' : undefined,
+          columnGap: 'tight',
+          display: 'flex',
+          fontSize: level >= 1 ? 'small' : undefined,
+          fontWeight: level === 0 || isActive ? 'bold' : undefined,
+          paddingX: 'tight',
+          paddingY: 'xxtight',
+          propsOnHover: {
             backgroundColor: 'selected',
-          }}
-          variant="bare"
-        >
-          {level >= 1 && (
-            <Icon color="textFaded" name="turn-down-right" variant="light" />
-          )}
-          <span>{title}</span>
-        </Anchor>
+          },
+        }}
+        variant="bare"
+      >
+        {level >= 1 && (
+          <Icon
+            name="turn-down-right"
+            styles={{ color: 'textFaded' }}
+            variant="light"
+          />
+        )}
+        <span>{title}</span>
+      </Anchor>
 
-        {subSections && <NavigationTree data={subSections} level={level + 1} />}
-      </Box>
-    );
-  }
+      {subSections && <NavigationTree data={subSections} level={level + 1} />}
+    </Box>
+  );
+};
+
+const NavigationTree = ({
+  data,
+  level = 0,
+  ...otherProps
+}: NavigationTreeProps): JSX.Element => (
+  <Box as="ul" {...otherProps}>
+    {data.map((navigationItem, index) => (
+      <NavigationItem key={index} level={level} {...navigationItem} />
+    ))}
+  </Box>
 );
-
-NavigationItem.displayName = 'NavigationItem';
-
-const NavigationTree = forwardRef(
-  (
-    { data, level = 0, ...otherProps }: NavigationTreeProps,
-    ref: Ref<HTMLUListElement>
-  ): JSX.Element => {
-    return (
-      <Box as="ul" ref={ref} {...otherProps}>
-        {data.map((navigationItem, index) => (
-          <NavigationItem key={index} level={level} {...navigationItem} />
-        ))}
-      </Box>
-    );
-  }
-);
-
-NavigationTree.displayName = 'NavigationTree';
 
 export type { NavigationItem };
 export { NavigationTree };

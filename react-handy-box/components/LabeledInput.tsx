@@ -11,10 +11,9 @@ export type LabeledInputProps = {
   labelLocation?: 'above' | 'left' | 'hidden';
 };
 
-type LabeledInputComponentProps = Omit<BoxProps<'label'>, 'ref'> &
-  LabeledInputProps;
+type LabeledInputComponentProps = LabeledInputProps & BoxProps<'label'>;
 
-const baseLabelProps: Omit<BoxProps<'label'>, 'ref'> = {
+const baseLabelProps: BoxProps<'label'>['styles'] = {
   display: 'block',
   flexGrow: 1,
   flexShrink: 1,
@@ -22,8 +21,8 @@ const baseLabelProps: Omit<BoxProps<'label'>, 'ref'> = {
 
 const labelLocationPropMap: {
   [key in 'above' | 'left' | 'hidden']: {
-    container?: Omit<BoxProps<'label'>, 'ref'>;
-    label?: Omit<BoxProps<'span'>, 'ref' | 'style'>;
+    container?: BoxProps<'label'>['styles'];
+    label?: BoxProps<'span'>['styles'];
   };
 } = {
   above: {
@@ -60,22 +59,29 @@ const LabeledInput = forwardRef(
       isRequired = false,
       label,
       labelLocation = 'above',
-      ...props
+      styles,
+      ...otherProps
     }: LabeledInputComponentProps,
     ref: Ref<HTMLLabelElement>
   ): JSX.Element => (
     <Box
       as="label"
-      opacity={disabled ? 0.6 : 1}
-      pointerEvents={disabled ? 'none' : undefined}
       ref={ref}
+      styles={{
+        ...baseLabelProps,
+        ...labelLocationPropMap[labelLocation]?.container,
+        opacity: disabled ? 0.6 : 1,
+        pointerEvents: disabled ? 'none' : undefined,
+        ...styles,
+      }}
       tabIndex={0}
-      {...baseLabelProps}
-      {...labelLocationPropMap[labelLocation]?.container}
-      {...props}
+      {...otherProps}
     >
       {labelLocation !== 'hidden' && (
-        <Text variant="label" {...labelLocationPropMap[labelLocation]?.label}>
+        <Text
+          styles={labelLocationPropMap[labelLocation]?.label}
+          variant="label"
+        >
           {label}
           {isRequired && (
             <>
@@ -89,7 +95,12 @@ const LabeledInput = forwardRef(
       {children}
 
       {errorMessage && (
-        <Box color="danger" fontSize="small">
+        <Box
+          styles={{
+            color: 'danger',
+            fontSize: 'small',
+          }}
+        >
           {errorMessage}
         </Box>
       )}

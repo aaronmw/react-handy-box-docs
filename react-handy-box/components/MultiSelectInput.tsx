@@ -8,13 +8,13 @@ import { BoxProps } from '@/react-handy-box/components/Box.types';
 import { Button } from '@/react-handy-box/components/Button';
 import { Icon } from '@/react-handy-box/components/Icon';
 import { Menu } from '@/react-handy-box/components/Menu';
-import { MenuItem } from '@/react-handy-box/components/Menu.types';
+import { MenuItemProps } from '@/react-handy-box/components/Menu.types';
 import { inputStyles } from '@/tokens/inputStyles';
-import { forwardRef, ReactNode, Ref } from 'react';
+import { forwardRef, MouseEvent, ReactNode, Ref } from 'react';
 
 type MultiSelectInputProps<T extends BaseOptionShape> = Omit<
   BoxProps,
-  'children' | 'ref'
+  'children'
 > &
   Omit<
     AbstractMultiSelectInputProps<T, true>,
@@ -29,105 +29,131 @@ const MultiSelectInput = forwardRef(
       ...otherProps
     }: MultiSelectInputProps<T>,
     ref: Ref<HTMLLabelElement>
-  ): JSX.Element => {
-    return (
-      <AbstractMultiSelectInput
-        disabled={disabled}
-        isMultiValue={true}
-        ref={ref}
-        renderOptions={({ options }) => {
-          const selectedOptions = options.filter((option) => option.isSelected);
-          const unselectedOptions = options.filter(
-            (option) => !option.isSelected
-          );
+  ): JSX.Element => (
+    <AbstractMultiSelectInput
+      disabled={disabled}
+      isMultiValue={true}
+      ref={ref}
+      renderOptions={({ options }) => {
+        const selectedOptions = options.filter((option) => option.isSelected);
+        const unselectedOptions = options.filter(
+          (option) => !option.isSelected
+        );
 
-          const optionsAsMenuItems = unselectedOptions.map(
-            ({ option, propsForOption }) =>
-              ({
-                label: option.label,
-                type: 'menu-item',
-                onClick: propsForOption.onClick,
-              } as MenuItem)
-          );
+        const optionsAsMenuItems = unselectedOptions.map(
+          ({ option, propsForOption }) =>
+            ({
+              label: option.label,
+              type: 'menu-item',
+              onClick: propsForOption.onClick,
+            } as MenuItemProps['MenuItem'])
+        );
 
-          return (
-            <Box rowGap="xtight">
-              <Menu
-                options={optionsAsMenuItems}
-                renderTrigger={({ propsForTrigger }) => (
+        return (
+          <Box
+            styles={{
+              rowGap: 'xtight',
+            }}
+          >
+            <Menu
+              options={optionsAsMenuItems}
+              renderTrigger={({ propsForTrigger }) => (
+                <Box
+                  ref={propsForTrigger.ref as Ref<HTMLDivElement>}
+                  tabIndex={0}
+                  styles={{
+                    alignItems: 'center',
+                    columnGap: 'tight',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    paddingY: 'xxtight',
+                    whiteSpace: 'nowrap',
+                    ...inputStyles,
+                  }}
+                  onClick={propsForTrigger.onClick}
+                >
                   <Box
-                    {...(inputStyles as BoxProps<'div'>)}
-                    alignItems="center"
-                    columnGap="tight"
-                    display="flex"
-                    justifyContent="space-between"
-                    paddingY="xxtight"
-                    ref={propsForTrigger.ref as Ref<HTMLDivElement>}
-                    tabIndex={0}
-                    whiteSpace="nowrap"
-                    onClick={propsForTrigger.onClick}
+                    styles={{
+                      color: 'textFaded',
+                    }}
                   >
-                    <Box color="textFaded">{placeholder}</Box>
-
-                    <Box columnGap="xtight">
-                      <Button variant="iconOnly">
-                        <Icon name="chevron-down" />
-                      </Button>
-                    </Box>
+                    {placeholder}
                   </Box>
-                )}
-              />
 
-              {!disabled && selectedOptions.length > 0 && (
-                <Box columnGap="xtight" flexWrap="wrap" rowGap="xtight">
-                  {selectedOptions.map((selectedOption) => (
-                    <PillButton
-                      key={selectedOption.option.value}
-                      label={selectedOption.option.label}
-                      onClick={selectedOption.propsForOption.onClick}
-                    />
-                  ))}
+                  <Box styles={{ columnGap: 'xtight' }}>
+                    <Button variant="iconOnly">
+                      <Icon name="chevron-down" />
+                    </Button>
+                  </Box>
                 </Box>
               )}
-            </Box>
-          );
-        }}
-        {...otherProps}
-      />
-    );
-  }
+            />
+
+            {!disabled && selectedOptions.length > 0 && (
+              <Box
+                styles={{
+                  columnGap: 'xtight',
+                  flexWrap: 'wrap',
+                  rowGap: 'xtight',
+                }}
+              >
+                {selectedOptions.map((selectedOption) => (
+                  <PillButton
+                    key={selectedOption.option.value}
+                    label={selectedOption.option.label}
+                    onClick={selectedOption.propsForOption.onClick}
+                  />
+                ))}
+              </Box>
+            )}
+          </Box>
+        );
+      }}
+      {...otherProps}
+    />
+  )
 );
 
 MultiSelectInput.displayName = 'MultiSelectInput';
 
-const PillButton = ({
-  label,
-  onClick,
-  ...otherProps
-}: BoxProps<'button'> & {
-  label: ReactNode;
-}) => (
-  <Box
-    as="button"
-    backgroundColor="selected"
-    borderRadius="small"
-    cursor="pointer"
-    paddingX="tight"
-    paddingY="xtight"
-    propsOnHover={{
-      backgroundColor: 'selected',
-      backgroundColorLightness: '+100',
-    }}
-    onClick={(event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      onClick?.(event);
-    }}
-    {...otherProps}
-  >
-    {label}
-    <Icon name="xmark" />
-  </Box>
+const PillButton = forwardRef(
+  (
+    {
+      label,
+      onClick,
+      ...otherProps
+    }: BoxProps<'button'> & {
+      label: ReactNode;
+    },
+    ref: Ref<HTMLButtonElement>
+  ) => (
+    <Box
+      as="button"
+      ref={ref}
+      styles={{
+        backgroundColor: 'selected',
+        borderRadius: 'small',
+        cursor: 'pointer',
+        paddingX: 'tight',
+        paddingY: 'xtight',
+        propsOnHover: {
+          backgroundColor: 'selected',
+          backgroundColorLightness: '+100',
+        },
+      }}
+      onClick={(event: MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        event.preventDefault();
+        onClick?.(event);
+      }}
+      {...otherProps}
+    >
+      {label}
+      <Icon name="xmark" />
+    </Box>
+  )
 );
+
+PillButton.displayName = 'PillButton';
 
 export { MultiSelectInput };

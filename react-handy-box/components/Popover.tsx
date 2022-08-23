@@ -48,6 +48,7 @@ const Popover = forwardRef(
       popperOptions,
       popperPlacementOrder = DEFAULT_POPPER_PLACEMENT_ORDER,
       renderTrigger,
+      styles,
       type = 'popover',
       onBeforeClose,
       onBeforeOpen,
@@ -55,14 +56,15 @@ const Popover = forwardRef(
       onOpen,
       ...otherProps
     }: PopoverProps,
-    outerRef: Ref<HTMLElement>
+    ref: Ref<HTMLDivElement>
   ) => {
     const [popperElement, setPopperElement] = useState<HTMLElement | null>(
       null
     );
     const [popperReferenceElement, setPopperReferenceElement] =
       useState<HTMLElement | null>(null);
-    const multipleRefs = useMultipleRefs(outerRef, setPopperElement);
+
+    const multipleRefs = useMultipleRefs(ref, setPopperElement);
 
     const {
       styles: { popper: popperStyles },
@@ -161,14 +163,17 @@ const Popover = forwardRef(
 
     return (
       <ModalLayer
-        backgroundColor="white"
-        border="normal"
-        borderRadius="normal"
-        boxShadow="normal"
-        padding="tight"
         ref={multipleRefs}
         renderTrigger={renderTriggerCallback}
         style={popperStyles}
+        styles={{
+          backgroundColor: 'white',
+          border: 'normal',
+          borderRadius: 'normal',
+          boxShadow: 'normal',
+          padding: 'tight',
+          ...styles,
+        }}
         type={type}
         onBeforeClose={onBeforeCloseCallback}
         onBeforeOpen={onBeforeOpenCallback}

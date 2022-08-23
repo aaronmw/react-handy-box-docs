@@ -4,16 +4,24 @@ import { forwardRef, Ref } from 'react';
 
 const Icon = forwardRef(
   (
-    { name = 'face-sad-sweat', variant = 'regular', ...props }: IconProps,
+    {
+      name = 'face-sad-sweat',
+      styles,
+      variant = 'regular',
+      ...otherProps
+    }: IconProps,
     ref: Ref<HTMLSpanElement>
   ) => (
     <Box
       as="span"
       className={`fa-${variant} fa-${name} fa-1x fa-fw`}
-      display="inline-block"
       key={`${name}-${variant}`}
       ref={ref}
-      {...props}
+      styles={{
+        display: 'inline-block',
+        ...styles,
+      }}
+      {...otherProps}
     />
   )
 );

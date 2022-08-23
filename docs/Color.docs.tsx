@@ -39,33 +39,33 @@ const docs: DocumentationPageDescriptor = {
           backgroundColor: 'blue',
           backgroundColorLightness: 100,
           resultingSwatchName: 'blue--100',
-          highlightLines: [3],
+          highlightLines: [4],
         },
         {
           backgroundColor: 'blue',
           backgroundColorLightness: '-200',
           resultingSwatchName: 'blue--200',
-          highlightLines: [3],
+          highlightLines: [4],
         },
         {
           backgroundColor: 'brand',
           backgroundColorOpacity: '-50',
           resultingSwatchName: 'purple--400--50',
-          highlightLines: [3],
+          highlightLines: [4],
         },
         {
           backgroundColor: 'brand',
           backgroundColorOpacity: '-50',
           backgroundColorLightness: '-100',
           resultingSwatchName: 'purple--300--50',
-          highlightLines: [3, 4],
+          highlightLines: [4, 5],
         },
         {
           backgroundColor: 'brand',
           backgroundColorOpacity: 10,
           backgroundColorLightness: 300,
           resultingSwatchName: 'purple--300--10',
-          highlightLines: [3, 4],
+          highlightLines: [4, 5],
         },
       ],
       renderSnippet: ({
@@ -74,26 +74,31 @@ const docs: DocumentationPageDescriptor = {
         backgroundColorLightness,
       }) =>
         `
-        <Box
-          backgroundColor="${backgroundColor}"
-          ${
-            backgroundColorOpacity
-              ? `backgroundColorOpacity=${toJSXAttributeValue(
-                  backgroundColorOpacity
-                )}`
-              : ``
-          }
-          ${
-            backgroundColorLightness
-              ? `backgroundColorLightness=${toJSXAttributeValue(
-                  backgroundColorLightness
-                )}`
-              : ``
-          }
-        />
+          <Box
+            styles={{
+              backgroundColor: ${JSON.stringify(backgroundColor)},
+              ${
+                backgroundColorOpacity
+                  ? `backgroundColorOpacity: ${JSON.stringify(
+                      backgroundColorOpacity
+                    )},`
+                  : ``
+              }
+              ${
+                backgroundColorLightness
+                  ? `backgroundColorLightness: ${JSON.stringify(
+                      backgroundColorLightness
+                    )},`
+                  : ``
+              }
+            }}
+          />
       `.replace(/\n\s*?\n/g, '\n'),
       renderDemo: ({ resultingSwatchName }) => (
-        <ColorSwatch borderRadius="small" colorName={resultingSwatchName} />
+        <ColorSwatch
+          colorName={resultingSwatchName}
+          styles={{ borderRadius: 'small' }}
+        />
       ),
       highlightLines: ({ highlightLines }) => highlightLines,
     },
@@ -102,7 +107,13 @@ const docs: DocumentationPageDescriptor = {
       title: 'Core Swatches',
       values: Object.keys(coreColorDefinitions),
       renderDemo: (colorName) => (
-        <Box borderRadius="small" overflow="hidden" width="100%">
+        <Box
+          styles={{
+            borderRadius: 'small',
+            overflow: 'hidden',
+            width: '100%',
+          }}
+        >
           {[100, 200, 300, 400, 500, 600, 700].map((lightnessValue) => (
             <ColorSwatch
               colorName={`${colorName}--${lightnessValue}` as Color}
@@ -112,10 +123,12 @@ const docs: DocumentationPageDescriptor = {
         </Box>
       ),
       propsForContainer: {
-        columns: 3,
-        gap: 'normal',
-        alignContent: 'stretch',
-        justifyContent: 'stretch',
+        styles: {
+          columns: 3,
+          gap: 'normal',
+          alignContent: 'stretch',
+          justifyContent: 'stretch',
+        },
       },
     },
 
@@ -127,11 +140,19 @@ const docs: DocumentationPageDescriptor = {
           swatchDescriptions[swatchName as keyof typeof swatchDescriptions],
       })),
       renderDemo: ({ description, swatchName }) => (
-        <Box alignItems="center" columnGap="normal" columns={2}>
+        <Box
+          styles={{
+            alignItems: 'center',
+            columnGap: 'normal',
+            columns: 2,
+          }}
+        >
           <ColorSwatch
-            borderRadius="small"
             colorName={swatchName as Color}
             key={swatchName}
+            styles={{
+              borderRadius: 'small',
+            }}
           />
           <Markdown>{description}</Markdown>
         </Box>
@@ -143,24 +164,28 @@ const docs: DocumentationPageDescriptor = {
       values: Object.keys(utilityColors),
       renderDemo: (utilityColorName) => (
         <Box
-          background={`
-            repeating-linear-gradient(
-              -55deg,
-              #222,
-              #222 10px,
-              #333 10px,
-              #333 20px
-            )
-          `}
-          borderRadius="small"
-          padding="normal"
+          styles={{
+            background: `
+              repeating-linear-gradient(
+                -55deg,
+                #222,
+                #222 10px,
+                #333 10px,
+                #333 20px
+              )
+            `,
+            borderRadius: 'small',
+            padding: 'normal',
+          }}
         >
           <ColorSwatch
-            border="normal"
-            borderColor="white"
-            borderRadius="small"
             colorName={utilityColorName as Color}
             key={utilityColorName}
+            styles={{
+              border: 'normal',
+              borderColor: 'white',
+              borderRadius: 'small',
+            }}
           />
         </Box>
       ),
@@ -170,28 +195,34 @@ const docs: DocumentationPageDescriptor = {
 
 const ColorSwatch = ({
   colorName,
+  styles,
   ...otherProps
 }: BoxProps & {
   colorName: Color;
 }) => (
   <Box
-    alignItems="center"
-    backgroundColor={colorName}
-    padding="tight"
-    width="100%"
+    styles={{
+      alignItems: 'center',
+      backgroundColor: colorName,
+      padding: 'tight',
+      width: '100%',
+      ...styles,
+    }}
     {...otherProps}
   >
     <Box
-      backgroundColor="white"
-      border="normal"
-      borderColor={colorName}
-      borderColorLightness="+100"
-      borderRadius="circle"
-      color="textFaded"
-      display="inline-block"
-      fontFamily="monospace"
-      fontSize="small"
-      paddingX="tight"
+      styles={{
+        backgroundColor: 'white',
+        border: 'normal',
+        borderColor: colorName,
+        borderColorLightness: '+100',
+        borderRadius: 'circle',
+        color: 'textFaded',
+        display: 'inline-block',
+        fontFamily: 'monospace',
+        fontSize: 'small',
+        paddingX: 'tight',
+      }}
     >
       {colorName}
     </Box>

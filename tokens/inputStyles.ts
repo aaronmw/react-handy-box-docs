@@ -1,6 +1,6 @@
 import { BoxProps } from '@/react-handy-box/components/Box.types';
 
-const inputStyles: BoxProps<'input'> = {
+const inputStyles: BoxProps<'input'>['styles'] = {
   backgroundColor: 'white',
   border: 'normal',
   borderRadius: 'small',

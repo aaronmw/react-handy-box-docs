@@ -25,27 +25,25 @@ export const lineHeights = {
 
 export const textStyles = {
   'code': {
-    color: 'purple',
-    fontFamily: 'monospace',
+    as: 'code',
+    styles: { color: 'purple', fontFamily: 'monospace' },
   },
   'heading--1': {
     as: 'h1',
-    fontSize: 'xxlarge',
-    fontWeight: 900,
+    styles: { fontSize: 'xxlarge', fontWeight: 900 },
   },
   'heading--2': {
     as: 'h2',
-    fontSize: 'xlarge',
-    fontWeight: 'bold',
+    styles: { fontSize: 'xlarge', fontWeight: 'bold' },
   },
   'heading--3': {
     as: 'h3',
-    fontSize: 'large',
-    fontWeight: 'bold',
+    styles: { fontSize: 'large', fontWeight: 'bold' },
   },
   'label': {
-    color: 'textFaded',
-    fontSize: 'small',
+    styles: { color: 'textFaded', fontSize: 'small' },
   },
-  'normal': {},
-};
+  'normal': {
+    styles: {},
+  },
+} as const;

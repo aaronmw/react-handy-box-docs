@@ -2,11 +2,7 @@ import { Box } from '@/react-handy-box/components/Box';
 import { BoxProps } from '@/react-handy-box/components/Box.types';
 import { Icon } from '@/react-handy-box/components/Icon';
 import {
-  ChildMenu,
-  DividingLine as DevidingLineType,
-  GroupLabel as GroupLabelType,
-  GroupLabel as MenuGroupLabelType,
-  MenuItem as MenuItemType,
+  MenuItemProps,
   MenuProps,
 } from '@/react-handy-box/components/Menu.types';
 import { Popover } from '@/react-handy-box/components/Popover';
@@ -33,17 +29,18 @@ import {
 
 const Menu = forwardRef(
   (
-    { options, ...otherProps }: MenuProps,
-    outerRef: Ref<HTMLElement>
+    { options, styles, ...otherProps }: MenuProps,
+    ref: Ref<HTMLDivElement>
   ): JSX.Element => {
     const hoistedPopoverRenderPropsRef = useRef<PopoverRenderProps | null>(
       null
     );
+    ``;
     const [triggerWidth, setTriggerWidth] = useState<number>(0);
     const [menuElementRef, setMenuElementRef] = useState<HTMLElement | null>(
       null
     );
-    const multipleRefs = useMultipleRefs(outerRef, setMenuElementRef);
+    const multipleRefs = useMultipleRefs(ref, setMenuElementRef);
 
     const memoizedKeyMap = useMemo<KeyMap>(
       () => ({
@@ -66,9 +63,11 @@ const Menu = forwardRef(
 
       return options.length === 0 ? (
         <Box
-          color="textFaded"
-          fontSize="small"
-          textAlign="center"
+          styles={{
+            color: 'textFaded',
+            fontSize: 'small',
+            textAlign: 'center',
+          }}
           onClick={popoverRenderProps.closeModal}
         >
           No options
@@ -78,7 +77,8 @@ const Menu = forwardRef(
           switch (option.type) {
             case 'menu-item': {
               const { icon, label, type, onClick, ...otherOptionProps } =
-                option as MenuItemType;
+                option as MenuItemProps['MenuItem'];
+
               return (
                 <MenuItem
                   {...otherOptionProps}
@@ -96,13 +96,13 @@ const Menu = forwardRef(
 
             case 'child-menu': {
               const { icon, label, options, type, ...otherOptionProps } =
-                option as ChildMenu;
+                option as MenuItemProps['MenuItemWithChildren'];
 
               const childMenuOptions = options.map((subOption) =>
                 subOption.type === 'menu-item'
                   ? {
                       ...subOption,
-                      onClick: (event: MouseEvent) => {
+                      onClick: (event: MouseEvent<HTMLButtonElement>) => {
                         subOption.onClick?.(event);
                         popoverRenderProps.closeModal(); // <- close entire menu
                       },
@@ -121,7 +121,12 @@ const Menu = forwardRef(
                       hasIcons={hasIcons}
                       icon={icon}
                       label={
-                        <Box columnGap="tight" justifyContent="space-between">
+                        <Box
+                          styles={{
+                            columnGap: 'tight',
+                            justifyContent: 'space-between',
+                          }}
+                        >
                           {label}
                           <Icon name="caret-right" variant="solid" />
                         </Box>
@@ -135,7 +140,7 @@ const Menu = forwardRef(
 
             case 'group-label': {
               const { label, type, ...otherOptionProps } =
-                option as GroupLabelType;
+                option as MenuItemProps['GroupLabel'];
 
               return (
                 <GroupLabel
@@ -147,7 +152,8 @@ const Menu = forwardRef(
             }
 
             case 'dividing-line': {
-              const { type, ...otherOptionProps } = option as DevidingLineType;
+              const { type, ...otherOptionProps } =
+                option as MenuItemProps['DividingLine'];
 
               return <DividingLine {...otherOptionProps} key={optionIndex} />;
             }
@@ -170,19 +176,22 @@ const Menu = forwardRef(
 
     return (
       <Popover
-        borderRadius="small"
-        flexDirection="column"
-        maxHeight={`calc(100vh - ${whiteSpacesAsCSSVariables.normal} * 2)`}
-        minWidth={200}
-        maxWidth={`calc(100vw - ${whiteSpacesAsCSSVariables.normal} * 2)`}
-        overflowY="auto"
-        padding="xtight"
         ref={multipleRefs}
         role="menu"
-        transitionDuration="short"
-        transitionProperty="opacity"
+        styles={{
+          borderRadius: 'small',
+          flexDirection: 'column',
+          maxHeight: `calc(100vh - ${whiteSpacesAsCSSVariables.normal} * 2)`,
+          maxWidth: `calc(100vw - ${whiteSpacesAsCSSVariables.normal} * 2)`,
+          minWidth: 200,
+          overflowY: 'auto',
+          padding: 'xtight',
+          transitionDuration: 'short',
+          transitionProperty: 'opacity',
+          width: triggerWidth <= 200 ? undefined : triggerWidth,
+          ...styles,
+        }}
         type="menu"
-        width={triggerWidth <= 200 ? undefined : triggerWidth}
         onBeforeOpen={sizeMenuToTriggerElement}
         {...otherProps}
       >
@@ -194,63 +203,94 @@ const Menu = forwardRef(
 
 Menu.displayName = 'Menu';
 
-type DividingLineProps = Omit<BoxProps, 'ref'>;
+type DividingLineComponentProps = BoxProps;
 
-const DividingLine = ({ ...otherProps }: DividingLineProps) => (
-  <Box marginY="xtight" borderBottom="hairline" {...otherProps} />
+const DividingLine = forwardRef(
+  (
+    { styles, ...otherProps }: DividingLineComponentProps,
+    ref: Ref<HTMLDivElement>
+  ) => (
+    <Box
+      ref={ref}
+      styles={{
+        borderBottom: 'hairline',
+        marginY: 'xtight',
+        ...styles,
+      }}
+      {...otherProps}
+    />
+  )
 );
 
-type GroupLabelProps = Omit<BoxProps, 'ref'> & Omit<MenuGroupLabelType, 'type'>;
+DividingLine.displayName = 'DividingLine';
 
-const GroupLabel = ({ label, ...otherProps }: GroupLabelProps) => (
-  <Box
-    color="textFaded"
-    fontSize="small"
-    paddingBottom="xtight"
-    paddingTop="tight"
-    paddingX="xtight"
-    textTransform="uppercase"
-    {...otherProps}
-  >
-    {label}
-  </Box>
+type GroupLabelComponentProps = BoxProps &
+  Omit<MenuItemProps['GroupLabel'], 'type'>;
+
+const GroupLabel = forwardRef(
+  (
+    { label, styles, ...otherProps }: GroupLabelComponentProps,
+    ref: Ref<HTMLDivElement>
+  ) => (
+    <Box
+      ref={ref}
+      styles={{
+        color: 'textFaded',
+        fontSize: 'small',
+        paddingBottom: 'xtight',
+        paddingTop: 'tight',
+        paddingX: 'xtight',
+        textTransform: 'uppercase',
+        ...styles,
+      }}
+      {...otherProps}
+    >
+      {label}
+    </Box>
+  )
 );
 
-type MenuItemProps = Omit<BoxProps<'button'>, 'ref'> &
-  Omit<MenuItemType, 'type'> & {
-    hasIcons?: boolean;
-  };
+GroupLabel.displayName = 'GroupLabel';
+
+type MenuItemComponentProps = Omit<MenuItemProps['MenuItem'], 'type'> & {
+  hasIcons?: boolean;
+};
 
 const MenuItem = forwardRef(
   (
-    { hasIcons, icon, label, onClick, ...otherProps }: MenuItemProps,
+    { hasIcons, icon, label, onClick, ...otherProps }: MenuItemComponentProps,
     ref: Ref<HTMLButtonElement>
   ): JSX.Element => {
-    const handleClick = (e: MouseEvent) => onClick?.(e);
+    const handleClick = (event: MouseEvent<HTMLButtonElement>) =>
+      onClick?.(event);
 
     return (
       <Box
         as="button"
-        borderRadius="small"
-        columnGap="tight"
-        cursor="pointer"
-        padding="xtight"
-        propsOnFocus={{
-          boxShadow: 'focusRing',
-          zIndex: '1--stickyElements',
-        }}
-        propsOnHover={{
-          backgroundColor: 'selected',
-        }}
         ref={ref}
-        whiteSpace="nowrap"
+        styles={{
+          borderRadius: 'small',
+          columnGap: 'tight',
+          cursor: 'pointer',
+          padding: 'xtight',
+          propsOnFocus: {
+            boxShadow: 'focusRing',
+            zIndex: '1--stickyElements',
+          },
+          propsOnHover: {
+            backgroundColor: 'selected',
+          },
+          whiteSpace: 'nowrap',
+        }}
         onClick={handleClick}
         {...otherProps}
       >
         {hasIcons && (
           <Icon
             name={icon ?? 'arrow-right'}
-            visibility={icon ? 'visible' : 'hidden'}
+            styles={{
+              visibility: icon ? 'visible' : 'hidden',
+            }}
           />
         )}
         {label}

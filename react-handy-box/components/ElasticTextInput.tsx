@@ -1,18 +1,18 @@
 import { Box } from '@/react-handy-box/components/Box';
 import {
-  inputStyles,
   TextInput,
   TextInputProps,
 } from '@/react-handy-box/components/TextInput';
 import { useKeyboardShortcuts } from '@/react-handy-box/hooks/useKeyboardShortcuts';
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
 import { addMultipleEventListeners } from '@/react-handy-box/utilities/addMultipleEventListeners';
+import { inputStyles } from '@/tokens/inputStyles';
 import { forwardRef, Ref, useEffect, useRef } from 'react';
 
 const ElasticTextInput = forwardRef(
   (
-    { ...otherProps }: Omit<TextInputProps<'textarea'>, 'type'>,
-    ref: Ref<HTMLTextAreaElement>
+    { styles, ...otherProps }: Omit<TextInputProps<'textarea'>, 'type'>,
+    ref: Ref<HTMLLabelElement>
   ): JSX.Element => {
     const ghostElementRef = useRef<HTMLDivElement>(null);
     const textareaElementRef = useRef<HTMLTextAreaElement>(null);
@@ -64,21 +64,31 @@ const ElasticTextInput = forwardRef(
     }, []);
 
     return (
-      <Box width="100%" position="relative">
+      <Box
+        styles={{
+          position: 'relative',
+          width: '100%',
+        }}
+      >
         <TextInput
-          overflow="hidden"
           ref={multipleRefs}
+          styles={{
+            overflow: 'hidden',
+            ...styles,
+          }}
           type="textarea"
           {...otherProps}
         />
         <Box
           as="div"
-          opacity={0}
-          pointerEvents="none"
-          position="absolute"
           ref={ghostElementRef}
-          whiteSpace="pre-wrap"
-          {...inputStyles}
+          styles={{
+            ...inputStyles,
+            opacity: 0,
+            pointerEvents: 'none',
+            position: 'absolute',
+            whiteSpace: 'pre-wrap',
+          }}
         />
       </Box>
     );

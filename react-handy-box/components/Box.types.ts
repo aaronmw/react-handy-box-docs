@@ -1,3 +1,4 @@
+import { ComponentPropsWithRef } from 'react';
 // https://github.com/kripod/react-polymorphic-box/blob/main/src/Box.tsx
 import { animationNames } from '@/tokens/animationNames';
 import { borderRadii } from '@/tokens/borderRadii';
@@ -13,7 +14,7 @@ import { transitionDurations } from '@/tokens/transitionDurations';
 import { fontNames, fontSizes } from '@/tokens/typography';
 import { whiteSpaceNames } from '@/tokens/whiteSpaces';
 import { zIndices } from '@/tokens/zIndices';
-import { ComponentProps, CSSProperties, ReactNode } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 
 export type AnimationDuration = TransitionDuration | `${number}${TimeUnit}`;
 
@@ -421,134 +422,136 @@ export const validStyleProps = [
   'zoom',
 ];
 
-export type BoxPropsWithHandlers<TagName extends keyof JSX.IntrinsicElements> =
-  {
-    animationDuration?: AnimationDuration;
-    animationName?: AnimationName;
-    as?: TagName;
-    backgroundColor?: Color;
-    backgroundColorOpacity?: ColorOpacityAdjustmentValue;
-    backgroundColorLightness?: ColorLightnessAdjustmentValue;
-    border?: BorderStyle;
-    borderBottom?: BorderStyle;
-    borderBottomLeftRadius?: BorderRadius;
-    borderBottomRadius?: BorderRadius;
-    borderBottomRightRadius?: BorderRadius;
-    borderColor?: Color;
-    borderColorOpacity?: ColorOpacityAdjustmentValue;
-    borderColorLightness?: ColorLightnessAdjustmentValue;
-    borderBottomColor?: Color;
-    borderBottomColorOpacity?: ColorOpacityAdjustmentValue;
-    borderBottomColorLightness?: ColorLightnessAdjustmentValue;
-    borderLeftColor?: Color;
-    borderLeftColorOpacity?: ColorOpacityAdjustmentValue;
-    borderLeftColorLightness?: ColorLightnessAdjustmentValue;
-    borderRightColor?: Color;
-    borderRightColorOpacity?: ColorOpacityAdjustmentValue;
-    borderRightColorLightness?: ColorLightnessAdjustmentValue;
-    borderTopColor?: Color;
-    borderTopColorOpacity?: ColorOpacityAdjustmentValue;
-    borderTopColorLightness?: ColorLightnessAdjustmentValue;
-    borderLeft?: BorderStyle;
-    borderLeftRadius?: BorderRadius;
-    borderRadius?: BorderRadius;
-    borderRight?: BorderStyle;
-    borderRightRadius?: BorderRadius;
-    borderTop?: BorderStyle;
-    borderTopLeftRadius?: BorderRadius;
-    borderTopRadius?: BorderRadius;
-    borderTopRightRadius?: BorderRadius;
-    bottom?: GridSpaceOrLength;
-    boxShadow?: BoxShadow;
-    children?: ReactNode;
-    color?: Color;
-    colorOpacity?: ColorOpacityAdjustmentValue;
-    colorLightness?: ColorLightnessAdjustmentValue;
-    columnGap?: GridSpaceOrLength;
-    columns?: ColumnsOrRows;
-    debug?: boolean;
-    fontName?: FontName;
-    fontSize?: FontSize;
-    gap?: GridSpaceOrLength;
-    height?: GridSpaceOrLength;
-    isOnlyForScreenReaders?: boolean;
-    left?: GridSpaceOrLength;
-    lineHeight?: FontSize;
-    margin?: GridSpaceOrLength;
-    marginBottom?: GridSpaceOrLength;
-    marginLeft?: GridSpaceOrLength;
-    marginRight?: GridSpaceOrLength;
-    marginTop?: GridSpaceOrLength;
-    /** Sets both `marginLeft` and `marginRight` */
-    marginX?: GridSpaceOrLength;
-    /** Sets both `marginTop` and `marginBottom` */
-    marginY?: GridSpaceOrLength;
-    maxHeight?: GridSpaceOrLength;
-    maxWidth?: GridSpaceOrLength;
-    minHeight?: GridSpaceOrLength;
-    minWidth?: GridSpaceOrLength;
-    padding?: GridSpaceOrLength;
-    paddingBottom?: GridSpaceOrLength;
-    paddingLeft?: GridSpaceOrLength;
-    paddingRight?: GridSpaceOrLength;
-    paddingTop?: GridSpaceOrLength;
-    /** Sets both `paddingLeft` and `paddingRight` */
-    paddingX?: GridSpaceOrLength;
-    /** Sets both `paddingTop` and `paddingBottom` */
-    paddingY?: GridSpaceOrLength;
-  } & {
-    [K in `propsFor${Capitalize<Breakpoint>}`]?: BoxProps<TagName>;
-  } & {
-    /** `BoxProps` to be applied to the `::after` psuedo element.
-     * `content` is set to `""` automatically. */
-    propsForAfterElement?: BoxProps<TagName>;
-    /** `BoxProps` to be applied to the `::before` psuedo element.
-     * `content` is set to `""` automatically. */
-    propsForBeforeElement?: BoxProps<TagName>;
-    propsForCustomSelector?: {
-      [selector: string]: BoxProps<TagName>;
-    };
-    propsForFirstElement?: BoxProps<TagName>;
-    /** `BoxProps` to be applied on `:focus` and `:focus-within`.
-     *
-     * Example:
-     * ```
-     * <Box
-     *   propsOnFocus={{
-     *     outline: '1px 1px 5px blue',
-     *   }}
-     * >
-     *   My background turns red on hover.
-     * </Box>
-     * ```
-     */
-    propsOnFocus?: BoxProps<TagName>;
-    /** `BoxProps` to be applied on `:hover` or `:focus`.
-     *
-     * Example:
-     * ```
-     * <Box
-     *   propsOnHover={{
-     *     backgroundColor: 'danger',
-     *   }}
-     * >
-     *   My background turns red on hover.
-     * </Box>
-     * ```
-     */
-    propsOnHover?: BoxProps<TagName>;
-    pointerEvents?: 'all' | 'auto' | 'none';
-    right?: GridSpaceOrLength;
-    rowGap?: GridSpaceOrLength;
-    rows?: ColumnsOrRows;
-    top?: GridSpaceOrLength;
-    transitionDuration?: TransitionDuration;
-    transitionProperty?: string | Array<string>;
-    width?: GridSpaceOrLength | 'fit-content';
-    zIndex?: ZIndex;
+export type ThemedStyles = {
+  animationDuration?: AnimationDuration;
+  animationName?: AnimationName;
+  backgroundColor?: Color;
+  backgroundColorOpacity?: ColorOpacityAdjustmentValue;
+  backgroundColorLightness?: ColorLightnessAdjustmentValue;
+  border?: BorderStyle;
+  borderBottom?: BorderStyle;
+  borderBottomLeftRadius?: BorderRadius;
+  borderBottomRadius?: BorderRadius;
+  borderBottomRightRadius?: BorderRadius;
+  borderColor?: Color;
+  borderColorOpacity?: ColorOpacityAdjustmentValue;
+  borderColorLightness?: ColorLightnessAdjustmentValue;
+  borderBottomColor?: Color;
+  borderBottomColorOpacity?: ColorOpacityAdjustmentValue;
+  borderBottomColorLightness?: ColorLightnessAdjustmentValue;
+  borderLeftColor?: Color;
+  borderLeftColorOpacity?: ColorOpacityAdjustmentValue;
+  borderLeftColorLightness?: ColorLightnessAdjustmentValue;
+  borderRightColor?: Color;
+  borderRightColorOpacity?: ColorOpacityAdjustmentValue;
+  borderRightColorLightness?: ColorLightnessAdjustmentValue;
+  borderTopColor?: Color;
+  borderTopColorOpacity?: ColorOpacityAdjustmentValue;
+  borderTopColorLightness?: ColorLightnessAdjustmentValue;
+  borderLeft?: BorderStyle;
+  borderLeftRadius?: BorderRadius;
+  borderRadius?: BorderRadius;
+  borderRight?: BorderStyle;
+  borderRightRadius?: BorderRadius;
+  borderTop?: BorderStyle;
+  borderTopLeftRadius?: BorderRadius;
+  borderTopRadius?: BorderRadius;
+  borderTopRightRadius?: BorderRadius;
+  bottom?: GridSpaceOrLength;
+  boxShadow?: BoxShadow;
+  children?: ReactNode;
+  color?: Color;
+  colorOpacity?: ColorOpacityAdjustmentValue;
+  colorLightness?: ColorLightnessAdjustmentValue;
+  columnGap?: GridSpaceOrLength;
+  columns?: ColumnsOrRows;
+  debug?: boolean;
+  fontName?: FontName;
+  fontSize?: FontSize;
+  gap?: GridSpaceOrLength;
+  height?: GridSpaceOrLength;
+  isOnlyForScreenReaders?: boolean;
+  left?: GridSpaceOrLength;
+  lineHeight?: FontSize;
+  margin?: GridSpaceOrLength;
+  marginBottom?: GridSpaceOrLength;
+  marginLeft?: GridSpaceOrLength;
+  marginRight?: GridSpaceOrLength;
+  marginTop?: GridSpaceOrLength;
+  /** Sets both `marginLeft` and `marginRight` */
+  marginX?: GridSpaceOrLength;
+  /** Sets both `marginTop` and `marginBottom` */
+  marginY?: GridSpaceOrLength;
+  maxHeight?: GridSpaceOrLength;
+  maxWidth?: GridSpaceOrLength;
+  minHeight?: GridSpaceOrLength;
+  minWidth?: GridSpaceOrLength;
+  padding?: GridSpaceOrLength;
+  paddingBottom?: GridSpaceOrLength;
+  paddingLeft?: GridSpaceOrLength;
+  paddingRight?: GridSpaceOrLength;
+  paddingTop?: GridSpaceOrLength;
+  /** Sets both `paddingLeft` and `paddingRight` */
+  paddingX?: GridSpaceOrLength;
+  /** Sets both `paddingTop` and `paddingBottom` */
+  paddingY?: GridSpaceOrLength;
+} & {
+  [K in `propsFor${Capitalize<Breakpoint>}`]?: StyleProps;
+} & {
+  /** `BoxProps` to be applied to the `::after` psuedo element.
+   * `content` is set to `""` automatically. */
+  propsForAfterElement?: StyleProps;
+  /** `BoxProps` to be applied to the `::before` psuedo element.
+   * `content` is set to `""` automatically. */
+  propsForBeforeElement?: StyleProps;
+  propsForCustomSelector?: {
+    [selector: string]: StyleProps;
   };
+  propsForFirstElement?: StyleProps;
+  propsForLastElement?: StyleProps;
+  /** `BoxProps` to be applied on `:focus` and `:focus-within`.
+   *
+   * Example:
+   * ```
+   * <Box
+   *   propsOnFocus={{
+   *     outline: '1px 1px 5px blue',
+   *   }}
+   * >
+   *   My background turns red on hover.
+   * </Box>
+   * ```
+   */
+  propsOnFocus?: StyleProps;
+  /** `BoxProps` to be applied on `:hover` or `:focus`.
+   *
+   * Example:
+   * ```
+   * <Box
+   *   propsOnHover={{
+   *     backgroundColor: 'danger',
+   *   }}
+   * >
+   *   My background turns red on hover.
+   * </Box>
+   * ```
+   */
+  propsOnHover?: StyleProps;
+  pointerEvents?: 'all' | 'auto' | 'none';
+  right?: GridSpaceOrLength;
+  rowGap?: GridSpaceOrLength;
+  rows?: ColumnsOrRows;
+  top?: GridSpaceOrLength;
+  transitionDuration?: TransitionDuration;
+  transitionProperty?: string | Array<string>;
+  width?: GridSpaceOrLength | 'fit-content';
+  zIndex?: ZIndex;
+};
 
-export type BoxProps<
-  TagName extends keyof JSX.IntrinsicElements = 'div',
-  P = BoxPropsWithHandlers<TagName>
-> = P & Omit<ComponentProps<TagName>, keyof P> & Omit<CSSProperties, keyof P>;
+export type StyleProps<T = ThemedStyles> = Omit<CSSProperties, keyof T> & T;
+
+export type BoxProps<E extends keyof JSX.IntrinsicElements = 'div'> =
+  ComponentPropsWithRef<E> & {
+    as?: E;
+    styles?: StyleProps;
+  };

@@ -8,13 +8,13 @@ import { BoxProps } from '@/react-handy-box/components/Box.types';
 import { Button } from '@/react-handy-box/components/Button';
 import { Icon } from '@/react-handy-box/components/Icon';
 import { Menu } from '@/react-handy-box/components/Menu';
-import { MenuItem } from '@/react-handy-box/components/Menu.types';
+import { MenuItemProps } from '@/react-handy-box/components/Menu.types';
 import { inputStyles } from '@/tokens/inputStyles';
 import { forwardRef, MouseEvent, Ref } from 'react';
 
 type SingleSelectInputProps<T extends BaseOptionShape> = Omit<
   BoxProps<'div'>,
-  'children' | 'ref'
+  'children'
 > &
   Omit<
     AbstractMultiSelectInputProps<T, false>,
@@ -41,7 +41,7 @@ const SingleSelectInput = forwardRef(
               label: option.label,
               type: 'menu-item',
               onClick: propsForOption.onClick,
-            } as MenuItem)
+            } as MenuItemProps['MenuItem'])
         );
 
         const handleClickClearSelection = (
@@ -54,27 +54,37 @@ const SingleSelectInput = forwardRef(
         };
 
         return (
-          <Box rowGap="xtight">
+          <Box styles={{ rowGap: 'xtight' }}>
             <Menu
               options={optionsAsMenuItems}
               renderTrigger={({ propsForTrigger }) => (
                 <Box
                   {...(inputStyles as BoxProps<'div'>)}
-                  alignItems="center"
-                  columnGap="tight"
-                  display="flex"
-                  justifyContent="space-between"
-                  paddingY="xxtight"
                   ref={propsForTrigger.ref as Ref<HTMLDivElement>}
                   tabIndex={0}
-                  whiteSpace="nowrap"
+                  styles={{
+                    alignItems: 'center',
+                    columnGap: 'tight',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    paddingY: 'xxtight',
+                    whiteSpace: 'nowrap',
+                  }}
                   onClick={propsForTrigger.onClick}
                 >
-                  <Box color={!selectedOption ? 'textFaded' : undefined}>
+                  <Box
+                    styles={{
+                      color: !selectedOption ? 'textFaded' : undefined,
+                    }}
+                  >
                     {selectedOption?.option.label ?? placeholder}
                   </Box>
 
-                  <Box columnGap="xtight">
+                  <Box
+                    styles={{
+                      columnGap: 'xtight',
+                    }}
+                  >
                     {selectedOption && (
                       <Button
                         variant="iconOnly"

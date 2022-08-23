@@ -2,6 +2,8 @@ import {
   BorderStyle,
   BoxProps,
   Breakpoint,
+  StyleProps,
+  ThemedStyles,
   validStyleProps,
 } from '@/react-handy-box/components/Box.types';
 import { adjustColor } from '@/react-handy-box/utilities/adjustColorLightness';
@@ -18,27 +20,7 @@ import { zIndices } from '@/tokens/zIndices';
 import camelCase from 'lodash/camelCase';
 import kebabCase from 'lodash/kebabCase';
 import upperFirst from 'lodash/upperFirst';
-import styled, { CSSObject } from 'styled-components';
-
-type PropOptionResolver<TagName extends keyof JSX.IntrinsicElements> = <
-  P extends string & keyof BoxProps<TagName>
->(args: {
-  propName: P;
-  props: BoxProps<TagName>;
-  propValue: BoxProps<TagName>[P];
-}) => CSSObject;
-
-type PropHandler<TagName extends keyof JSX.IntrinsicElements> = {
-  aliases?: Array<keyof BoxProps<TagName>>;
-  setDefaults?: CSSObject;
-  options:
-    | Record<string, string | number | CSSObject>
-    | PropOptionResolver<TagName>;
-};
-
-type PropHandlers<TagName extends keyof JSX.IntrinsicElements> = {
-  [K in keyof BoxProps<TagName>]: PropHandler<TagName>;
-};
+import styled, { CSSObject, CSSProperties } from 'styled-components';
 
 const nestedSelectorPropAliases = {
   propsForAfterElement: '&:after',
@@ -49,13 +31,29 @@ const nestedSelectorPropAliases = {
   propsForLastElement: '&:last-child',
 };
 
-const propHandlers: PropHandlers<any> = {
+type PropHandler<K extends keyof StyleProps> = {
+  aliases?: Array<keyof CSSProperties | keyof ThemedStyles>;
+  setDefaults?: CSSObject;
+  options:
+    | Record<string, string | number | CSSObject>
+    | ((args: {
+        propName: K;
+        props: StyleProps;
+        propValue: NonNullable<StyleProps[K]>;
+      }) => CSSObject);
+};
+
+type PropHandlers = {
+  [K in keyof StyleProps]: PropHandler<K>;
+};
+
+const propHandlers: PropHandlers = {
   alignItems: {
     aliases: ['justifyContent'],
     setDefaults: {
       display: 'flex',
     },
-    options: ({ propName = 'alignItems', propValue }) => ({
+    options: ({ propName, propValue }) => ({
       [propName]: propValue,
     }),
   },
@@ -104,8 +102,13 @@ const propHandlers: PropHandlers<any> = {
       'borderBottomColor',
       'borderLeftColor',
     ],
-    options: ({ props, propName = 'border' }) => {
-      const borderEdgeName = propName.replace('Color', '');
+    options: ({ props, propName }) => {
+      const borderEdgeName = propName.replace('Color', '') as
+        | 'border'
+        | 'borderBottom'
+        | 'borderLeft'
+        | 'borderRight'
+        | 'borderTop';
       const borderStyleObject =
         borderStyles[(props[borderEdgeName] ?? 'normal') as BorderStyle];
       const borderColor = props[`${borderEdgeName}Color`] ?? 'border';
@@ -132,13 +135,15 @@ const propHandlers: PropHandlers<any> = {
   color: {
     aliases: ['backgroundColor'],
     options: ({ props, propName, propValue }) => {
+      const typedPropName = propName as 'color' | 'backgroundColor';
+
       return {
         [propName]:
           colorPalette[
             adjustColor(
               propValue,
-              props[`${propName}Lightness`],
-              props[`${propName}Opacity`]
+              props[`${typedPropName}Lightness`],
+              props[`${typedPropName}Opacity`]
             )
           ],
       };
@@ -171,7 +176,9 @@ const propHandlers: PropHandlers<any> = {
     setDefaults: {
       gridAutoRows: 'auto',
     },
-    options: ({ propName = 'columns', propValue }) => {
+    options: ({ propName, propValue }) => {
+      const typedPropName = propName as 'columns' | 'rows';
+
       let result;
 
       if (typeof propValue === 'number') {
@@ -184,7 +191,7 @@ const propHandlers: PropHandlers<any> = {
 
       return {
         display: 'grid',
-        [`gridTemplate${upperFirst(propName)}`]: result,
+        [`gridTemplate${upperFirst(typedPropName)}`]: result,
       };
     },
   },
@@ -247,24 +254,19 @@ const propHandlers: PropHandlers<any> = {
   },
   marginX: {
     aliases: ['marginY', 'paddingX', 'paddingY'],
-    options: ({ props, propName, propValue }) => {
-      const XorY = propName.includes('X') ? 'X' : 'Y';
+    options: ({ propName, propValue }) => {
+      const typedPropName = propName as
+        | 'marginX'
+        | 'marginY'
+        | 'paddingX'
+        | 'paddingY';
+      const XorY = typedPropName.includes('X') ? 'X' : 'Y';
       const LeftOrBottom = XorY === 'X' ? 'Left' : 'Bottom';
       const RightOrTop = XorY === 'X' ? 'Right' : 'Top';
-      const propNameLeftOrBottom = propName.replace(XorY, LeftOrBottom);
-      const propNameRightOrTop = propName.replace(XorY, RightOrTop);
-
-      const adjustmentProps = propName.endsWith('Color')
-        ? {
-            [`${propNameLeftOrBottom}Opacity`]: props[`${propName}Opacity`],
-            [`${propNameLeftOrBottom}Lightness`]: props[`${propName}Lightness`],
-            [`${propNameRightOrTop}Opacity`]: props[`${propName}Opacity`],
-            [`${propNameRightOrTop}Lightness`]: props[`${propName}Lightness`],
-          }
-        : {};
+      const propNameLeftOrBottom = typedPropName.replace(XorY, LeftOrBottom);
+      const propNameRightOrTop = typedPropName.replace(XorY, RightOrTop);
 
       return propsToStyleObject({
-        ...adjustmentProps,
         [`${propNameLeftOrBottom}`]: propValue,
         [`${propNameRightOrTop}`]: propValue,
       });
@@ -294,7 +296,7 @@ const propHandlers: PropHandlers<any> = {
   propsForRoot: {
     aliases: Object.keys(breakpoints).map(
       (breakpointName) => `propsFor${upperFirst(breakpointName)}`
-    ),
+    ) as Array<`propsFor${Capitalize<Breakpoint>}`>,
     options: ({ propName, propValue }) => {
       const breakpointName = camelCase(
         propName.replace('propsFor', '')
@@ -352,29 +354,36 @@ const propHandlers: PropHandlers<any> = {
 };
 
 Object.entries(propHandlers).forEach(([propName, propHandler]) => {
-  propHandler?.aliases?.forEach((aliasedPropName) => {
-    propHandlers[aliasedPropName] = propHandlers[propName];
+  propHandler.aliases?.forEach((aliasedPropName: keyof StyleProps) => {
+    propHandlers[aliasedPropName] = propHandlers[
+      propName as keyof PropHandlers
+    ] as PropHandler<any>;
   });
 });
 
-const propsToStyleObject: (boxProps: BoxProps<any>) => CSSObject = (boxProps) =>
+const propsToStyleObject: (boxProps: StyleProps) => CSSObject = (boxProps) =>
   Object.keys(boxProps).reduce((acc, propName) => {
-    const propHandler = propHandlers[propName];
-    const propValue = boxProps[propName];
+    const typedPropName = propName as keyof PropHandlers;
+
+    const propHandler = propHandlers[typedPropName] as PropHandler<
+      keyof ThemedStyles
+    >;
+
+    const propValue = boxProps[typedPropName];
 
     if (typeof propValue === 'undefined') {
       return acc;
     }
 
     if (!propHandler) {
-      if (propName === 'debug') {
+      if (typedPropName === 'debug') {
         console.log(acc);
       }
 
-      return validStyleProps.includes(propName)
+      return validStyleProps.includes(typedPropName)
         ? {
             ...acc,
-            [propName]: propValue,
+            [typedPropName]: propValue,
           }
         : acc;
     }
@@ -385,9 +394,9 @@ const propsToStyleObject: (boxProps: BoxProps<any>) => CSSObject = (boxProps) =>
       return {
         ...defaults,
         ...acc,
-        ...propHandler.options({
+        ...(propHandler.options as Function)({
           props: boxProps,
-          propName,
+          propName: typedPropName,
           propValue,
         }),
       };
@@ -395,24 +404,18 @@ const propsToStyleObject: (boxProps: BoxProps<any>) => CSSObject = (boxProps) =>
       return {
         ...defaults,
         ...acc,
-        [propName]: propHandler.options[propValue] ?? propValue,
+        [typedPropName]:
+          propHandler.options[propValue as keyof typeof propHandler.options] ??
+          propValue,
       };
     }
 
     return acc;
   }, {});
 
-const Box: <TagName extends keyof JSX.IntrinsicElements = 'div'>(
-  props: BoxProps<TagName>
-) => JSX.Element = styled('div').withConfig({
-  shouldForwardProp: (prop, defaultValidatorFn) =>
-    Object.keys(propHandlers).includes(prop) === false &&
-    validStyleProps.includes(prop) === false &&
-    defaultValidatorFn(prop),
-})(
-  <TagName extends keyof JSX.IntrinsicElements = 'div'>(
-    props: BoxProps<TagName>
-  ) => propsToStyleObject(props)
+const Box = styled('div')(
+  <E extends keyof JSX.IntrinsicElements = 'div'>(props: BoxProps<E>) =>
+    propsToStyleObject(props.styles ?? {})
 );
 
 export { Box };

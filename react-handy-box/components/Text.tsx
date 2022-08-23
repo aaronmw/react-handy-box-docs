@@ -1,42 +1,48 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxProps, StyleProps } from '@/react-handy-box/components/Box.types';
 import { textStyles } from '@/tokens/typography';
 import { forwardRef, Ref } from 'react';
 
-type TextProps<TagName extends keyof JSX.IntrinsicElements> = Omit<
-  BoxProps<TagName>,
-  'ref' | 'style'
+type TextProps<E extends keyof JSX.IntrinsicElements = 'span'> = Omit<
+  BoxProps<E>,
+  'size' | 'style'
 > & {
-  size?: BoxProps<TagName>['fontSize'];
-  style?: BoxProps<TagName>['fontStyle'];
+  size?: StyleProps['fontSize'];
+  style?: StyleProps['fontStyle'];
   variant?: keyof typeof textStyles;
-  weight?: BoxProps<TagName>['fontWeight'];
+  weight?: StyleProps['fontWeight'];
 };
 
 const Text = forwardRef(
-  <TagName extends keyof JSX.IntrinsicElements = 'span'>(
+  (
     {
       children,
       size,
       style,
+      styles,
       variant = 'normal',
       weight,
-      ...props
-    }: TextProps<TagName>,
-    ref: Ref<HTMLElement>
-  ) => (
-    <Box
-      as="span"
-      fontSize={size}
-      fontWeight={weight}
-      fontStyle={style}
-      ref={ref}
-      {...(textStyles[variant] as any)}
-      {...props}
-    >
-      {children}
-    </Box>
-  )
+      ...otherProps
+    }: TextProps,
+    ref: Ref<HTMLSpanElement>
+  ) => {
+    const { styles: variantStyles, ...variantProps } = textStyles[variant];
+
+    return (
+      <Box
+        as="span"
+        ref={ref}
+        styles={{
+          ...variantStyles,
+          ...styles,
+        }}
+        {...variantProps}
+        {...otherProps}
+      >
+        {children}
+      </Box>
+    );
+  }
 );
 
 Text.displayName = 'Text';

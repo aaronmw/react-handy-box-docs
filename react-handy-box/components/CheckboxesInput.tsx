@@ -9,6 +9,7 @@ import { Button } from '@/react-handy-box/components/Button';
 import { Icon } from '@/react-handy-box/components/Icon';
 import { IconName } from '@/react-handy-box/components/Icon.types';
 import { forwardRef, MouseEvent, Ref } from 'react';
+import rehypeFilter from 'react-markdown/lib/rehype-filter';
 
 type CheckboxesOrRadioInputProps<
   T extends BaseOptionShape,
@@ -19,21 +20,49 @@ type CheckboxesOrRadioInputProps<
     iconWhenNotSelected: IconName;
   };
 
-const Checkbox = ({ isSelected = false }) => (
-  <Icon
-    color={isSelected ? 'brand' : 'textFaded'}
-    name={isSelected ? 'square-check' : 'square'}
-    variant={isSelected ? 'solid' : undefined}
-  />
+type CheckboxOrRadioProps = BoxProps<'span'> & {
+  isSelected?: boolean;
+};
+
+const Checkbox = forwardRef(
+  (
+    { isSelected = false, styles, ...otherProps }: CheckboxOrRadioProps,
+    ref: Ref<HTMLSpanElement>
+  ) => (
+    <Icon
+      name={isSelected ? 'square-check' : 'square'}
+      ref={ref}
+      styles={{
+        color: isSelected ? 'brand' : 'textFaded',
+        ...styles,
+      }}
+      variant={isSelected ? 'solid' : undefined}
+      {...otherProps}
+    />
+  )
 );
 
-const Radio = ({ isSelected = false }) => (
-  <Icon
-    color={isSelected ? 'brand' : 'textFaded'}
-    name={isSelected ? 'circle-dot' : 'circle'}
-    variant={isSelected ? 'solid' : undefined}
-  />
+Checkbox.displayName = 'Checkbox';
+
+const Radio = forwardRef(
+  (
+    { isSelected = false, styles, ...otherProps }: CheckboxOrRadioProps,
+    ref: Ref<HTMLSpanElement>
+  ) => (
+    <Icon
+      name={isSelected ? 'circle-dot' : 'circle'}
+      ref={ref}
+      styles={{
+        color: isSelected ? 'brand' : 'textFaded',
+        ...styles,
+      }}
+      variant={isSelected ? 'solid' : undefined}
+      {...otherProps}
+    />
+  )
 );
+
+Radio.displayName = 'Radio';
 
 const CheckboxesOrRadioInput = forwardRef(
   <T extends BaseOptionShape, IsMultiValue extends boolean>(
@@ -49,13 +78,15 @@ const CheckboxesOrRadioInput = forwardRef(
       isMultiValue={isMultiValue}
       ref={ref}
       renderOptions={({ options }) => (
-        <Box rowGap="xtight">
-          <Box columnGap="xtight" flexWrap="wrap">
+        <Box styles={{ rowGap: 'xtight' }}>
+          <Box styles={{ columnGap: 'xtight', flexWrap: 'wrap' }}>
             {options.map(({ option, propsForOption, isSelected }) => (
               <Button
-                columnGap="xtight"
-                cursor="pointer"
                 key={option.value}
+                styles={{
+                  columnGap: 'xtight',
+                  cursor: 'pointer',
+                }}
                 variant="bare"
                 onBlur={propsForOption.onBlur}
                 onClick={(event: MouseEvent<HTMLButtonElement>) => {
@@ -65,8 +96,10 @@ const CheckboxesOrRadioInput = forwardRef(
                 }}
               >
                 <Icon
-                  color={isSelected ? 'brand' : 'textFaded'}
                   name={isSelected ? iconWhenSelected : iconWhenNotSelected}
+                  styles={{
+                    color: isSelected ? 'brand' : 'textFaded',
+                  }}
                   variant={isSelected ? 'solid' : undefined}
                 />
                 {option.label}
@@ -80,7 +113,7 @@ const CheckboxesOrRadioInput = forwardRef(
   )
 );
 
-CheckboxesOrRadioInput.displayName = 'CheckboxesOrRadiosInput';
+CheckboxesOrRadioInput.displayName = 'CheckboxesOrRadioInput';
 
 const CheckboxesInput = forwardRef(
   <T extends BaseOptionShape>(

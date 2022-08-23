@@ -132,12 +132,12 @@ const useFormField = (fieldDescriptor: FormFieldDescriptor) => {
 
 const Form = forwardRef(
   (
-    { children, onDirtyStateChange, onSubmit, ...props }: FormProps,
-    outerRef: Ref<HTMLFormElement>
+    { children, onDirtyStateChange, onSubmit, ...otherProps }: FormProps,
+    ref: Ref<HTMLFormElement>
   ): JSX.Element => {
     const [isDirty, setIsDirty] = useState(false);
     const formElementRef = useRef<HTMLFormElement>();
-    const multipleRefs = useMultipleRefs(formElementRef, outerRef);
+    const multipleRefs = useMultipleRefs(formElementRef, ref);
     const formFieldRegistryRef = useRef<FormFieldRegistry>({});
 
     useEffect(() => {
@@ -239,7 +239,7 @@ const Form = forwardRef(
           ref={multipleRefs}
           onReset={handleReset}
           onSubmit={handleSubmit}
-          {...props}
+          {...otherProps}
         >
           {children}
         </Box>

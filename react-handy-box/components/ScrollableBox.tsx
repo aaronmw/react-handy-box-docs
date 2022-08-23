@@ -4,31 +4,41 @@ import { useDOMWatcher } from '@/react-handy-box/hooks/useDOMWatcher';
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
 import { forwardRef, ReactNode, Ref, useEffect, useRef, useState } from 'react';
 
-const OverflowIndicator = (props: BoxProps) => (
-  <Box
-    height={10}
-    left={0}
-    marginTop={-10}
-    overflow="hidden"
-    pointerEvents="none"
-    position="sticky"
-    right={0}
-    transitionProperty="opacity"
-    zIndex="1--stickyElements"
-    {...props}
-  >
+const OverflowIndicator = forwardRef(
+  ({ styles, ...otherProps }: BoxProps, ref: Ref<HTMLDivElement>) => (
     <Box
-      borderRadius="100%"
-      boxShadow="normal"
-      height={10}
-      transform="translateY(-100%)"
-      width="100%"
-    />
-  </Box>
+      ref={ref}
+      styles={{
+        height: 10,
+        left: 0,
+        marginTop: -10,
+        overflow: 'hidden',
+        pointerEvents: 'none',
+        position: 'sticky',
+        right: 0,
+        transitionProperty: 'opacity',
+        zIndex: '1--stickyElements',
+        ...styles,
+      }}
+      {...otherProps}
+    >
+      <Box
+        styles={{
+          borderRadius: '100%',
+          boxShadow: 'normal',
+          height: 10,
+          transform: 'translateY(-100%)',
+          width: '100%',
+        }}
+      />
+    </Box>
+  )
 );
 
+OverflowIndicator.displayName = 'OverflowIndicator';
+
 type ScrollableBoxProps<TagName extends keyof JSX.IntrinsicElements = 'div'> =
-  Omit<BoxProps<TagName>, 'children' | 'ref'> & {
+  Omit<BoxProps<TagName>, 'children'> & {
     children: ReactNode;
     offsetBottomOverflowIndicator?: number;
     offsetTopOverflowIndicator?: number;
@@ -38,20 +48,19 @@ const ScrollableBox = forwardRef(
   <TagName extends keyof JSX.IntrinsicElements = 'div'>(
     {
       children,
-      height,
-      maxHeight,
       offsetBottomOverflowIndicator,
       offsetTopOverflowIndicator,
+      styles,
       ...otherProps
     }: ScrollableBoxProps<TagName>,
-    outerRef: Ref<HTMLElement>
+    ref: Ref<HTMLDivElement>
   ) => {
     const { addDOMWatcher, removeDOMWatcher } = useDOMWatcher();
     const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
     const [isScrolledToTop, setIsScrolledToTop] = useState(false);
     const [isOverflowing, setIsOverflowing] = useState(false);
     const scrollingElementRef = useRef<HTMLElement>(null);
-    const multipleRefs = useMultipleRefs(outerRef, scrollingElementRef);
+    const multipleRefs = useMultipleRefs(ref, scrollingElementRef);
 
     useEffect(() => {
       const scrollingElement = scrollingElementRef.current;
@@ -106,22 +115,29 @@ const ScrollableBox = forwardRef(
 
     return (
       <Box
-        height={height}
-        maxHeight={maxHeight}
-        overflow={isOverflowing ? 'auto' : undefined}
-        position="relative"
         ref={multipleRefs}
+        styles={{
+          overflow: isOverflowing ? 'auto' : undefined,
+          position: 'relative',
+          ...styles,
+        }}
         {...(otherProps as any)}
       >
         <OverflowIndicator
-          opacity={isScrolledToTop ? 0 : 1}
-          top={offsetTopOverflowIndicator ?? 0}
+          styles={{
+            opacity: isScrolledToTop ? 0 : 1,
+            top: offsetTopOverflowIndicator ?? 0,
+          }}
         />
+
         {children}
+
         <OverflowIndicator
-          bottom={offsetBottomOverflowIndicator ?? 0}
-          opacity={isScrolledToBottom ? 0 : 1}
-          transform="rotate(180deg)"
+          styles={{
+            bottom: offsetBottomOverflowIndicator ?? 0,
+            opacity: isScrolledToBottom ? 0 : 1,
+            transform: 'rotate(180deg)',
+          }}
         />
       </Box>
     );

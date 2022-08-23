@@ -48,11 +48,11 @@ export type ModalLayerRenderProps = {
   };
 };
 
-type BasicModalLayerProps = Omit<BoxProps, 'children' | 'ref' | 'type'> & {
+type BasicModalLayerProps = Omit<BoxProps, 'children' | 'type'> & {
   children: ReactNode | ModalLayerRenderFunction;
   disableBackdropClick?: boolean;
   disableFocusTrap?: boolean;
-  propsForBackdrop?: Omit<BoxProps, 'ref'>;
+  propsForBackdrop?: BoxProps;
   type: ModalLayerType;
   onBeforeClose?: ModalLayerEventHandler;
   onBeforeOpen?: ModalLayerEventHandler;

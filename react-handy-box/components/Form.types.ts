@@ -82,7 +82,7 @@ export type FormFieldValidationHandler = (
   formContext?: FormContextObject
 ) => true | ReactNode;
 
-export type FormProps = Omit<BoxProps<'form'>, 'ref' | 'onSubmit'> & {
+export type FormProps = Omit<BoxProps<'form'>, 'onSubmit'> & {
   onDirtyStateChange?: (isStateDirty: boolean) => void;
   onSubmit?: (
     event: FormEvent<HTMLFormElement>,

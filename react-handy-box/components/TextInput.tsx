@@ -5,7 +5,7 @@ import { CommonFormInputProps } from '@/react-handy-box/components/Form.types';
 import { LabeledInput } from '@/react-handy-box/components/LabeledInput';
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
 import { inputStyles } from '@/tokens/inputStyles';
-import { FocusEventHandler, forwardRef, memo, Ref, useRef } from 'react';
+import { FocusEventHandler, forwardRef, Ref, useRef } from 'react';
 
 export type SupportedInputTypes =
   | 'text'
@@ -16,16 +16,10 @@ export type SupportedInputTypes =
   | 'password'
   | 'phone';
 
-export type TextInputElementRef<T extends SupportedInputTypes = 'text'> =
-  T extends 'textarea' ? Ref<HTMLTextAreaElement> : Ref<HTMLInputElement>;
-
 export type TextInputProps<T extends SupportedInputTypes = 'text'> =
-  (T extends 'textarea'
-    ? Omit<BoxProps<'textarea'>, 'as' | 'ref' | 'type'> & {
-        type: 'textarea';
-      }
-    : Omit<BoxProps<'input'>, 'as' | 'ref' | 'type'> & { type?: T }) &
-    CommonFormInputProps;
+  (T extends 'textarea' ? BoxProps<'textarea'> : BoxProps<'input'>) & {
+    type?: T;
+  } & CommonFormInputProps;
 
 const TextInput = forwardRef(
   <T extends SupportedInputTypes = 'text'>(
@@ -35,14 +29,15 @@ const TextInput = forwardRef(
       label,
       labelLocation,
       name,
-      type = 'text',
+      styles,
+      type,
       onChange,
       onRead,
       onReset,
       onValidate,
       ...otherProps
     }: TextInputProps<T>,
-    ref: TextInputElementRef<T>
+    ref: Ref<HTMLLabelElement>
   ): JSX.Element => {
     const inputElementRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
 
@@ -65,6 +60,14 @@ const TextInput = forwardRef(
       event.target.select();
     };
 
+    const boxProps = {
+      ref: multipleRefs,
+      styles: { ...inputStyles, ...styles },
+      onFocus: handleFocus,
+      ...propsForInput,
+      ...otherProps,
+    };
+
     return (
       <LabeledInput
         label={label}
@@ -74,11 +77,13 @@ const TextInput = forwardRef(
         <Box
           as={type === 'textarea' ? 'textarea' : 'input'}
           ref={multipleRefs}
-          type={type === 'textarea' ? undefined : type}
+          styles={inputStyles}
+          type={type === 'textarea' ? undefined : type ?? 'text'}
           onFocus={handleFocus}
-          {...inputStyles}
           {...propsForInput}
-          {...otherProps}
+          {...(type === 'textarea'
+            ? (otherProps as BoxProps<'textarea'>)
+            : (otherProps as BoxProps<'input'>))}
         />
       </LabeledInput>
     );
@@ -87,5 +92,4 @@ const TextInput = forwardRef(
 
 TextInput.displayName = 'TextInput';
 
-export { inputStyles };
 export { TextInput };

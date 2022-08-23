@@ -21,6 +21,7 @@ const codeReplacements = {
 const CodeSnippet = ({
   children,
   highlightLines = [],
+  styles,
   ...otherProps
 }: CodeSnippetProps) => {
   const trimmedCodeSnippet = removeIndentation(children);
@@ -35,7 +36,7 @@ const CodeSnippet = ({
   );
 
   return (
-    <Box fontFamily="monospace" {...otherProps}>
+    <Box styles={{ fontFamily: 'monospace', ...styles }} {...otherProps}>
       <SyntaxHighlighter
         language="jsx"
         lineNumberStyle={{ display: 'none' }}
@@ -47,7 +48,7 @@ const CodeSnippet = ({
           };
         }}
         showLineNumbers={true}
-        style={styles}
+        style={syntaxHighlighterStyles}
         wrapLines={true}
       >
         {patchedCodeSnippet}
@@ -82,7 +83,7 @@ const removeIndentation = (code: string) => {
   return [lines[0], ...trimmedLines].join('\n');
 };
 
-const styles = {
+const syntaxHighlighterStyles = {
   'code[class*="language-"]': {
     direction: 'ltr',
     textAlign: 'left',

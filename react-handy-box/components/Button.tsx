@@ -10,9 +10,10 @@ const Button = forwardRef(
     {
       children,
       stopClickPropagation = false,
+      styles,
       variant = 'primary',
       onClick,
-      ...props
+      ...otherProps
     }: ButtonComponentProps<'button'>,
     ref: Ref<HTMLButtonElement>
   ) => {
@@ -22,6 +23,7 @@ const Button = forwardRef(
       <Box
         as="button"
         ref={ref}
+        styles={{ ...buttonStyles[variant](otherProps), ...styles }}
         onClick={(event: MouseEvent<HTMLButtonElement>) => {
           if (stopClickPropagation) {
             event.stopPropagation();
@@ -29,8 +31,7 @@ const Button = forwardRef(
 
           return (onClick as FormFieldClickHandler)?.(event, formContext);
         }}
-        {...(buttonStyles[variant](props) as any)}
-        {...props}
+        {...otherProps}
       >
         {children}
       </Box>
@@ -42,11 +43,21 @@ Button.displayName = 'Button';
 
 const AnchorButton = forwardRef(
   (
-    { children, variant = 'primary', ...props }: ButtonComponentProps<'a'>,
+    {
+      children,
+      variant = 'primary',
+      styles = {},
+      ...otherProps
+    }: ButtonComponentProps<'a'>,
     ref: Ref<HTMLAnchorElement>
   ) => {
     return (
-      <Box as="a" ref={ref} {...buttonStyles[variant](props as any)} {...props}>
+      <Box
+        as="a"
+        ref={ref}
+        styles={{ ...buttonStyles[variant](otherProps), ...styles }}
+        {...otherProps}
+      >
         {children}
       </Box>
     );

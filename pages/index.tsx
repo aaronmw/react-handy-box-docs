@@ -3,7 +3,6 @@ import { Markdown } from '@/components/Markdown';
 import { NavigationItem, NavigationTree } from '@/components/NavigationTree';
 import { Box } from '@/react-handy-box/components/Box';
 import { BoxProps } from '@/react-handy-box/components/Box.types';
-import { GlobalStyles } from '@/react-handy-box/components/GlobalStyles';
 import { HandyProviders } from '@/react-handy-box/components/HandyProviders';
 import { Text } from '@/react-handy-box/components/Text';
 import { select } from '@/react-handy-box/utilities/select';
@@ -93,52 +92,70 @@ const Home: NextPage<{
         data-auto-replace-svg="nest"
       ></Script>
 
-      <Box columns={['250px', '1fr']} height="100vh">
+      <Box
+        styles={{
+          columns: ['250px', '1fr'],
+          height: '100vh',
+        }}
+      >
         <Box
           as="nav"
-          backgroundColor="shaded"
-          borderRight="hairline"
-          height="100%"
-          overflowY="auto"
-          paddingBottom="xxloose"
+          styles={{
+            backgroundColor: 'shaded',
+            borderRight: 'hairline',
+            height: '100%',
+            overflowY: 'auto',
+            paddingBottom: 'xxloose',
+          }}
         >
           <Box
-            alignItems="center"
-            backgroundColor="shaded"
-            backgroundColorOpacity={100}
-            backgroundColorLightness={600}
-            color="white"
-            justifyContent="space-between"
-            paddingX="tight"
-            paddingY="xtight"
+            styles={{
+              alignItems: 'center',
+              backgroundColor: 'shaded',
+              backgroundColorOpacity: 100,
+              backgroundColorLightness: 600,
+              color: 'white',
+              justifyContent: 'space-between',
+              paddingX: 'tight',
+              paddingY: 'xtight',
+            }}
           >
-            <Box fontWeight="bold">react-handy-box</Box>
-            <Box fontSize="small" opacity={0.6}>
-              v0.1.0
-            </Box>
+            <Box styles={{ fontWeight: 'bold' }}>react-handy-box</Box>
+            <Box styles={{ fontSize: 'small', opacity: 0.6 }}>v0.1.0</Box>
           </Box>
 
           <NavigationTree data={navigationTree} />
         </Box>
+
         <Box
-          alignItems={isLoading ? 'center' : undefined}
-          backgroundColor={isLoading ? 'shaded' : undefined}
-          justifyContent={isLoading ? 'center' : undefined}
-          height="100%"
-          overflowY="auto"
           ref={scrollingContentElementRef}
-          scrollPaddingTop={50}
+          styles={{
+            alignItems: isLoading ? 'center' : undefined,
+            backgroundColor: isLoading ? 'shaded' : undefined,
+            justifyContent: isLoading ? 'center' : undefined,
+            height: '100%',
+            overflowY: 'auto',
+            scrollPaddingTop: 50,
+          }}
         >
           {isLoading && <Box>Loading...</Box>}
           {!isLoading && (
-            <Box marginX="auto" maxWidth={1200} padding="loose" rowGap="loose">
+            <Box
+              styles={{
+                marginX: 'auto',
+                maxWidth: 1200,
+                padding: 'loose',
+                rowGap: 'loose',
+              }}
+            >
               <Text variant="heading--2">{pageData.title}</Text>
-              <Box rowGap="loose">
+
+              <Box styles={{ rowGap: 'loose' }}>
                 {pageData.description && (
                   <Markdown>{pageData.description}</Markdown>
                 )}
 
-                <Box rowGap="xloose">{renderedDemos}</Box>
+                <Box styles={{ rowGap: 'xloose' }}>{renderedDemos}</Box>
               </Box>
             </Box>
           )}

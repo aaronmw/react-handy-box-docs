@@ -10,9 +10,9 @@ import { TextInput } from '@/react-handy-box/components/TextInput';
 import { DocumentationPageDescriptor } from '../pages';
 
 const dummyOptions = [
-  { id: 1, label: 'Apples', value: 'apples' },
-  { id: 2, label: 'Bananas', value: 'bananas' },
-  { id: 3, label: 'Cherries', value: 'cherries' },
+  { id: 'abc', label: 'Apples', value: 'apples' },
+  { id: 'def', label: 'Bananas', value: 'bananas' },
+  { id: 'ghi', label: 'Cherries', value: 'cherries' },
 ];
 
 const docs: DocumentationPageDescriptor = {
@@ -22,7 +22,9 @@ const docs: DocumentationPageDescriptor = {
       title: 'Usage',
       renderDemo: () => (
         <Form
-          rowGap="normal"
+          styles={{
+            rowGap: 'normal',
+          }}
           onSubmit={(event, formContext) => {
             console.log(formContext?.getFieldValues());
           }}
@@ -56,7 +58,12 @@ const docs: DocumentationPageDescriptor = {
             placeholder="Multi-Select Input"
           />
 
-          <Box columnGap="tight" justifyContent="flex-end">
+          <Box
+            styles={{
+              columnGap: 'tight',
+              justifyContent: 'flex-end',
+            }}
+          >
             <Button
               type="reset"
               onClick={(e, formContext) => formContext?.resetForm()}
@@ -69,11 +76,11 @@ const docs: DocumentationPageDescriptor = {
       ),
       renderSnippet: () => `
         <Form
-          rowGap="tight"
+          styles={{
+            rowGap: 'normal',
+          }}
           onSubmit={(event, formContext) => {
-            console.log(
-              formContext?.getFieldValues()
-            );
+            console.log(formContext?.getFieldValues());
           }}
         >
           <TextInput
@@ -106,14 +113,14 @@ const docs: DocumentationPageDescriptor = {
           />
 
           <Box
-            columnGap="tight"
-            justifyContent="flex-end"
+            styles={{
+              columnGap: 'tight',
+              justifyContent: 'flex-end',
+            }}
           >
             <Button
               type="reset"
-              onClick={(e, formContext) =>
-                formContext?.resetForm()
-              }
+              onClick={(e, formContext) => formContext?.resetForm()}
             >
               Reset
             </Button>
@@ -121,7 +128,7 @@ const docs: DocumentationPageDescriptor = {
           </Box>
         </Form>
       `,
-      highlightLines: [6],
+      highlightLines: [],
     },
   ],
 };
