@@ -1,5 +1,5 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { Button } from '@/react-handy-box/components/Button';
 import { Form } from '@/react-handy-box/components/Form';
 import { Icon } from '@/react-handy-box/components/Icon';
@@ -98,7 +98,7 @@ const ModalWindow = forwardRef(
         ...(isLowestModalWindowInStack ? { backgroundColor: 'shadow' } : {}),
         ...(disableBackdropClick === true ? { pointerEvents: 'none' } : {}),
       },
-    } as BoxProps;
+    } as BoxPropsWithoutRef;
 
     const WrapperComponent = propsForForm ? Form : Box;
 
@@ -195,21 +195,27 @@ const ModalWindow = forwardRef(
                   styles={{
                     flexGrow: 1,
                     flexShrink: 1,
-                    paddingBottom: renderFooter ? undefined : 'normal',
-                    paddingTop: renderHeader ? undefined : 'normal',
-                    paddingX: 'normal',
                   }}
                 >
-                  {typeof children === 'function'
-                    ? children(renderProps)
-                    : children}
+                  <Box
+                    styles={{
+                      paddingBottom: renderFooter ? undefined : 'normal',
+                      paddingTop: renderHeader ? undefined : 'normal',
+                      paddingX: 'normal',
+                    }}
+                  >
+                    {typeof children === 'function'
+                      ? children(renderProps)
+                      : children}
+                  </Box>
                 </ScrollableBox>
 
                 {renderFooter && (
                   <Box
                     as="footer"
                     styles={{
-                      padding: 'normal',
+                      paddingX: 'normal',
+                      paddingY: 'tight',
                     }}
                   >
                     {renderFooter(renderProps)}

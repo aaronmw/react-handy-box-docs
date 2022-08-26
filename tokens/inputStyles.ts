@@ -1,6 +1,6 @@
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { StyleProps } from '@/react-handy-box/components/Box.types';
 
-const inputStyles: BoxProps<'input'>['styles'] = {
+const inputStyles: StyleProps = {
   backgroundColor: 'white',
   border: 'normal',
   borderRadius: 'small',
@@ -9,7 +9,7 @@ const inputStyles: BoxProps<'input'>['styles'] = {
   flexShrink: 1,
   paddingX: 'tight',
   paddingY: 'xtight',
-  propsOnFocus: {
+  stylesOnFocus: {
     boxShadow: 'focusRing',
   },
   resize: 'none',

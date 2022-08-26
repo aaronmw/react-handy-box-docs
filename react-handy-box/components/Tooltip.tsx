@@ -1,5 +1,5 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { Popover } from '@/react-handy-box/components/Popover';
 import { PopoverRenderProps } from '@/react-handy-box/components/Popover.types';
 import { forwardRef, ReactNode, Ref, useRef } from 'react';
@@ -15,7 +15,7 @@ const variantPropMap = {
   },
 } as const;
 
-type TooltipProps = Omit<BoxProps, 'content'> & {
+type TooltipProps = Omit<BoxPropsWithoutRef, 'content'> & {
   content: ReactNode;
   disabled?: boolean;
   variant?: keyof typeof variantPropMap;
@@ -67,6 +67,7 @@ const Tooltip = forwardRef(
           ref={renderProps.propsForTrigger.ref as any}
           styles={{
             display: 'inline-block',
+            ...styles,
           }}
           onMouseEnter={scheduleTooltipReveal}
           onMouseLeave={scheduleTooltipDismissal}
@@ -85,7 +86,6 @@ const Tooltip = forwardRef(
         renderTrigger={innerRenderTrigger}
         styles={{
           ...variantPropMap[variant],
-          ...styles,
         }}
         type="tooltip"
         onMouseEnter={cancelTooltipTimers}

@@ -1,11 +1,16 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import {
+  BoxPropsWithoutRef,
+  GridSpaceOrLength,
+  HTMLElementFor,
+  SupportedTags,
+} from '@/react-handy-box/components/Box.types';
 import { useDOMWatcher } from '@/react-handy-box/hooks/useDOMWatcher';
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
 import { forwardRef, ReactNode, Ref, useEffect, useRef, useState } from 'react';
 
 const OverflowIndicator = forwardRef(
-  ({ styles, ...otherProps }: BoxProps, ref: Ref<HTMLDivElement>) => (
+  ({ styles, ...otherProps }: BoxPropsWithoutRef, ref: Ref<HTMLDivElement>) => (
     <Box
       ref={ref}
       styles={{
@@ -37,29 +42,32 @@ const OverflowIndicator = forwardRef(
 
 OverflowIndicator.displayName = 'OverflowIndicator';
 
-type ScrollableBoxProps<TagName extends keyof JSX.IntrinsicElements = 'div'> =
-  Omit<BoxProps<TagName>, 'children'> & {
-    children: ReactNode;
-    offsetBottomOverflowIndicator?: number;
-    offsetTopOverflowIndicator?: number;
-  };
+type ScrollableBoxProps<TagName extends SupportedTags = 'div'> = Omit<
+  BoxPropsWithoutRef<TagName>,
+  'children'
+> & {
+  children: ReactNode;
+  offsetBottomOverflowIndicator?: GridSpaceOrLength;
+  offsetTopOverflowIndicator?: GridSpaceOrLength;
+};
 
 const ScrollableBox = forwardRef(
-  <TagName extends keyof JSX.IntrinsicElements = 'div'>(
+  <TagName extends SupportedTags = 'div'>(
     {
+      as = 'div',
       children,
       offsetBottomOverflowIndicator,
       offsetTopOverflowIndicator,
       styles,
       ...otherProps
     }: ScrollableBoxProps<TagName>,
-    ref: Ref<HTMLDivElement>
+    ref: Ref<HTMLElementFor<TagName>>
   ) => {
     const { addDOMWatcher, removeDOMWatcher } = useDOMWatcher();
     const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
     const [isScrolledToTop, setIsScrolledToTop] = useState(false);
     const [isOverflowing, setIsOverflowing] = useState(false);
-    const scrollingElementRef = useRef<HTMLElement>(null);
+    const scrollingElementRef = useRef<HTMLElementFor<TagName>>(null);
     const multipleRefs = useMultipleRefs(ref, scrollingElementRef);
 
     useEffect(() => {
@@ -115,13 +123,14 @@ const ScrollableBox = forwardRef(
 
     return (
       <Box
+        as={as}
         ref={multipleRefs}
         styles={{
           overflow: isOverflowing ? 'auto' : undefined,
           position: 'relative',
           ...styles,
         }}
-        {...(otherProps as any)}
+        {...otherProps}
       >
         <OverflowIndicator
           styles={{

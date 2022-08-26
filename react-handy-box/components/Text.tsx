@@ -1,11 +1,16 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps, StyleProps } from '@/react-handy-box/components/Box.types';
+import {
+  BoxPropsWithoutRef,
+  HTMLElementFor,
+  StyleProps,
+  SupportedTags,
+} from '@/react-handy-box/components/Box.types';
 import { textStyles } from '@/tokens/typography';
 import { forwardRef, Ref } from 'react';
 
-type TextProps<E extends keyof JSX.IntrinsicElements = 'span'> = Omit<
-  BoxProps<E>,
-  'size' | 'style'
+type TextProps<E extends SupportedTags = 'span'> = Omit<
+  BoxPropsWithoutRef<E>,
+  'size' | 'style' | 'weight'
 > & {
   size?: StyleProps['fontSize'];
   style?: StyleProps['fontStyle'];
@@ -14,8 +19,9 @@ type TextProps<E extends keyof JSX.IntrinsicElements = 'span'> = Omit<
 };
 
 const Text = forwardRef(
-  (
+  <E extends SupportedTags = 'span'>(
     {
+      as = 'span',
       children,
       size,
       style,
@@ -23,17 +29,20 @@ const Text = forwardRef(
       variant = 'normal',
       weight,
       ...otherProps
-    }: TextProps,
-    ref: Ref<HTMLSpanElement>
+    }: TextProps<E>,
+    ref: Ref<HTMLElementFor<E>>
   ) => {
     const { styles: variantStyles, ...variantProps } = textStyles[variant];
 
     return (
       <Box
-        as="span"
+        as={as}
         ref={ref}
         styles={{
           ...variantStyles,
+          ...(size ? { fontSize: size } : {}),
+          ...(style ? { fontStyle: style } : {}),
+          ...(weight ? { fontWeight: weight } : {}),
           ...styles,
         }}
         {...variantProps}

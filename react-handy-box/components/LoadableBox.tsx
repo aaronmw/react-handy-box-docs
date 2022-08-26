@@ -1,8 +1,8 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { forwardRef, ReactNode, Ref } from 'react';
 
-export type LoadableBoxProps = BoxProps & {
+export type LoadableBoxProps = BoxPropsWithoutRef & {
   isLoading: boolean;
   loadingMessage?: ReactNode;
   unmountWhileLoading?: boolean;

@@ -1,5 +1,9 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import {
+  BoxPropsWithoutRef,
+  HTMLElementFor,
+  SupportedTags,
+} from '@/react-handy-box/components/Box.types';
 import {
   KeyMap,
   useKeyboardShortcuts,
@@ -96,23 +100,27 @@ const stylesForHiddenFocusableInput = {
   opacity: 0.01,
 } as CSSProperties;
 
-type FocusTrapProps = Omit<BoxProps, 'disabled'> & {
+type FocusTrapProps<E extends SupportedTags = 'div'> = Omit<
+  BoxPropsWithoutRef<E>,
+  'disabled'
+> & {
   disabled?: boolean;
   enforceOnBlur?: boolean;
 };
 
 const FocusTrap = forwardRef(
-  (
+  <E extends SupportedTags = 'div'>(
     {
+      as = 'div',
       children,
       disabled,
       enforceOnBlur = true,
       styles,
       ...otherProps
-    }: FocusTrapProps,
-    ref: Ref<HTMLDivElement>
+    }: FocusTrapProps<E>,
+    ref: Ref<HTMLElementFor<E>>
   ) => {
-    const focusTrappedElementRef = useRef<HTMLElement>();
+    const focusTrappedElementRef = useRef<HTMLElementFor<E>>();
 
     const multipleRefs = useMultipleRefs(ref, focusTrappedElementRef);
 
@@ -187,6 +195,7 @@ const FocusTrap = forwardRef(
 
     return (
       <Box
+        as={as}
         ref={multipleRefs}
         styles={{
           position: 'relative',

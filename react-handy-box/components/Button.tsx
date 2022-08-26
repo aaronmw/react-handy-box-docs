@@ -23,7 +23,7 @@ const Button = forwardRef(
       <Box
         as="button"
         ref={ref}
-        styles={{ ...buttonStyles[variant](otherProps), ...styles }}
+        styles={buttonStyles[variant](styles)}
         onClick={(event: MouseEvent<HTMLButtonElement>) => {
           if (stopClickPropagation) {
             event.stopPropagation();
@@ -46,7 +46,7 @@ const AnchorButton = forwardRef(
     {
       children,
       variant = 'primary',
-      styles = {},
+      styles,
       ...otherProps
     }: ButtonComponentProps<'a'>,
     ref: Ref<HTMLAnchorElement>
@@ -55,7 +55,7 @@ const AnchorButton = forwardRef(
       <Box
         as="a"
         ref={ref}
-        styles={{ ...buttonStyles[variant](otherProps), ...styles }}
+        styles={buttonStyles[variant](styles)}
         {...otherProps}
       >
         {children}

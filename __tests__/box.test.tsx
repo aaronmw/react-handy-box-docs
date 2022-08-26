@@ -2,7 +2,7 @@ import {
   nestedSelectorPropAliases,
   propsToStyleObject,
 } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { borderRadii } from '@/tokens/borderRadii';
 import { borderStyles } from '@/tokens/borderStyles';
 import { breakpoints } from '@/tokens/breakpoints';
@@ -13,7 +13,9 @@ import { CSSObject } from 'styled-components';
 
 type TestDescriptor = [
   description: string,
-  tests: Array<[it: string, given: BoxProps<'div'>, expect: CSSObject]>
+  tests: Array<
+    [it: string, given: BoxPropsWithoutRef<'div'>, expect: CSSObject]
+  >
 ];
 
 const tests: Array<TestDescriptor> = [
@@ -237,32 +239,32 @@ const tests: Array<TestDescriptor> = [
         },
       ],
       [
-        'resolves propsOnHover',
+        'resolves stylesOnHover',
         {
           color: 'black',
-          propsOnHover: {
+          stylesOnHover: {
             color: 'white',
           },
         },
         {
           color: colorPalette.black,
-          [nestedSelectorPropAliases.propsOnHover]: {
+          [nestedSelectorPropAliases.stylesOnHover]: {
             color: colorPalette.white,
           },
         },
       ],
       [
-        'resolves propsForAfterElement',
+        'resolves stylesForAfterElement',
         {
           color: 'white',
-          propsForAfterElement: {
+          stylesForAfterElement: {
             backgroundColor: 'black',
             display: 'block',
           },
         },
         {
           color: colorPalette.white,
-          [nestedSelectorPropAliases.propsForAfterElement]: {
+          [nestedSelectorPropAliases.stylesForAfterElement]: {
             backgroundColor: colorPalette.black,
             content: '""',
             display: 'block',
@@ -270,17 +272,17 @@ const tests: Array<TestDescriptor> = [
         },
       ],
       [
-        'resolves propsForBeforeElement',
+        'resolves stylesForBeforeElement',
         {
           color: 'black',
-          propsForBeforeElement: {
+          stylesForBeforeElement: {
             backgroundColor: 'white',
             display: 'block',
           },
         },
         {
           color: colorPalette.black,
-          [nestedSelectorPropAliases.propsForBeforeElement]: {
+          [nestedSelectorPropAliases.stylesForBeforeElement]: {
             backgroundColor: colorPalette.white,
             content: '""',
             display: 'block',
@@ -288,25 +290,25 @@ const tests: Array<TestDescriptor> = [
         },
       ],
       [
-        'resolves propsForFirstElement',
+        'resolves stylesForFirstElement',
         {
           color: 'black',
-          propsForFirstElement: {
+          stylesForFirstElement: {
             color: 'white',
           },
         },
         {
           color: colorPalette.black,
-          [nestedSelectorPropAliases.propsForFirstElement]: {
+          [nestedSelectorPropAliases.stylesForFirstElement]: {
             color: colorPalette.white,
           },
         },
       ],
       [
-        'resolves propsForCustomSelector',
+        'resolves stylesForCustomSelector',
         {
           color: 'black',
-          propsForCustomSelector: {
+          stylesForCustomSelector: {
             '&:hover': { color: 'white' },
           },
         },
@@ -318,13 +320,13 @@ const tests: Array<TestDescriptor> = [
         },
       ],
       [
-        'resolves responsive props (propsFor{breakpointName})',
+        'resolves responsive props (stylesFor{breakpointName})',
         {
           color: 'black',
-          propsForTabletOrLarger: {
+          stylesForTabletOrLarger: {
             color: 'white',
           },
-          propsForPhoneOnly: {
+          stylesForPhoneOnly: {
             color: 'white',
           },
         },

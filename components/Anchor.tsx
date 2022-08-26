@@ -1,8 +1,8 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import Link from 'next/link';
 
-export type AnchorProps = Omit<BoxProps<'a'>, 'href'> & {
+export type AnchorProps = Omit<BoxPropsWithoutRef<'a'>, 'href'> & {
   href: string;
   variant?: keyof typeof variantPropMap;
 };
@@ -13,7 +13,7 @@ const variantPropMap = {
     color: 'link',
     fontWeight: 'bold',
     textDecoration: 'underline',
-    propsOnHover: {
+    stylesOnHover: {
       color: 'link--hovered',
     },
   },
@@ -21,7 +21,7 @@ const variantPropMap = {
     color: 'text',
     fontWeight: 'bold',
     textDecoration: 'underline',
-    propsOnHover: {
+    stylesOnHover: {
       color: 'link--hovered',
     },
   },
@@ -40,7 +40,7 @@ const Anchor = ({
       cursor="pointer"
       styles={{
         cursor: 'pointer',
-        ...(variantPropMap[variant] as BoxProps<'a'>['styles']),
+        ...(variantPropMap[variant] as BoxPropsWithoutRef<'a'>['styles']),
         ...styles,
       }}
       {...otherProps}

@@ -1,4 +1,4 @@
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { FormProps } from '@/react-handy-box/components/Form.types';
 import { variantPropMap } from '@/react-handy-box/components/ModalWindow';
 import {
@@ -48,11 +48,11 @@ export type ModalLayerRenderProps = {
   };
 };
 
-type BasicModalLayerProps = Omit<BoxProps, 'children' | 'type'> & {
+type BasicModalLayerProps = Omit<BoxPropsWithoutRef, 'children' | 'type'> & {
   children: ReactNode | ModalLayerRenderFunction;
   disableBackdropClick?: boolean;
   disableFocusTrap?: boolean;
-  propsForBackdrop?: BoxProps;
+  propsForBackdrop?: BoxPropsWithoutRef;
   type: ModalLayerType;
   onBeforeClose?: ModalLayerEventHandler;
   onBeforeOpen?: ModalLayerEventHandler;
@@ -78,9 +78,7 @@ export type ModalLayerProps = BasicModalLayerProps &
 export type ModalWindowProps = Omit<ModalLayerProps, 'type'> & {
   propsForForm?:
     | Omit<FormProps, 'children'>
-    | ((
-        renderProps: ModalLayerRenderProps
-      ) => Omit<FormProps, 'children' | 'ref'>);
+    | ((renderProps: ModalLayerRenderProps) => Omit<FormProps, 'children'>);
   renderFooter?: ModalLayerRenderFunction;
   renderHeader?: ModalLayerRenderFunction;
   type?: ModalLayerType;

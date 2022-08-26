@@ -1,5 +1,5 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { FocusTrap } from '@/react-handy-box/components/FocusTrap';
 import {
   ModalLayerContextObject,
@@ -77,7 +77,10 @@ const ModalLayerProvider = ({ children }: { children: ReactNode }) => {
 };
 
 const BackdroppedBox = forwardRef(
-  ({ children, styles, ...otherProps }: BoxProps, ref: Ref<HTMLDivElement>) => (
+  (
+    { children, styles, ...otherProps }: BoxPropsWithoutRef,
+    ref: Ref<HTMLDivElement>
+  ) => (
     <>
       <Box
         ref={ref}

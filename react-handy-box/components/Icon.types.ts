@@ -1,8 +1,8 @@
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 
 export type IconVariants = 'solid' | 'regular' | 'light' | 'thin' | 'duotone';
 
-export type IconProps = Omit<BoxProps<'span'>, 'children' | 'name'> &
+export type IconProps = Omit<BoxPropsWithoutRef<'span'>, 'children' | 'name'> &
   (
     | {
         name: IconName;

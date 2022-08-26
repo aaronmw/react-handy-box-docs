@@ -1,8 +1,9 @@
 import {
   BorderStyle,
-  BoxProps,
+  BoxPropsWithRef,
   Breakpoint,
   StyleProps,
+  SupportedTags,
   ThemedStyles,
   validStyleProps,
 } from '@/react-handy-box/components/Box.types';
@@ -20,15 +21,16 @@ import { zIndices } from '@/tokens/zIndices';
 import camelCase from 'lodash/camelCase';
 import kebabCase from 'lodash/kebabCase';
 import upperFirst from 'lodash/upperFirst';
+import { forwardRef } from 'react';
 import styled, { CSSObject, CSSProperties } from 'styled-components';
 
 const nestedSelectorPropAliases = {
-  propsForAfterElement: '&:after',
-  propsForBeforeElement: '&:before',
-  propsForFirstElement: '&:first-child',
-  propsOnFocus: '&:focus, &:focus-within',
-  propsOnHover: '&:hover, &:focus, &:focus-within',
-  propsForLastElement: '&:last-child',
+  stylesForAfterElement: '&:after',
+  stylesForBeforeElement: '&:before',
+  stylesForFirstElement: '&:first-child',
+  stylesOnFocus: '&:focus, &:focus-within',
+  stylesOnHover: '&:hover, &:focus, &:focus-within',
+  stylesForLastElement: '&:last-child',
 };
 
 type PropHandler<K extends keyof StyleProps> = {
@@ -272,8 +274,8 @@ const propHandlers: PropHandlers = {
       });
     },
   },
-  propsForAfterElement: {
-    aliases: ['propsForBeforeElement'],
+  stylesForAfterElement: {
+    aliases: ['stylesForBeforeElement'],
     options: ({ propName, propValue }) => ({
       [nestedSelectorPropAliases[
         propName as keyof typeof nestedSelectorPropAliases
@@ -283,7 +285,7 @@ const propHandlers: PropHandlers = {
       },
     }),
   },
-  propsForCustomSelector: {
+  stylesForCustomSelector: {
     options: ({ propValue }) => {
       return Object.fromEntries(
         Object.entries(propValue).map(([customSelector, props]) => [
@@ -293,13 +295,13 @@ const propHandlers: PropHandlers = {
       );
     },
   },
-  propsForRoot: {
+  stylesForRoot: {
     aliases: Object.keys(breakpoints).map(
-      (breakpointName) => `propsFor${upperFirst(breakpointName)}`
-    ) as Array<`propsFor${Capitalize<Breakpoint>}`>,
+      (breakpointName) => `stylesFor${upperFirst(breakpointName)}`
+    ) as Array<`stylesFor${Capitalize<Breakpoint>}`>,
     options: ({ propName, propValue }) => {
       const breakpointName = camelCase(
-        propName.replace('propsFor', '')
+        propName.replace('stylesFor', '')
       ) as Breakpoint;
 
       const mediaQuery = breakpoints[breakpointName];
@@ -309,8 +311,8 @@ const propHandlers: PropHandlers = {
       };
     },
   },
-  propsOnHover: {
-    aliases: ['propsOnFocus', 'propsForFirstElement', 'propsForLastElement'],
+  stylesOnHover: {
+    aliases: ['stylesOnFocus', 'stylesForFirstElement', 'stylesForLastElement'],
     options: ({ propName, propValue }) => {
       const propSelector =
         nestedSelectorPropAliases[
@@ -413,10 +415,13 @@ const propsToStyleObject: (boxProps: StyleProps) => CSSObject = (boxProps) =>
     return acc;
   }, {});
 
+// TODO: Re-casting with `as` for speed boost; not sure why this type is so slow
 const Box = styled('div')(
-  <E extends keyof JSX.IntrinsicElements = 'div'>(props: BoxProps<E>) =>
+  <E extends SupportedTags = 'div'>(props: BoxPropsWithRef<E>) =>
     propsToStyleObject(props.styles ?? {})
-);
+) as <E extends SupportedTags = 'div'>(
+  props: BoxPropsWithRef<E>
+) => JSX.Element;
 
 export { Box };
 export { nestedSelectorPropAliases, propsToStyleObject };

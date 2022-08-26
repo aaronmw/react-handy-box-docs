@@ -1,4 +1,4 @@
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { LabeledInputProps } from '@/react-handy-box/components/LabeledInput';
 import {
   ChangeEvent,
@@ -82,7 +82,7 @@ export type FormFieldValidationHandler = (
   formContext?: FormContextObject
 ) => true | ReactNode;
 
-export type FormProps = Omit<BoxProps<'form'>, 'onSubmit'> & {
+export type FormProps = Omit<BoxPropsWithoutRef<'form'>, 'onSubmit'> & {
   onDirtyStateChange?: (isStateDirty: boolean) => void;
   onSubmit?: (
     event: FormEvent<HTMLFormElement>,

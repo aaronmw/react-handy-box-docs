@@ -1,10 +1,10 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { colorPalette } from '@/tokens/colorPalette';
 import { trimEnd } from 'lodash';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
-type CodeSnippetProps = Omit<BoxProps, 'children'> & {
+type CodeSnippetProps = Omit<BoxPropsWithoutRef, 'children'> & {
   children: string;
   highlightLines?: Array<number>;
 };

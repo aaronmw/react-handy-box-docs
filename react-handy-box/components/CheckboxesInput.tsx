@@ -4,7 +4,7 @@ import {
   BaseOptionShape,
 } from '@/react-handy-box/components/AbstractMultiSelectInput';
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { Button } from '@/react-handy-box/components/Button';
 import { Icon } from '@/react-handy-box/components/Icon';
 import { IconName } from '@/react-handy-box/components/Icon.types';
@@ -14,13 +14,13 @@ import rehypeFilter from 'react-markdown/lib/rehype-filter';
 type CheckboxesOrRadioInputProps<
   T extends BaseOptionShape,
   IsMultiValue extends boolean
-> = Omit<BoxProps, 'children' | 'ref'> &
+> = Omit<BoxPropsWithoutRef, 'children'> &
   Omit<AbstractMultiSelectInputProps<T, IsMultiValue>, 'renderOptions'> & {
     iconWhenSelected: IconName;
     iconWhenNotSelected: IconName;
   };
 
-type CheckboxOrRadioProps = BoxProps<'span'> & {
+type CheckboxOrRadioProps = BoxPropsWithoutRef<'span'> & {
   isSelected?: boolean;
 };
 
@@ -78,8 +78,10 @@ const CheckboxesOrRadioInput = forwardRef(
       isMultiValue={isMultiValue}
       ref={ref}
       renderOptions={({ options }) => (
-        <Box styles={{ rowGap: 'xtight' }}>
-          <Box styles={{ columnGap: 'xtight', flexWrap: 'wrap' }}>
+        <Box styles={{ rowGap: 'tight' }}>
+          <Box
+            styles={{ columnGap: 'xtight', flexWrap: 'wrap', rowGap: 'xtight' }}
+          >
             {options.map(({ option, propsForOption, isSelected }) => (
               <Button
                 key={option.value}

@@ -2,12 +2,13 @@ import { CodeSnippet } from '@/components/CodeSnippet';
 import { Markdown } from '@/components/Markdown';
 import { DocumentationSectionDescriptor } from '@/pages/index';
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { Text } from '@/react-handy-box/components/Text';
 import kebabCase from 'lodash/kebabCase';
 import reactElementToJSXString from 'react-element-to-jsx-string';
 
-type DemoProps = Omit<BoxProps, 'title'> & DocumentationSectionDescriptor;
+type DemoProps = Omit<BoxPropsWithoutRef, 'title'> &
+  DocumentationSectionDescriptor;
 
 const Demo = ({
   description,

@@ -1,5 +1,5 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { useFormField } from '@/react-handy-box/components/Form';
 import { CommonFormInputProps } from '@/react-handy-box/components/Form.types';
 import { LabeledInput } from '@/react-handy-box/components/LabeledInput';
@@ -17,7 +17,9 @@ export type SupportedInputTypes =
   | 'phone';
 
 export type TextInputProps<T extends SupportedInputTypes = 'text'> =
-  (T extends 'textarea' ? BoxProps<'textarea'> : BoxProps<'input'>) & {
+  (T extends 'textarea'
+    ? BoxPropsWithoutRef<'textarea'>
+    : BoxPropsWithoutRef<'input'>) & {
     type?: T;
   } & CommonFormInputProps;
 

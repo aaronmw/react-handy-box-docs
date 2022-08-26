@@ -4,7 +4,7 @@ import {
   BaseOptionShape,
 } from '@/react-handy-box/components/AbstractMultiSelectInput';
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { Button } from '@/react-handy-box/components/Button';
 import { Icon } from '@/react-handy-box/components/Icon';
 import { Menu } from '@/react-handy-box/components/Menu';
@@ -13,7 +13,7 @@ import { inputStyles } from '@/tokens/inputStyles';
 import { forwardRef, MouseEvent, Ref } from 'react';
 
 type SingleSelectInputProps<T extends BaseOptionShape> = Omit<
-  BoxProps<'div'>,
+  BoxPropsWithoutRef<'div'>,
   'children'
 > &
   Omit<
@@ -59,10 +59,9 @@ const SingleSelectInput = forwardRef(
               options={optionsAsMenuItems}
               renderTrigger={({ propsForTrigger }) => (
                 <Box
-                  {...(inputStyles as BoxProps<'div'>)}
                   ref={propsForTrigger.ref as Ref<HTMLDivElement>}
-                  tabIndex={0}
                   styles={{
+                    ...inputStyles,
                     alignItems: 'center',
                     columnGap: 'tight',
                     display: 'flex',
@@ -70,6 +69,7 @@ const SingleSelectInput = forwardRef(
                     paddingY: 'xxtight',
                     whiteSpace: 'nowrap',
                   }}
+                  tabIndex={0}
                   onClick={propsForTrigger.onClick}
                 >
                   <Box

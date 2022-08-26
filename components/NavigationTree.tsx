@@ -1,7 +1,7 @@
 import { Anchor } from '@/components/Anchor';
 import { useLinkActivity } from '@/hooks/useLinkActivity';
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { Icon } from '@/react-handy-box/components/Icon';
 
 type NavigationItem = {
@@ -11,12 +11,18 @@ type NavigationItem = {
   level?: number;
 };
 
-type NavigationTreeProps = Omit<BoxProps<'ul'>, 'children' | 'data' | 'ref'> & {
+type NavigationTreeProps = Omit<
+  BoxPropsWithoutRef<'ul'>,
+  'children' | 'data'
+> & {
   data: Array<NavigationItem>;
   level?: number;
 };
 
-type NavigationItemProps = Omit<BoxProps<'li'>, 'children' | 'ref' | 'title'> &
+type NavigationItemProps = Omit<
+  BoxPropsWithoutRef<'li'>,
+  'children' | 'title'
+> &
   NavigationItem;
 
 const NavigationItem = ({
@@ -49,7 +55,7 @@ const NavigationItem = ({
           fontWeight: level === 0 || isActive ? 'bold' : undefined,
           paddingX: 'tight',
           paddingY: 'xxtight',
-          propsOnHover: {
+          stylesOnHover: {
             backgroundColor: 'selected',
           },
         }}

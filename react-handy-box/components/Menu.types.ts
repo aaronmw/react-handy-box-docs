@@ -1,25 +1,25 @@
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { IconName } from '@/react-handy-box/components/Icon.types';
 import { PopoverProps } from '@/react-handy-box/components/Popover.types';
 import { ReactNode } from 'react';
 
 export type MenuItemProps = {
-  DividingLine: BoxProps & {
+  DividingLine: BoxPropsWithoutRef & {
     type: 'dividing-line';
   };
 
-  GroupLabel: BoxProps & {
+  GroupLabel: BoxPropsWithoutRef & {
     type: 'group-label';
     label: ReactNode;
   };
 
-  MenuItem: Omit<BoxProps<'button'>, 'type'> & {
+  MenuItem: Omit<BoxPropsWithoutRef<'button'>, 'type'> & {
     icon?: IconName;
     label: ReactNode;
     type: 'menu-item';
   };
 
-  MenuItemWithChildren: Omit<BoxProps<'button'>, 'type'> & {
+  MenuItemWithChildren: Omit<BoxPropsWithoutRef<'button'>, 'type'> & {
     icon?: IconName;
     label: ReactNode;
     options: Array<MenuItemProps[keyof MenuItemProps]>;

@@ -1,5 +1,5 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { Icon } from '@/react-handy-box/components/Icon';
 import {
   MenuItemProps,
@@ -203,7 +203,7 @@ const Menu = forwardRef(
 
 Menu.displayName = 'Menu';
 
-type DividingLineComponentProps = BoxProps;
+type DividingLineComponentProps = BoxPropsWithoutRef;
 
 const DividingLine = forwardRef(
   (
@@ -224,7 +224,7 @@ const DividingLine = forwardRef(
 
 DividingLine.displayName = 'DividingLine';
 
-type GroupLabelComponentProps = BoxProps &
+type GroupLabelComponentProps = BoxPropsWithoutRef &
   Omit<MenuItemProps['GroupLabel'], 'type'>;
 
 const GroupLabel = forwardRef(
@@ -273,11 +273,11 @@ const MenuItem = forwardRef(
           columnGap: 'tight',
           cursor: 'pointer',
           padding: 'xtight',
-          propsOnFocus: {
+          stylesOnFocus: {
             boxShadow: 'focusRing',
             zIndex: '1--stickyElements',
           },
-          propsOnHover: {
+          stylesOnHover: {
             backgroundColor: 'selected',
           },
           whiteSpace: 'nowrap',

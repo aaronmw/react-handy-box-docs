@@ -32,7 +32,8 @@ const ElasticTextInput = forwardRef(
 
     useEffect(() => {
       const ghostElement = ghostElementRef.current;
-      const textareaElement = labelElementRef.current;
+      const textareaElement =
+        labelElementRef.current?.querySelector('textarea');
 
       if (!textareaElement || !ghostElement) {
         return;
@@ -71,7 +72,8 @@ const ElasticTextInput = forwardRef(
         }}
       >
         <TextInput
-          ref={multipleRefs as any}
+          ref={multipleRefs}
+          rows={1}
           styles={{
             overflow: 'hidden',
             ...styles,
@@ -84,6 +86,7 @@ const ElasticTextInput = forwardRef(
           ref={ghostElementRef}
           styles={{
             ...inputStyles,
+            ...styles,
             opacity: 0,
             pointerEvents: 'none',
             position: 'absolute',

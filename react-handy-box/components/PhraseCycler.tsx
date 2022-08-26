@@ -1,10 +1,10 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import last from 'lodash/last';
 import sortBy from 'lodash/sortBy';
 import { forwardRef, ReactNode, Ref, useEffect, useState } from 'react';
 
-type PhraseCyclerProps = Omit<BoxProps<'span'>, 'children'> & {
+type PhraseCyclerProps = Omit<BoxPropsWithoutRef<'span'>, 'children'> & {
   /** Time in milliseconds to show each phrase; default is `2000` */
   duration?: number;
   phrases: Array<ReactNode>;

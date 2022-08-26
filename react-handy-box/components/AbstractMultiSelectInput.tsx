@@ -1,5 +1,5 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { useFormField } from '@/react-handy-box/components/Form';
 import { CommonFormInputProps } from '@/react-handy-box/components/Form.types';
 import { LabeledInput } from '@/react-handy-box/components/LabeledInput';
@@ -22,7 +22,7 @@ export type AbstractMultiSelectInputRenderProps<T extends BaseOptionShape> = {
   options: Array<{
     isSelected: boolean;
     option: T;
-    propsForOption: BoxProps<'button'>;
+    propsForOption: BoxPropsWithoutRef<'button'>;
   }>;
 };
 
@@ -38,8 +38,9 @@ export type AbstractMultiSelectInputProps<
     props: AbstractMultiSelectInputRenderProps<T>
   ) => JSX.Element | Array<JSX.Element>;
 } & CommonFormInputProps &
-  BoxProps<'label'>;
+  BoxPropsWithoutRef<'div'>;
 
+// eslint-disable-next-line react/display-name
 const AbstractMultiSelectInput = forwardRef(
   <T extends BaseOptionShape, IsMultiValue extends boolean>(
     {
@@ -167,8 +168,12 @@ const AbstractMultiSelectInput = forwardRef(
       </LabeledInput>
     );
   }
-);
+) as <T extends BaseOptionShape, IsMultiValue extends boolean>(
+  props: AbstractMultiSelectInputProps<T, IsMultiValue> & {
+    ref?: Ref<HTMLLabelElement>;
+  }
+) => JSX.Element;
 
-AbstractMultiSelectInput.displayName = 'AbstractMultiSelectInput';
+(AbstractMultiSelectInput as any).displayName = 'AbstractMultiSelectInput';
 
 export { AbstractMultiSelectInput };

@@ -1,9 +1,9 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { Text } from '@/react-handy-box/components/Text';
 import ReactMarkdown from 'react-markdown';
 
-type MarkdownProps = Omit<BoxProps, 'children' | 'ref'> & {
+type MarkdownProps = Omit<BoxPropsWithoutRef, 'children'> & {
   children: string;
 };
 

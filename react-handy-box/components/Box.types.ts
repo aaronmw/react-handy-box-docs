@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef } from 'react';
+import { ComponentPropsWithRef, DetailedHTMLProps } from 'react';
 // https://github.com/kripod/react-polymorphic-box/blob/main/src/Box.tsx
 import { animationNames } from '@/tokens/animationNames';
 import { borderRadii } from '@/tokens/borderRadii';
@@ -14,7 +14,7 @@ import { transitionDurations } from '@/tokens/transitionDurations';
 import { fontNames, fontSizes } from '@/tokens/typography';
 import { whiteSpaceNames } from '@/tokens/whiteSpaces';
 import { zIndices } from '@/tokens/zIndices';
-import { CSSProperties, ReactNode } from 'react';
+import { ComponentPropsWithoutRef, CSSProperties, ReactNode, Ref } from 'react';
 
 export type AnimationDuration = TransitionDuration | `${number}${TimeUnit}`;
 
@@ -496,25 +496,25 @@ export type ThemedStyles = {
   /** Sets both `paddingTop` and `paddingBottom` */
   paddingY?: GridSpaceOrLength;
 } & {
-  [K in `propsFor${Capitalize<Breakpoint>}`]?: StyleProps;
+  [K in `stylesFor${Capitalize<Breakpoint>}`]?: StyleProps;
 } & {
   /** `BoxProps` to be applied to the `::after` psuedo element.
    * `content` is set to `""` automatically. */
-  propsForAfterElement?: StyleProps;
+  stylesForAfterElement?: StyleProps;
   /** `BoxProps` to be applied to the `::before` psuedo element.
    * `content` is set to `""` automatically. */
-  propsForBeforeElement?: StyleProps;
-  propsForCustomSelector?: {
+  stylesForBeforeElement?: StyleProps;
+  stylesForCustomSelector?: {
     [selector: string]: StyleProps;
   };
-  propsForFirstElement?: StyleProps;
-  propsForLastElement?: StyleProps;
+  stylesForFirstElement?: StyleProps;
+  stylesForLastElement?: StyleProps;
   /** `BoxProps` to be applied on `:focus` and `:focus-within`.
    *
    * Example:
    * ```
    * <Box
-   *   propsOnFocus={{
+   *   stylesOnFocus={{
    *     outline: '1px 1px 5px blue',
    *   }}
    * >
@@ -522,13 +522,13 @@ export type ThemedStyles = {
    * </Box>
    * ```
    */
-  propsOnFocus?: StyleProps;
+  stylesOnFocus?: StyleProps;
   /** `BoxProps` to be applied on `:hover` or `:focus`.
    *
    * Example:
    * ```
    * <Box
-   *   propsOnHover={{
+   *   stylesOnHover={{
    *     backgroundColor: 'danger',
    *   }}
    * >
@@ -536,7 +536,7 @@ export type ThemedStyles = {
    * </Box>
    * ```
    */
-  propsOnHover?: StyleProps;
+  stylesOnHover?: StyleProps;
   pointerEvents?: 'all' | 'auto' | 'none';
   right?: GridSpaceOrLength;
   rowGap?: GridSpaceOrLength;
@@ -550,8 +550,19 @@ export type ThemedStyles = {
 
 export type StyleProps<T = ThemedStyles> = Omit<CSSProperties, keyof T> & T;
 
-export type BoxProps<E extends keyof JSX.IntrinsicElements = 'div'> =
+export type BoxPropsWithRef<E extends SupportedTags = 'div'> =
   ComponentPropsWithRef<E> & {
     as?: E;
     styles?: StyleProps;
   };
+
+export type BoxPropsWithoutRef<E extends SupportedTags = 'div'> =
+  ComponentPropsWithoutRef<E> & {
+    as?: E;
+    styles?: StyleProps;
+  };
+
+export type SupportedTags = keyof JSX.IntrinsicElements &
+  keyof HTMLElementTagNameMap;
+
+export type HTMLElementFor<T extends SupportedTags> = HTMLElementTagNameMap[T];

@@ -4,7 +4,7 @@ import {
   BaseOptionShape,
 } from '@/react-handy-box/components/AbstractMultiSelectInput';
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { Button } from '@/react-handy-box/components/Button';
 import { Icon } from '@/react-handy-box/components/Icon';
 import { Menu } from '@/react-handy-box/components/Menu';
@@ -13,7 +13,7 @@ import { inputStyles } from '@/tokens/inputStyles';
 import { forwardRef, MouseEvent, ReactNode, Ref } from 'react';
 
 type MultiSelectInputProps<T extends BaseOptionShape> = Omit<
-  BoxProps,
+  BoxPropsWithoutRef,
   'children'
 > &
   Omit<
@@ -60,16 +60,16 @@ const MultiSelectInput = forwardRef(
               renderTrigger={({ propsForTrigger }) => (
                 <Box
                   ref={propsForTrigger.ref as Ref<HTMLDivElement>}
-                  tabIndex={0}
                   styles={{
+                    ...inputStyles,
                     alignItems: 'center',
                     columnGap: 'tight',
                     display: 'flex',
                     justifyContent: 'space-between',
                     paddingY: 'xxtight',
                     whiteSpace: 'nowrap',
-                    ...inputStyles,
                   }}
+                  tabIndex={0}
                   onClick={propsForTrigger.onClick}
                 >
                   <Box
@@ -80,11 +80,9 @@ const MultiSelectInput = forwardRef(
                     {placeholder}
                   </Box>
 
-                  <Box styles={{ columnGap: 'xtight' }}>
-                    <Button variant="iconOnly">
-                      <Icon name="chevron-down" />
-                    </Button>
-                  </Box>
+                  <Button variant="iconOnly">
+                    <Icon name="chevron-down" />
+                  </Button>
                 </Box>
               )}
             />
@@ -122,7 +120,7 @@ const PillButton = forwardRef(
       label,
       onClick,
       ...otherProps
-    }: BoxProps<'button'> & {
+    }: BoxPropsWithoutRef<'button'> & {
       label: ReactNode;
     },
     ref: Ref<HTMLButtonElement>
@@ -136,7 +134,7 @@ const PillButton = forwardRef(
         cursor: 'pointer',
         paddingX: 'tight',
         paddingY: 'xtight',
-        propsOnHover: {
+        stylesOnHover: {
           backgroundColor: 'selected',
           backgroundColorLightness: '+100',
         },

@@ -1,27 +1,33 @@
-import { BoxProps, StyleProps } from '@/react-handy-box/components/Box.types';
-import { ButtonComponentProps } from '@/react-handy-box/components/Button.types';
+import { StyleProps } from '@/react-handy-box/components/Box.types';
+import merge from 'lodash/merge';
 
-type ButtonPropGenerator = (
-  props: ButtonComponentProps<'a' | 'button'>
-) => StyleProps;
+type ButtonStylesGenerator = (styles?: StyleProps) => StyleProps;
 
-const getBaseButtonProps: ButtonPropGenerator = (props) => ({
-  borderRadius: 'small',
-  cursor: 'pointer',
-  display: 'inline-block',
-  pointerEvents: (props as any).disabled ? 'none' : 'all',
-  width: 'fit-content',
-  whiteSpace: 'nowrap',
-  propsOnFocus: {
-    boxShadow: 'focusRing',
-  },
-});
+const mergeBaseButtonStyles: ButtonStylesGenerator = (styles) =>
+  merge(
+    {
+      borderRadius: 'small',
+      cursor: 'pointer',
+      display: 'inline-block',
+      stylesForCustomSelector: {
+        ':disabled': {
+          opacity: 0.6,
+          pointerEvents: 'none',
+        },
+      },
+      stylesOnFocus: {
+        boxShadow: 'focusRing',
+      },
+      width: 'fit-content',
+      whiteSpace: 'nowrap',
+    },
+    styles
+  );
 
-const getPrimaryButtonProps: ButtonPropGenerator = (props) => {
-  const renderedBaseButtonProps = getBaseButtonProps(props);
+const mergePrimaryButtonStyles: ButtonStylesGenerator = (styles) => {
+  const renderedBaseButtonStyles = mergeBaseButtonStyles(styles);
 
-  return {
-    ...renderedBaseButtonProps,
+  return merge(renderedBaseButtonStyles, {
     backgroundColor: 'brand',
     borderRadius: 'small',
     boxSizing: 'content-box',
@@ -30,59 +36,53 @@ const getPrimaryButtonProps: ButtonPropGenerator = (props) => {
     paddingY: 'xtight',
     transform: 'scale(1)',
     transitionProperty: ['transform'].concat(
-      props.styles?.transitionProperty ?? []
+      renderedBaseButtonStyles?.transitionProperty ?? []
     ),
-    propsOnHover: {
-      ...props.styles?.propsOnHover,
+    stylesOnHover: {
       backgroundColor: 'purple',
       color: 'white',
-      transform: 'scale(1.1)',
+      transform: 'scale(1.05)',
     },
-  };
+  });
 };
 
-const buttonStyles: Record<string, ButtonPropGenerator> = {
-  bare: getBaseButtonProps,
+const buttonStyles: Record<string, ButtonStylesGenerator> = {
+  bare: mergeBaseButtonStyles,
 
-  caution: (props) => {
-    const renderedPrimaryButtonProps = getPrimaryButtonProps(props);
+  caution: (styles) => {
+    const renderedPrimaryButtonStyles = mergePrimaryButtonStyles(styles);
 
-    return Object.assign(renderedPrimaryButtonProps, {
+    return merge(renderedPrimaryButtonStyles, {
       borderColor: 'transparent',
       color: 'danger',
-      propsOnHover: {
-        ...props.styles?.propsOnHover,
-        ...renderedPrimaryButtonProps.propsOnHover,
+      stylesOnHover: {
         borderColor: 'danger',
       },
     });
   },
 
-  danger: (props) => {
-    const renderedPrimaryButtonProps = getPrimaryButtonProps(props);
+  danger: (styles) => {
+    const renderedPrimaryButtonStyles = mergePrimaryButtonStyles(styles);
 
-    return {
-      ...renderedPrimaryButtonProps,
+    return merge(renderedPrimaryButtonStyles, {
       borderColor: 'danger',
       borderStyle: 'thick',
       color: 'danger',
-      propsOnHover: {
-        ...props.styles?.propsOnHover,
-        ...renderedPrimaryButtonProps.propsOnHover,
+      stylesOnHover: {
         backgroundColor: 'danger',
         borderColor: 'danger',
         color: 'white',
       },
-    };
+    });
   },
 
-  iconOnly: (props) => ({
-    ...getBaseButtonProps(props),
+  iconOnly: (styles) => ({
+    ...mergeBaseButtonStyles(styles),
     paddingX: 'xtight',
     paddingY: 'xxtight',
   }),
 
-  primary: getPrimaryButtonProps,
+  primary: mergePrimaryButtonStyles,
 };
 
 export { buttonStyles };

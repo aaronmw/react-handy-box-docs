@@ -1,7 +1,10 @@
 import { Markdown } from '@/components/Markdown';
 import { DocumentationPageDescriptor } from '@/pages/index';
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps, Color } from '@/react-handy-box/components/Box.types';
+import {
+  BoxPropsWithoutRef,
+  Color,
+} from '@/react-handy-box/components/Box.types';
 import {
   coreColorDefinitions,
   semanticSwatchAliases,
@@ -197,7 +200,7 @@ const ColorSwatch = ({
   colorName,
   styles,
   ...otherProps
-}: BoxProps & {
+}: BoxPropsWithoutRef & {
   colorName: Color;
 }) => (
   <Box

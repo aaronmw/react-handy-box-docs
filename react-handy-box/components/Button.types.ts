@@ -1,4 +1,4 @@
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { FormFieldClickHandler } from '@/react-handy-box/components/Form.types';
 import { buttonStyles } from '@/tokens/buttonStyles';
 import { MouseEventHandler } from 'react';
@@ -12,7 +12,7 @@ export type ButtonProps = {
 };
 
 export type ButtonComponentProps<T extends 'a' | 'button'> = Omit<
-  BoxProps<T>,
+  BoxPropsWithoutRef<T>,
   keyof ButtonProps
 > &
   ButtonProps;

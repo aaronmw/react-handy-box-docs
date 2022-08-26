@@ -1,5 +1,8 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import {
+  BoxPropsWithoutRef,
+  BoxPropsWithRef,
+} from '@/react-handy-box/components/Box.types';
 import { Text } from '@/react-handy-box/components/Text';
 import sortBy from 'lodash/sortBy';
 import { forwardRef, ReactNode, Ref, useEffect, useState } from 'react';
@@ -17,7 +20,7 @@ export type ColumnDescriptor<T extends BaseRowShape, K extends keyof T> = {
   initialSortDirection?: SortDirection;
   isSortable?: boolean;
   label: ReactNode;
-  propsForCell?: BoxProps<'td'>;
+  propsForCell?: BoxPropsWithRef<'td'>;
 };
 
 type SortDirection = 'ASC' | 'DESC';
@@ -25,12 +28,13 @@ type SortDirection = 'ASC' | 'DESC';
 type TableProps<
   T extends BaseRowShape,
   K extends keyof T
-> = BoxProps<'table'> & {
+> = BoxPropsWithoutRef<'table'> & {
   columnDescriptors: Array<ColumnDescriptor<T, K>>;
   initialSortedColumnKey?: K;
   rowObjects: Array<T>;
 };
 
+// eslint-disable-next-line react/display-name
 const Table = forwardRef(
   <T extends BaseRowShape, K extends keyof T>(
     {
@@ -152,7 +156,7 @@ const Table = forwardRef(
               key={rowObject.id}
               styles={{
                 backgroundColor: index % 2 === 0 ? 'shaded' : undefined,
-                propsOnHover: {
+                stylesOnHover: {
                   backgroundColor: 'shaded',
                 },
               }}
@@ -177,8 +181,10 @@ const Table = forwardRef(
       </Box>
     );
   }
-);
+) as <T extends BaseRowShape, K extends keyof T>(
+  props: TableProps<T, K>
+) => JSX.Element;
 
-Table.displayName = 'Table';
+(Table as any).displayName = 'Table';
 
 export { Table };

@@ -435,11 +435,11 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'propsForPhoneOnly',
+      title: 'stylesForPhoneOnly',
       renderDemo: () => (
         <Box
           styles={{
-            propsForPhoneOnly: {
+            stylesForPhoneOnly: {
               color: 'danger',
             },
           }}
@@ -452,13 +452,13 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'propsForAfterElement / propsForBeforeElement',
+      title: 'stylesForAfterElement / stylesForBeforeElement',
       values: [
         {
           renderDemo: () => (
             <Box
               styles={{
-                propsForAfterElement: {
+                stylesForAfterElement: {
                   color: 'danger',
                   content: ` (I'm inside ::after)`,
                 },
@@ -475,7 +475,7 @@ const docs: DocumentationPageDescriptor = {
           renderDemo: () => (
             <Box
               styles={{
-                propsForAfterElement: {
+                stylesForAfterElement: {
                   backgroundColor: 'danger',
                   borderRadius: 'circle',
                   display: 'inline-block',
@@ -499,12 +499,12 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'propsOnHover',
+      title: 'stylesOnHover',
       values: [
         {
           styles: {
             padding: 'normal',
-            propsOnHover: {
+            stylesOnHover: {
               backgroundColor: 'shaded',
             },
           },
@@ -515,7 +515,7 @@ const docs: DocumentationPageDescriptor = {
           styles: {
             padding: 'normal',
             transitionDuration: 'normal',
-            propsOnHover: {
+            stylesOnHover: {
               backgroundColor: 'shaded',
             },
           },
@@ -534,7 +534,7 @@ const docs: DocumentationPageDescriptor = {
         <Box
           styles={{
             padding: 'normal',
-            propsOnHover: {
+            stylesOnHover: {
               backgroundColor: 'shaded',
             },
             transitionDuration,
@@ -569,7 +569,7 @@ const docs: DocumentationPageDescriptor = {
           styles={{
             opacity: 0.5,
             padding: 'normal',
-            propsOnHover: {
+            stylesOnHover: {
               backgroundColor: 'shaded',
               border: 'normal',
               opacity: 1,

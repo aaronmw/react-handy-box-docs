@@ -1,5 +1,5 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { Text } from '@/react-handy-box/components/Text';
 import { forwardRef, ReactNode, Ref } from 'react';
 
@@ -11,9 +11,10 @@ export type LabeledInputProps = {
   labelLocation?: 'above' | 'left' | 'hidden';
 };
 
-type LabeledInputComponentProps = LabeledInputProps & BoxProps<'label'>;
+type LabeledInputComponentProps = LabeledInputProps &
+  BoxPropsWithoutRef<'label'>;
 
-const baseLabelProps: BoxProps<'label'>['styles'] = {
+const baseLabelProps: BoxPropsWithoutRef<'label'>['styles'] = {
   display: 'block',
   flexGrow: 1,
   flexShrink: 1,
@@ -21,8 +22,8 @@ const baseLabelProps: BoxProps<'label'>['styles'] = {
 
 const labelLocationPropMap: {
   [key in 'above' | 'left' | 'hidden']: {
-    container?: BoxProps<'label'>['styles'];
-    label?: BoxProps<'span'>['styles'];
+    container?: BoxPropsWithoutRef<'label'>['styles'];
+    label?: BoxPropsWithoutRef<'span'>['styles'];
   };
 } = {
   above: {

@@ -1,8 +1,8 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { forwardRef, MouseEventHandler, Ref } from 'react';
 
-type PropagationStopperProps = BoxProps & {
+type PropagationStopperProps = BoxPropsWithoutRef & {
   disabled?: boolean;
 };
 

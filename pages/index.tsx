@@ -2,7 +2,7 @@ import { Demo } from '@/components/Demo';
 import { Markdown } from '@/components/Markdown';
 import { NavigationItem, NavigationTree } from '@/components/NavigationTree';
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxProps } from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { HandyProviders } from '@/react-handy-box/components/HandyProviders';
 import { Text } from '@/react-handy-box/components/Text';
 import { select } from '@/react-handy-box/utilities/select';
@@ -22,7 +22,7 @@ type DocumentationPageDescriptor = {
 type DocumentationSectionDescriptor = {
   description?: string;
   highlightLines?: Array<number> | ((value: any) => Array<number>);
-  propsForContainer?: BoxProps;
+  propsForContainer?: BoxPropsWithoutRef;
   renderDemo: (value: any) => JSX.Element;
   renderSnippet?: ((value: any) => string) | boolean;
   title: string;
