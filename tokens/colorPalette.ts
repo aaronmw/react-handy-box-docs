@@ -1,5 +1,13 @@
+import {
+  ColorLightnessValue,
+  SwatchName,
+  ThemeName,
+  ThemeObject,
+  ValidColorSwatchName,
+} from '@/react-handy-box/components/Box.types';
 import mapValues from 'lodash/mapValues';
 import { parseToHsl, rgba, setLightness } from 'polished';
+import { SwatchNameOrAlias } from './../react-handy-box/components/Box.types';
 
 const defaultLightnessLevels = {
   100: -0.925,
@@ -9,7 +17,7 @@ const defaultLightnessLevels = {
   500: 0.33,
   600: 0.66,
   700: 0.95,
-};
+} as const;
 
 const opacityOptions = [10, 20, 30, 40, 50, 60, 70, 80, 90] as const;
 
@@ -68,28 +76,22 @@ const coreColorDefinitions = {
       ...defaultLightnessLevels,
     },
   },
-};
+} as const;
 
-type ColorLightnessValue = keyof typeof defaultLightnessLevels;
-
-type ColorOpacityValue = typeof opacityOptions[number] | 100;
-
-type ValidColorSwatchName =
-  | `${keyof typeof coreColorDefinitions}--${ColorLightnessValue}`
-  | `${keyof typeof coreColorDefinitions}--${ColorLightnessValue}--${ColorOpacityValue}`;
-
-const coreSwatches = Object.keys(coreColorDefinitions).reduce(
+const colorSwatches = Object.keys(coreColorDefinitions).reduce(
   (acc, colorName) => {
     const coreColorName = colorName as keyof typeof coreColorDefinitions;
-    const { code: coreColor, lightnessLevels } =
+
+    const { code: coreColorCode, lightnessLevels } =
       coreColorDefinitions[coreColorName];
-    const { lightness: baseLightness } = parseToHsl(coreColor);
+
+    const { lightness: baseLightness } = parseToHsl(coreColorCode);
 
     const adjustedColors = Object.keys(lightnessLevels).reduce(
       (previousValue, lightnessLevel) => {
-        const lightnessLevelAsNumber = parseInt(
+        const lightnessLevelAsNumber = Number(
           lightnessLevel
-        ) as keyof typeof lightnessLevels;
+        ) as ColorLightnessValue;
 
         const lightnessAdjustment = lightnessLevels[lightnessLevelAsNumber];
 
@@ -99,10 +101,10 @@ const coreSwatches = Object.keys(coreColorDefinitions).reduce(
             : baseLightness - baseLightness * lightnessAdjustment;
 
         const lightnessColorCode = lightnessAdjustment
-          ? setLightness(adjustedLightness, coreColor)
-          : coreColor;
+          ? setLightness(adjustedLightness, coreColorCode)
+          : coreColorCode;
 
-        const alphaColorCodes = Object.fromEntries(
+        const alphaColorCodes: Record<string, string> = Object.fromEntries(
           opacityOptions.map((opacityOption) => [
             `${coreColorName}--${lightnessLevel}--${opacityOption}`,
             rgba(lightnessColorCode, opacityOption / 100),
@@ -128,22 +130,82 @@ const coreSwatches = Object.keys(coreColorDefinitions).reduce(
   }
 );
 
-const semanticSwatchAliases = {
-  'border': coreSwatches['gray--200'],
-  'brand': coreSwatches['purple--400'],
-  'danger': coreSwatches['red--400'],
-  'highlighted': coreSwatches['purple--300'],
-  'link--hovered': coreSwatches['purple--200'],
-  'link': coreSwatches['blue--400'],
-  'selected': coreSwatches['purple--100'],
-  'shaded': coreSwatches['purple--100--40'],
-  'shadow': coreSwatches['gray--400--20'],
-  'success': coreSwatches['green--400'],
-  'text': coreSwatches['blue--700'],
-  'textFaded': coreSwatches['gray--400'],
+const swatchNameAliases = [
+  'accent',
+  'background',
+  'border',
+  'primary',
+  'codeSnippet--comment',
+  'codeSnippet--function',
+  'codeSnippet--keyword',
+  'codeSnippet--string',
+  'codeSnippet--tags',
+  'codeSnippet--numbers',
+  'danger',
+  'highlighted',
+  'link--hovered',
+  'link',
+  'selected',
+  'selectedText',
+  'shaded',
+  'shadow',
+  'success',
+  'text',
+  'textFaded',
+] as const;
+
+const themeNames = ['light', 'dark'] as const;
+
+const themes: Record<ThemeName, ThemeObject> = {
+  light: {
+    'accent': 'orange--400',
+    'background': 'white',
+    'border': 'gray--200',
+    'primary': 'purple--400',
+    'codeSnippet--comment': 'gray--500',
+    'codeSnippet--function': 'red--500',
+    'codeSnippet--keyword': 'blue--500',
+    'codeSnippet--numbers': 'teal--500',
+    'codeSnippet--string': 'purple--500',
+    'codeSnippet--tags': 'purple--600',
+    'danger': 'red--400',
+    'highlighted': 'yellow--300--70',
+    'link--hovered': 'purple--200',
+    'link': 'blue--400',
+    'selected': 'purple--200--40',
+    'selectedText': 'purple--400',
+    'shaded': 'purple--100--40',
+    'shadow': 'gray--400--20',
+    'success': 'green--400',
+    'text': 'blue--700',
+    'textFaded': 'gray--400',
+  },
+  dark: {
+    'accent': 'orange--400',
+    'background': 'purple--700',
+    'border': 'purple--300--20',
+    'primary': 'purple--400',
+    'danger': 'red--400',
+    'codeSnippet--comment': 'gray--300',
+    'codeSnippet--function': 'red--300',
+    'codeSnippet--keyword': 'blue--300',
+    'codeSnippet--numbers': 'teal--300',
+    'codeSnippet--string': 'purple--200',
+    'codeSnippet--tags': 'purple--300',
+    'highlighted': 'yellow--400--20',
+    'link--hovered': 'purple--200',
+    'link': 'blue--400',
+    'selected': 'purple--400',
+    'selectedText': 'white',
+    'shaded': 'purple--300--10',
+    'shadow': 'purple--600--80',
+    'success': 'green--400',
+    'text': 'white',
+    'textFaded': 'white--translucent',
+  },
 };
 
-const coreColors = mapValues(coreColorDefinitions, 'code') as {
+const coreColorCodes = mapValues(coreColorDefinitions, 'code') as {
   [K in keyof typeof coreColorDefinitions]: string;
 };
 
@@ -154,19 +216,21 @@ const utilityColors = {
   'white--translucent': 'rgba(255, 255, 255, 0.3)',
 };
 
-const colorPalette = {
-  ...coreColors,
-  ...coreSwatches,
-  ...semanticSwatchAliases,
+const colorCodesBySwatchName: Record<SwatchName, string> = {
   ...utilityColors,
+  ...coreColorCodes,
+  ...colorSwatches,
 };
 
-export type { ColorOpacityValue, ColorLightnessValue, ValidColorSwatchName };
 export {
-  coreColors,
+  colorCodesBySwatchName,
+  colorSwatches,
+  themes,
+  coreColorCodes,
   coreColorDefinitions,
-  coreSwatches,
-  semanticSwatchAliases,
-  colorPalette,
+  defaultLightnessLevels,
+  opacityOptions,
+  swatchNameAliases,
+  themeNames,
   utilityColors,
 };

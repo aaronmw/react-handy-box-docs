@@ -1,43 +1,69 @@
 export const animationNames = {
-  dropIn: {
+  backdropEntry: {
     keyframes: `
-      {
-        0% {
-          opacity: 0;
-          transform: translateY(-50%);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0);
-        }
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
       }
     `,
-    cssObject: {
+    style: {
       animationDirection: 'normal',
-      animationDuration: '1s',
+      animationDuration: '0.5s',
       animationIterationCount: 1,
-      animationName: 'dropIn',
       animationTimingFunction: 'ease-in',
     },
   },
-  dropOut: {
+  backdropExit: {
     keyframes: `
-      {
-        0% {
-          opacity: 1;
-          transform: translateY(0%);
-        }
-        100% {
-          opacity: 0;
-          transform: translateY(50%);
-        }
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
       }
     `,
-    cssObject: {
+    style: {
       animationDirection: 'normal',
-      animationDuration: '1s',
+      animationDuration: '0.5s',
       animationIterationCount: 1,
-      animationName: 'dropOut',
+      animationTimingFunction: 'ease-in',
+    },
+  },
+  modalWindowEntry: {
+    keyframes: `
+      from {
+        opacity: 0;
+        transform: translate(-50%, -70%);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+    `,
+    style: {
+      animationDirection: 'normal',
+      animationDuration: '0.5s',
+      animationIterationCount: 1,
+      animationTimingFunction: 'ease-in',
+    },
+  },
+  modalWindowExit: {
+    keyframes: `
+      from {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+      to {
+        opacity: 0;
+        transform: translate(-50%, 20%);
+      }
+    `,
+    style: {
+      animationDirection: 'normal',
+      animationDuration: '0.5s',
+      animationIterationCount: 1,
       animationTimingFunction: 'ease-in',
     },
   },

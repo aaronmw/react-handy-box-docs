@@ -9,9 +9,11 @@ import {
 } from '@/react-handy-box/components/ModalLayer';
 import { ModalWindowProps } from '@/react-handy-box/components/ModalLayer.types';
 import { ScrollableBox } from '@/react-handy-box/components/ScrollableBox';
+import { Tooltip } from '@/react-handy-box/components/Tooltip';
 import { useDOMWatcher } from '@/react-handy-box/hooks/useDOMWatcher';
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
-import { whiteSpacesAsCSSVariables } from '@/tokens/whiteSpaces';
+import { modalLayerStyles } from '@/tokens/modalLayerStyles';
+import merge from 'lodash/merge';
 import {
   forwardRef,
   MouseEvent,
@@ -21,7 +23,7 @@ import {
   useRef,
 } from 'react';
 
-export const variantPropMap = {
+export const variantStylesMap = {
   small: {
     width: 300,
   },
@@ -46,6 +48,9 @@ const ModalWindow = forwardRef(
       renderFooter,
       renderHeader,
       styles,
+      stylesForBackdrop,
+      stylesForBackdropOnClose,
+      stylesForBackdropOnOpen,
       type = 'window',
       variant = 'normal',
       ...otherProps
@@ -72,7 +77,7 @@ const ModalWindow = forwardRef(
       if (isLowestModalWindowInStack) {
         const positionMultipleWindows = () => {
           modalWindowsInStack.reverse().forEach((modalLayer, windowIndex) => {
-            const offset = `calc(${whiteSpacesAsCSSVariables.normal} * -${windowIndex})`;
+            const offset = `calc(var(--white-space--normal) * -${windowIndex})`;
 
             modalLayer.element.style.marginLeft = offset;
             modalLayer.element.style.marginTop = offset;
@@ -93,13 +98,6 @@ const ModalWindow = forwardRef(
       removeDOMWatcher,
     ]);
 
-    const propsForBackdrop = {
-      styles: {
-        ...(isLowestModalWindowInStack ? { backgroundColor: 'shadow' } : {}),
-        ...(disableBackdropClick === true ? { pointerEvents: 'none' } : {}),
-      },
-    } as BoxPropsWithoutRef;
-
     const WrapperComponent = propsForForm ? Form : Box;
 
     return (
@@ -107,29 +105,38 @@ const ModalWindow = forwardRef(
         <ModalLayer
           aria-describedby="modalWindowContent"
           aria-labelledby="modalWindowTitle"
-          propsForBackdrop={propsForBackdrop}
           ref={multipleRefs}
-          styles={{
-            backgroundColor: 'white',
-            border: 'normal',
-            borderRadius: 'normal',
-            boxShadow: 'normal',
-            display: 'flex',
-            left: '50%',
-            maxHeight: `calc(100vh - ${whiteSpacesAsCSSVariables.normal} * 2)`,
-            maxWidth: `calc(100vw - ${whiteSpacesAsCSSVariables.normal} * 2)`,
-            position: 'fixed',
-            top: '50%',
-            transform: 'translate(-50%, -50%)',
-            transitionProperty: [
-              'filter',
-              'margin-left',
-              'margin-top',
-              'opacity',
-              'transform',
-            ],
-            ...variantPropMap[variant],
-            ...styles,
+          styles={merge(
+            {},
+            modalLayerStyles.window,
+            variantStylesMap[variant],
+            styles
+          )}
+          stylesForBackdrop={merge(
+            isLowestModalWindowInStack
+              ? {
+                  animationFillMode: 'forwards',
+                  backgroundColor: 'shadow',
+                  ...stylesForBackdrop,
+                }
+              : {},
+            disableBackdropClick === true ? { pointerEvents: 'none' } : {}
+          )}
+          stylesForBackdropOnClose={{
+            animationName: 'backdropExit',
+            opacity: 0,
+          }}
+          stylesForBackdropOnOpen={{
+            animationName: 'backdropEntry',
+            opacity: 1,
+          }}
+          stylesOnClose={{
+            animationName: 'modalWindowExit',
+            opacity: 0,
+          }}
+          stylesOnOpen={{
+            animationName: 'modalWindowEntry',
+            opacity: 1,
           }}
           type={type}
           {...(otherProps as any)}
@@ -146,8 +153,6 @@ const ModalWindow = forwardRef(
                   alignItems: 'stretch',
                   display: 'flex',
                   flexDirection: 'column',
-                  flexGrow: 1,
-                  flexShrink: 1,
                   justifyContent: 'stretch',
                   ...resolvedPropsForForm.styles,
                 }}
@@ -162,17 +167,19 @@ const ModalWindow = forwardRef(
                     zIndex: '1--stickyElements',
                   }}
                 >
-                  <Button
-                    aria-label="Close Window"
-                    variant="iconOnly"
-                    onClick={(event: MouseEvent) => {
-                      event.preventDefault();
-                      event.stopPropagation();
-                      renderProps.closeModal();
-                    }}
-                  >
-                    <Icon name="xmark" />
-                  </Button>
+                  <Tooltip content="Close Window">
+                    <Button
+                      aria-label="Close Window"
+                      variant="iconOnly"
+                      onClick={(event: MouseEvent) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        renderProps.closeModal();
+                      }}
+                    >
+                      <Icon name="xmark" />
+                    </Button>
+                  </Tooltip>
                 </Box>
 
                 {renderHeader && (
@@ -195,19 +202,15 @@ const ModalWindow = forwardRef(
                   styles={{
                     flexGrow: 1,
                     flexShrink: 1,
+                    paddingBottom: renderFooter ? undefined : 'normal',
+                    paddingTop: renderHeader ? undefined : 'normal',
+                    paddingX: 'normal',
+                    width: '100%',
                   }}
                 >
-                  <Box
-                    styles={{
-                      paddingBottom: renderFooter ? undefined : 'normal',
-                      paddingTop: renderHeader ? undefined : 'normal',
-                      paddingX: 'normal',
-                    }}
-                  >
-                    {typeof children === 'function'
-                      ? children(renderProps)
-                      : children}
-                  </Box>
+                  {typeof children === 'function'
+                    ? children(renderProps)
+                    : children}
                 </ScrollableBox>
 
                 {renderFooter && (

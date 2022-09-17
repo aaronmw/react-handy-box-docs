@@ -280,19 +280,19 @@ const docs: DocumentationPageDescriptor = {
       renderDemo: () => <ModalLaunchingMenuDemo />,
       renderSnippet: () => `
         const ModalLaunchingMenuDemo = () => {
-          const {
-            ModalWindow,
-            setIsModalWindowOpen,
-          } = useModalWindow();
+          const [
+            isModalWindowOpen,
+            setIsModalWindowOpen
+          ] = useState(false);
 
           return (
             <>
               <Menu
                 options={[
                   {
-                    icon: "up-right-from-square",
-                    label: "Launch a Modal...",
-                    type: "menu-item",
+                    icon: 'up-right-from-square',
+                    label: 'Launch a Modal...',
+                    type: 'menu-item',
                     onClick: () => {
                       console.log(\`Opening modal...\`);
                       setIsModalWindowOpen(true);
@@ -300,19 +300,20 @@ const docs: DocumentationPageDescriptor = {
                   },
                 ]}
                 renderTrigger={({ propsForTrigger }) => (
-                  <Button {...propsForTrigger}>
-                    Open Menu
-                  </Button>
+                  <Button {...propsForTrigger}>Open Menu</Button>
                 )}
               />
-              <ModalWindow>
+              <ModalWindow
+                isOpen={isModalWindowOpen}
+                onClose={() => setIsModalWindowOpen(false)}
+              >
                 I am remote-controlled!
               </ModalWindow>
             </>
           );
         };
       `,
-      highlightLines: [...range(2, 6), ...range(15, 19)],
+      highlightLines: [...range(2, 6), ...range(15, 19), ...range(26, 28)],
     },
   ],
 };
@@ -338,7 +339,10 @@ const ModalLaunchingMenuDemo = () => {
           <Button {...propsForTrigger}>Open Menu</Button>
         )}
       />
-      <ModalWindow isOpen={isModalWindowOpen}>
+      <ModalWindow
+        isOpen={isModalWindowOpen}
+        onClose={() => setIsModalWindowOpen(false)}
+      >
         I am remote-controlled!
       </ModalWindow>
     </>

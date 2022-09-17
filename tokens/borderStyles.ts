@@ -7,6 +7,10 @@ export const borderStyles = {
     borderStyle: 'solid',
     borderWidth: '1px',
   },
+  none: {
+    borderStyle: 'none',
+    borderWidth: 0,
+  },
   normal: {
     borderStyle: 'solid',
     borderWidth: '2px',
@@ -15,4 +19,4 @@ export const borderStyles = {
     borderStyle: 'solid',
     borderWidth: '4px',
   },
-};
+} as const;

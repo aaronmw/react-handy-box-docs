@@ -3,11 +3,11 @@ import { DocumentationPageDescriptor } from '@/pages/index';
 import { Box } from '@/react-handy-box/components/Box';
 import {
   BoxPropsWithoutRef,
-  Color,
+  SwatchNameOrAlias,
 } from '@/react-handy-box/components/Box.types';
 import {
   coreColorDefinitions,
-  semanticSwatchAliases,
+  swatchNameAliases,
   utilityColors,
 } from '@/tokens/colorPalette';
 import { toJSXAttributeValue } from '@/utilities/toJSXAttributeValue';
@@ -15,14 +15,15 @@ import { toJSXAttributeValue } from '@/utilities/toJSXAttributeValue';
 const swatchDescriptions = {
   'black': 'Handy to have around, sometimes.',
   'border': 'The default `borderColor` if none is specified',
-  'brand':
+  'primary':
     'The primary color used for buttons and as the base for many other UI elements. Change this to make sweeping changes to the overall theme.',
   'danger': 'For dangerous buttons, warnings, errors, etc.',
   'highlighted': 'For highlighted text / elements',
   'link--hovered': 'Pretty self-explanatory.',
   'link':
-    'The color of clickable text links. Often the same as `brand`, but can be configured separately.',
-  'shaded': 'For darkening the background. Often a lighter version of `brand`',
+    'The color of clickable text links. Often the same as `primary`, but can be configured separately.',
+  'shaded':
+    'For darkening the background. Often a lighter version of `primary`',
   'shadow': 'The color of shadows cast by `boxShadow`',
   'text': 'The default color of all text on the page.',
   'textFaded': 'A lighter version of `text` for secondary or footnote copy.',
@@ -51,20 +52,20 @@ const docs: DocumentationPageDescriptor = {
           highlightLines: [4],
         },
         {
-          backgroundColor: 'brand',
+          backgroundColor: 'primary',
           backgroundColorOpacity: '-50',
           resultingSwatchName: 'purple--400--50',
           highlightLines: [4],
         },
         {
-          backgroundColor: 'brand',
+          backgroundColor: 'primary',
           backgroundColorOpacity: '-50',
           backgroundColorLightness: '-100',
           resultingSwatchName: 'purple--300--50',
           highlightLines: [4, 5],
         },
         {
-          backgroundColor: 'brand',
+          backgroundColor: 'primary',
           backgroundColorOpacity: 10,
           backgroundColorLightness: 300,
           resultingSwatchName: 'purple--300--10',
@@ -119,7 +120,7 @@ const docs: DocumentationPageDescriptor = {
         >
           {[100, 200, 300, 400, 500, 600, 700].map((lightnessValue) => (
             <ColorSwatch
-              colorName={`${colorName}--${lightnessValue}` as Color}
+              colorName={`${colorName}--${lightnessValue}` as SwatchNameOrAlias}
               key={lightnessValue}
             />
           ))}
@@ -137,7 +138,7 @@ const docs: DocumentationPageDescriptor = {
 
     {
       title: 'Semantic Swatches',
-      values: Object.keys(semanticSwatchAliases).map((swatchName) => ({
+      values: swatchNameAliases.map((swatchName) => ({
         swatchName,
         description:
           swatchDescriptions[swatchName as keyof typeof swatchDescriptions],
@@ -151,7 +152,7 @@ const docs: DocumentationPageDescriptor = {
           }}
         >
           <ColorSwatch
-            colorName={swatchName as Color}
+            colorName={swatchName as SwatchNameOrAlias}
             key={swatchName}
             styles={{
               borderRadius: 'small',
@@ -182,7 +183,7 @@ const docs: DocumentationPageDescriptor = {
           }}
         >
           <ColorSwatch
-            colorName={utilityColorName as Color}
+            colorName={utilityColorName as SwatchNameOrAlias}
             key={utilityColorName}
             styles={{
               border: 'normal',
@@ -201,7 +202,7 @@ const ColorSwatch = ({
   styles,
   ...otherProps
 }: BoxPropsWithoutRef & {
-  colorName: Color;
+  colorName: SwatchNameOrAlias;
 }) => (
   <Box
     styles={{
@@ -215,7 +216,7 @@ const ColorSwatch = ({
   >
     <Box
       styles={{
-        backgroundColor: 'white',
+        backgroundColor: 'background',
         border: 'normal',
         borderColor: colorName,
         borderColorLightness: '+100',

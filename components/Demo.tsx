@@ -43,10 +43,11 @@ const Demo = ({
           key={index}
           styles={{
             alignItems: 'center',
-            backgroundColor: 'white',
-            borderRadius: 'normal',
+            backgroundColor: 'background',
+            borderRadius: 'small',
             columns: renderSnippet ? 2 : undefined,
             columnGap: 'normal',
+            color: 'text',
             padding: 'normal',
           }}
         >
@@ -64,7 +65,7 @@ const Demo = ({
             </CodeSnippet>
           )}
 
-          <Box styles={{ flexGrow: 1 }}>{renderDemo(value)}</Box>
+          <Box styles={{ flexGrow: 1, width: '100%' }}>{renderDemo(value)}</Box>
         </Box>
       ))}
     </Box>

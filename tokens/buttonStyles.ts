@@ -5,8 +5,8 @@ type ButtonStylesGenerator = (styles?: StyleProps) => StyleProps;
 
 const mergeBaseButtonStyles: ButtonStylesGenerator = (styles) =>
   merge(
+    {},
     {
-      borderRadius: 'small',
       cursor: 'pointer',
       display: 'inline-block',
       stylesForCustomSelector: {
@@ -17,6 +17,8 @@ const mergeBaseButtonStyles: ButtonStylesGenerator = (styles) =>
       },
       stylesOnFocus: {
         boxShadow: 'focusRing',
+        position: 'relative',
+        zIndex: '1--stickyElements',
       },
       width: 'fit-content',
       whiteSpace: 'nowrap',
@@ -27,8 +29,8 @@ const mergeBaseButtonStyles: ButtonStylesGenerator = (styles) =>
 const mergePrimaryButtonStyles: ButtonStylesGenerator = (styles) => {
   const renderedBaseButtonStyles = mergeBaseButtonStyles(styles);
 
-  return merge(renderedBaseButtonStyles, {
-    backgroundColor: 'brand',
+  return merge({}, renderedBaseButtonStyles, {
+    backgroundColor: 'primary',
     borderRadius: 'small',
     boxSizing: 'content-box',
     color: 'white',
@@ -46,25 +48,20 @@ const mergePrimaryButtonStyles: ButtonStylesGenerator = (styles) => {
   });
 };
 
-const buttonStyles: Record<string, ButtonStylesGenerator> = {
+const buttonStyles = {
   bare: mergeBaseButtonStyles,
 
-  caution: (styles) => {
-    const renderedPrimaryButtonStyles = mergePrimaryButtonStyles(styles);
-
-    return merge(renderedPrimaryButtonStyles, {
+  caution: (styles: StyleProps) =>
+    merge({}, mergePrimaryButtonStyles(styles), {
       borderColor: 'transparent',
       color: 'danger',
       stylesOnHover: {
         borderColor: 'danger',
       },
-    });
-  },
+    }),
 
-  danger: (styles) => {
-    const renderedPrimaryButtonStyles = mergePrimaryButtonStyles(styles);
-
-    return merge(renderedPrimaryButtonStyles, {
+  danger: (styles: StyleProps) =>
+    merge({}, mergePrimaryButtonStyles(styles), {
       borderColor: 'danger',
       borderStyle: 'thick',
       color: 'danger',
@@ -73,14 +70,32 @@ const buttonStyles: Record<string, ButtonStylesGenerator> = {
         borderColor: 'danger',
         color: 'white',
       },
-    });
-  },
+    }),
 
-  iconOnly: (styles) => ({
-    ...mergeBaseButtonStyles(styles),
-    paddingX: 'xtight',
-    paddingY: 'xxtight',
-  }),
+  iconOnly: (styles: StyleProps) =>
+    merge({}, mergeBaseButtonStyles(styles), {
+      paddingX: 'xtight',
+      paddingY: 'xxtight',
+      stylesOnHover: {
+        color: 'primary',
+      },
+    }),
+
+  pill: (styles: StyleProps) =>
+    merge({}, mergeBaseButtonStyles(styles), {
+      alignItems: 'center',
+      backgroundColor: 'selected',
+      borderRadius: 'small',
+      columnGap: 'xtight',
+      cursor: 'pointer',
+      display: 'flex',
+      paddingX: 'tight',
+      paddingY: 'xxtight',
+      stylesOnHover: {
+        backgroundColor: 'selected',
+        backgroundColorLightness: '+100',
+      },
+    }),
 
   primary: mergePrimaryButtonStyles,
 };

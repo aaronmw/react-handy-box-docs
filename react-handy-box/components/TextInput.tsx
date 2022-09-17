@@ -16,34 +16,40 @@ export type SupportedInputTypes =
   | 'password'
   | 'phone';
 
-export type TextInputProps<T extends SupportedInputTypes = 'text'> =
-  (T extends 'textarea'
-    ? BoxPropsWithoutRef<'textarea'>
-    : BoxPropsWithoutRef<'input'>) & {
-    type?: T;
-  } & CommonFormInputProps;
+export type TagNameForInputType<InputType extends SupportedInputTypes> =
+  InputType extends 'textarea' ? 'textarea' : 'input';
+
+export type TextInputProps<InputType extends SupportedInputTypes = 'text'> =
+  Omit<
+    BoxPropsWithoutRef<TagNameForInputType<InputType>>,
+    'type' | 'defaultValue'
+  > & {
+    type?: InputType;
+  } & CommonFormInputProps<false>;
 
 const TextInput = forwardRef(
-  <T extends SupportedInputTypes = 'text'>(
+  <InputType extends SupportedInputTypes = 'text'>(
     {
+      defaultValue,
       disabled,
       isRequired,
       label,
       labelLocation,
       name,
       styles,
-      type,
+      type = 'text' as InputType,
       onChange,
       onRead,
       onReset,
       onValidate,
       ...otherProps
-    }: TextInputProps<T>,
+    }: TextInputProps<InputType>,
     ref: Ref<HTMLLabelElement>
   ): JSX.Element => {
     const inputElementRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
 
     const { propsForInput, propsForLabel } = useFormField({
+      defaultValue,
       disabled,
       isRequired,
       name,
@@ -69,9 +75,9 @@ const TextInput = forwardRef(
       >
         <Box
           as={type === 'textarea' ? 'textarea' : 'input'}
-          ref={inputElementRef as any}
+          ref={inputElementRef}
           styles={inputStyles}
-          type={type === 'textarea' ? undefined : type ?? 'text'}
+          type={type === 'textarea' ? undefined : type}
           onFocus={handleFocus}
           {...propsForInput}
           {...(otherProps as any)}

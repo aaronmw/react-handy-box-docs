@@ -13,7 +13,7 @@ import { inputStyles } from '@/tokens/inputStyles';
 import { forwardRef, MouseEvent, ReactNode, Ref } from 'react';
 
 type MultiSelectInputProps<T extends BaseOptionShape> = Omit<
-  BoxPropsWithoutRef,
+  BoxPropsWithoutRef<'label'>,
   'children'
 > &
   Omit<
@@ -96,11 +96,14 @@ const MultiSelectInput = forwardRef(
                 }}
               >
                 {selectedOptions.map((selectedOption) => (
-                  <PillButton
+                  <Button
                     key={selectedOption.option.value}
-                    label={selectedOption.option.label}
+                    variant="pill"
                     onClick={selectedOption.propsForOption.onClick}
-                  />
+                  >
+                    <span>{selectedOption.option.label}</span>
+                    <Icon name="xmark" />
+                  </Button>
                 ))}
               </Box>
             )}
@@ -113,45 +116,5 @@ const MultiSelectInput = forwardRef(
 );
 
 MultiSelectInput.displayName = 'MultiSelectInput';
-
-const PillButton = forwardRef(
-  (
-    {
-      label,
-      onClick,
-      ...otherProps
-    }: BoxPropsWithoutRef<'button'> & {
-      label: ReactNode;
-    },
-    ref: Ref<HTMLButtonElement>
-  ) => (
-    <Box
-      as="button"
-      ref={ref}
-      styles={{
-        backgroundColor: 'selected',
-        borderRadius: 'small',
-        cursor: 'pointer',
-        paddingX: 'tight',
-        paddingY: 'xtight',
-        stylesOnHover: {
-          backgroundColor: 'selected',
-          backgroundColorLightness: '+100',
-        },
-      }}
-      onClick={(event: MouseEvent<HTMLButtonElement>) => {
-        event.stopPropagation();
-        event.preventDefault();
-        onClick?.(event);
-      }}
-      {...otherProps}
-    >
-      {label}
-      <Icon name="xmark" />
-    </Box>
-  )
-);
-
-PillButton.displayName = 'PillButton';
 
 export { MultiSelectInput };

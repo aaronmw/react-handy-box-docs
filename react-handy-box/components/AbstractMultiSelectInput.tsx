@@ -1,10 +1,15 @@
 import { Box } from '@/react-handy-box/components/Box';
-import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
+import {
+  BoxPropsWithoutRef,
+  BoxPropsWithRef,
+} from '@/react-handy-box/components/Box.types';
 import { useFormField } from '@/react-handy-box/components/Form';
 import { CommonFormInputProps } from '@/react-handy-box/components/Form.types';
 import { LabeledInput } from '@/react-handy-box/components/LabeledInput';
 import {
+  createRef,
   forwardRef,
+  MouseEvent,
   ReactNode,
   Ref,
   useCallback,
@@ -13,36 +18,38 @@ import {
 } from 'react';
 
 export type BaseOptionShape = {
-  id: string;
+  key: string;
   label: ReactNode;
   value: string;
 };
 
-export type AbstractMultiSelectInputRenderProps<T extends BaseOptionShape> = {
+export type AbstractMultiSelectInputRenderProps<
+  OptionShape extends BaseOptionShape
+> = {
   options: Array<{
     isSelected: boolean;
-    option: T;
-    propsForOption: BoxPropsWithoutRef<'button'>;
+    option: OptionShape;
+    propsForOption: BoxPropsWithRef<'button'>;
   }>;
 };
 
 export type AbstractMultiSelectInputProps<
-  T extends BaseOptionShape,
+  OptionShape extends BaseOptionShape,
   IsMultiValue extends boolean
 > = {
   defaultValue?: IsMultiValue extends true ? Array<string> : string;
   isMultiValue: IsMultiValue;
   name: string;
-  options: Array<T>;
+  options: Array<OptionShape>;
   renderOptions: (
-    props: AbstractMultiSelectInputRenderProps<T>
+    props: AbstractMultiSelectInputRenderProps<OptionShape>
   ) => JSX.Element | Array<JSX.Element>;
-} & CommonFormInputProps &
+} & CommonFormInputProps<IsMultiValue> &
   BoxPropsWithoutRef<'div'>;
 
 // eslint-disable-next-line react/display-name
 const AbstractMultiSelectInput = forwardRef(
-  <T extends BaseOptionShape, IsMultiValue extends boolean>(
+  <OptionShape extends BaseOptionShape, IsMultiValue extends boolean>(
     {
       defaultValue,
       disabled,
@@ -57,60 +64,70 @@ const AbstractMultiSelectInput = forwardRef(
       onChange,
       onRead,
       onReset,
+      onWrite,
       onValidate,
       ...otherProps
-    }: AbstractMultiSelectInputProps<T, IsMultiValue>,
+    }: AbstractMultiSelectInputProps<OptionShape, IsMultiValue>,
     ref: Ref<HTMLLabelElement>
   ): JSX.Element => {
-    const { propsForInput, propsForLabel, touched } = useFormField({
-      disabled,
-      isMultiValue,
-      isRequired,
-      name,
-      onChange,
-      onRead,
-      onReset: () => {
-        setToDefaultValue();
-      },
-      onValidate,
-    });
+    const [selectedOptions, setSelectedOptions] = useState<Array<OptionShape>>(
+      []
+    );
 
-    const [selectedOptions, setSelectedOptions] = useState<Array<T>>([]);
+    const setFieldValue = useCallback(
+      (
+        newFieldValue?: IsMultiValue extends true
+          ? Array<string | number>
+          : string | number
+      ) => {
+        if (!newFieldValue) {
+          setSelectedOptions([]);
+          return;
+        }
 
-    const setToDefaultValue = useCallback(() => {
-      if (!defaultValue) {
-        setSelectedOptions([]);
-        return;
-      }
+        if (
+          (isMultiValue && !Array.isArray(newFieldValue)) ||
+          (!isMultiValue && Array.isArray(newFieldValue))
+        ) {
+          throw new Error(
+            `\`defaultValue\` type is incompatible with \`isMultiValue={${String(
+              isMultiValue
+            )}}\``
+          );
+        }
 
-      if (
-        (isMultiValue && !Array.isArray(defaultValue)) ||
-        (!isMultiValue && Array.isArray(defaultValue))
-      ) {
-        isMultiValue;
-        defaultValue;
-
-        throw new Error(
-          `\`defaultValue\` type is incompatible with \`isMultiValue={${String(
-            isMultiValue
-          )}}\``
+        const newSelectedOptions = options.filter((option) =>
+          isMultiValue === true
+            ? (newFieldValue as Array<string | number>).includes(option.value)
+            : option.value === newFieldValue
         );
-      }
 
-      const newSelectedOptions = options.filter((option) =>
-        isMultiValue
-          ? (defaultValue as Array<string>).includes(option.value)
-          : option.value === defaultValue
-      );
+        setSelectedOptions(newSelectedOptions);
+      },
+      [isMultiValue, options]
+    );
 
-      setSelectedOptions(newSelectedOptions);
-    }, [defaultValue, isMultiValue, options]);
+    const { propsForInput, propsForLabel, touched } =
+      useFormField<IsMultiValue>({
+        defaultValue,
+        disabled,
+        isMultiValue,
+        isRequired,
+        name,
+        onChange,
+        onRead,
+        onValidate,
+        onWrite: setFieldValue,
+      });
 
     useEffect(() => {
-      setToDefaultValue();
-    }, [defaultValue, isMultiValue, options, setToDefaultValue]);
+      setFieldValue(defaultValue);
+    }, [defaultValue, setFieldValue]);
 
-    const handleClickOption = (option: T) => {
+    const handleClickOption = (option: OptionShape, event: MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+
       if (selectedOptions.includes(option)) {
         setSelectedOptions((currentSelectedOptions) =>
           currentSelectedOptions.filter(
@@ -146,7 +163,8 @@ const AbstractMultiSelectInput = forwardRef(
             options: options.map((option) => ({
               option,
               propsForOption: {
-                key: option.id,
+                key: option.key,
+                ref: createRef(),
                 styles: { cursor: 'pointer' },
                 tabIndex: 0,
                 onBlur: propsForInput.onBlur,
@@ -158,7 +176,7 @@ const AbstractMultiSelectInput = forwardRef(
 
           {selectedOptions.map((selectedOption) => (
             <input
-              key={selectedOption.id}
+              key={selectedOption.key}
               type="hidden"
               name={name}
               value={selectedOption.value}
@@ -168,8 +186,8 @@ const AbstractMultiSelectInput = forwardRef(
       </LabeledInput>
     );
   }
-) as <T extends BaseOptionShape, IsMultiValue extends boolean>(
-  props: AbstractMultiSelectInputProps<T, IsMultiValue> & {
+) as <OptionShape extends BaseOptionShape, IsMultiValue extends boolean>(
+  props: AbstractMultiSelectInputProps<OptionShape, IsMultiValue> & {
     ref?: Ref<HTMLLabelElement>;
   }
 ) => JSX.Element;

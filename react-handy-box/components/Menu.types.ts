@@ -1,4 +1,7 @@
-import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
+import {
+  BoxPropsWithoutRef,
+  StyleProps,
+} from '@/react-handy-box/components/Box.types';
 import { IconName } from '@/react-handy-box/components/Icon.types';
 import { PopoverProps } from '@/react-handy-box/components/Popover.types';
 import { ReactNode } from 'react';

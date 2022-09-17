@@ -9,7 +9,6 @@ import { Button } from '@/react-handy-box/components/Button';
 import { Icon } from '@/react-handy-box/components/Icon';
 import { IconName } from '@/react-handy-box/components/Icon.types';
 import { forwardRef, MouseEvent, Ref } from 'react';
-import rehypeFilter from 'react-markdown/lib/rehype-filter';
 
 type CheckboxesOrRadioInputProps<
   T extends BaseOptionShape,
@@ -21,7 +20,7 @@ type CheckboxesOrRadioInputProps<
   };
 
 type CheckboxOrRadioProps = BoxPropsWithoutRef<'span'> & {
-  isSelected?: boolean;
+  isSelected?: boolean | 'indeterminate';
 };
 
 const Checkbox = forwardRef(
@@ -30,10 +29,16 @@ const Checkbox = forwardRef(
     ref: Ref<HTMLSpanElement>
   ) => (
     <Icon
-      name={isSelected ? 'square-check' : 'square'}
+      name={
+        isSelected === 'indeterminate'
+          ? 'square-minus'
+          : isSelected === true
+          ? 'square-check'
+          : 'square'
+      }
       ref={ref}
       styles={{
-        color: isSelected ? 'brand' : 'textFaded',
+        color: isSelected ? 'primary' : 'textFaded',
         ...styles,
       }}
       variant={isSelected ? 'solid' : undefined}
@@ -53,7 +58,7 @@ const Radio = forwardRef(
       name={isSelected ? 'circle-dot' : 'circle'}
       ref={ref}
       styles={{
-        color: isSelected ? 'brand' : 'textFaded',
+        color: isSelected ? 'primary' : 'textFaded',
         ...styles,
       }}
       variant={isSelected ? 'solid' : undefined}
@@ -86,8 +91,10 @@ const CheckboxesOrRadioInput = forwardRef(
               <Button
                 key={option.value}
                 styles={{
+                  alignItems: 'center',
                   columnGap: 'xtight',
                   cursor: 'pointer',
+                  display: 'flex',
                 }}
                 variant="bare"
                 onBlur={propsForOption.onBlur}
@@ -100,7 +107,7 @@ const CheckboxesOrRadioInput = forwardRef(
                 <Icon
                   name={isSelected ? iconWhenSelected : iconWhenNotSelected}
                   styles={{
-                    color: isSelected ? 'brand' : 'textFaded',
+                    color: isSelected ? 'primary' : 'textFaded',
                   }}
                   variant={isSelected ? 'solid' : undefined}
                 />

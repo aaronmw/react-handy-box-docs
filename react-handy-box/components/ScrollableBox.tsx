@@ -75,9 +75,9 @@ const ScrollableBox = forwardRef(
 
       if (scrollingElement) {
         const updateScrollInfo = () => {
-          const originalOverflow = scrollingElement.style.overflow;
+          const originalOverflowY = scrollingElement.style.overflowY;
 
-          scrollingElement.style.overflow = 'auto';
+          scrollingElement.style.overflowY = 'auto';
 
           const elementHeight = scrollingElement.clientHeight;
           const scrollHeight = scrollingElement.scrollHeight;
@@ -88,7 +88,7 @@ const ScrollableBox = forwardRef(
           const newIsScrolledToBottom = scrollProgress >= 99;
           const newIsScrolledToTop = scrollTop === 0;
 
-          scrollingElement.style.overflow = originalOverflow;
+          scrollingElement.style.overflowY = originalOverflowY;
 
           if (newIsScrolledToBottom !== isScrolledToBottom) {
             setIsScrolledToBottom(newIsScrolledToBottom);
@@ -126,8 +126,10 @@ const ScrollableBox = forwardRef(
         as={as}
         ref={multipleRefs}
         styles={{
-          overflow: isOverflowing ? 'auto' : undefined,
+          overflowX: 'hidden',
+          overflowY: isOverflowing ? 'auto' : undefined,
           position: 'relative',
+          width: '100%', // scrollbar
           ...styles,
         }}
         {...otherProps}

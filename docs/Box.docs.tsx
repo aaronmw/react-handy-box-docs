@@ -3,6 +3,7 @@ import { Box } from '@/react-handy-box/components/Box';
 import { borderRadii } from '@/tokens/borderRadii';
 import { borderStyles } from '@/tokens/borderStyles';
 import { boxShadows } from '@/tokens/boxShadows';
+import { themes } from '@/tokens/colorPalette';
 import { transitionDurations } from '@/tokens/transitionDurations';
 import { fontSizes } from '@/tokens/typography';
 import { whiteSpaceNames } from '@/tokens/whiteSpaces';
@@ -199,8 +200,8 @@ const docs: DocumentationPageDescriptor = {
     {
       title: 'boxShadow',
       values: ([] as Array<string | number>).concat(
-        Object.keys(boxShadows),
-        '1px 1px 0 5px red'
+        Object.keys(boxShadows({ theme: themes.light })),
+        '2px 2px 5px red'
       ),
       renderDemo: (boxShadow) => (
         <Box

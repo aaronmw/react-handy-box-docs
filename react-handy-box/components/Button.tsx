@@ -10,7 +10,7 @@ const Button = forwardRef(
     {
       children,
       stopClickPropagation = false,
-      styles,
+      styles = {},
       variant = 'primary',
       onClick,
       ...otherProps
@@ -46,7 +46,7 @@ const AnchorButton = forwardRef(
     {
       children,
       variant = 'primary',
-      styles,
+      styles = {},
       ...otherProps
     }: ButtonComponentProps<'a'>,
     ref: Ref<HTMLAnchorElement>

@@ -27,7 +27,6 @@ const docs: DocumentationPageDescriptor = {
           I am a popover. Click elsewhere to hide me.
         </Popover>
       `,
-      highlightLines: [6],
     },
   ],
 };

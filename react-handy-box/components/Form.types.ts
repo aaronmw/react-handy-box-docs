@@ -9,9 +9,13 @@ import {
   RefObject,
 } from 'react';
 
-export type CommonFormInputProps = {
+export type CommonFormInputProps<IsMultiValue extends boolean> = {
+  defaultValue?: IsMultiValue extends true
+    ? Array<string | number>
+    : string | number;
   description?: ReactNode;
   disabled?: boolean;
+  isMultiValue?: IsMultiValue;
   isRequired?: boolean;
   label: ReactNode;
   labelLocation?: 'above' | 'left' | 'hidden';
@@ -19,18 +23,25 @@ export type CommonFormInputProps = {
   name: string;
   onChange?: FormFieldChangeHandler;
   onFocus?: FormFieldFocusHandler;
-  onRead?: FormFieldReadHandler;
+  onRead?: FormFieldReadHandler<IsMultiValue>;
   onReset?: FormFieldResetHandler;
   onValidate?: FormFieldValidationHandler;
+  onWrite?: FormFieldWriteHandler<IsMultiValue>;
 };
 
 export type FormContextObject = {
   getFieldValues: () => Record<string, unknown>;
-  registerFormField: (fieldRegistryEntry: FormFieldRegistryEntry) => void;
+  registerFormField: <IsMultiValue extends boolean>(
+    fieldRegistryEntry: FormFieldRegistryEntry<IsMultiValue>
+  ) => void;
   resetField: (fieldName: string) => void;
   resetForm: () => void;
-  setFieldValue: (fieldName: string, value: unknown) => void;
+  setFieldValue: (
+    fieldName: string,
+    value: string | number | Array<string | number>
+  ) => void;
   setIsDirty: (newIsDirty: boolean) => void;
+  submitForm: (event: FormEvent<HTMLFormElement>) => void;
 };
 
 export type FormFieldBlurHandler = (
@@ -39,7 +50,7 @@ export type FormFieldBlurHandler = (
 ) => void;
 
 export type FormFieldChangeHandler = (
-  event?: ChangeEvent<any>,
+  event?: ChangeEvent,
   formContext?: FormContextObject
 ) => void;
 
@@ -48,17 +59,21 @@ export type FormFieldClickHandler = (
   formContext?: FormContextObject
 ) => void;
 
-export type FormFieldDescriptor = {
+export type FormFieldDescriptor<IsMultiValue extends boolean> = {
+  defaultValue?: IsMultiValue extends true
+    ? Array<string | number>
+    : string | number;
   disabled?: boolean;
-  isMultiValue?: boolean;
+  isMultiValue?: IsMultiValue;
   isRequired?: boolean;
   ref?: RefObject<unknown> | null;
   name: string;
   onBlur?: FormFieldBlurHandler;
   onChange?: FormFieldChangeHandler;
-  onRead?: FormFieldReadHandler;
+  onRead?: FormFieldReadHandler<IsMultiValue>;
   onReset?: FormFieldResetHandler;
   onValidate?: FormFieldValidationHandler;
+  onWrite?: FormFieldWriteHandler<IsMultiValue>;
 };
 
 export type FormFieldFocusHandler = (
@@ -66,14 +81,18 @@ export type FormFieldFocusHandler = (
   formContext?: FormContextObject
 ) => void;
 
-export type FormFieldReadHandler = (
-  valueOrValues: FormDataEntryValue | Array<FormDataEntryValue>,
+export type FormFieldReadHandler<IsMultiValue extends boolean> = (
+  valueOrValues: IsMultiValue extends true
+    ? Array<FormDataEntryValue>
+    : FormDataEntryValue,
   formContext?: FormContextObject
 ) => unknown | Array<unknown>;
 
-export type FormFieldRegistry = Record<string, FormFieldRegistryEntry>;
+export type FormFieldRegistry = Record<string, FormFieldRegistryEntry<boolean>>;
 
-export type FormFieldRegistryEntry = Required<FormFieldDescriptor>;
+export type FormFieldRegistryEntry<IsMultiValue extends boolean> = Required<
+  FormFieldDescriptor<IsMultiValue>
+>;
 
 export type FormFieldResetHandler = (formContext?: FormContextObject) => void;
 
@@ -81,6 +100,13 @@ export type FormFieldValidationHandler = (
   valueOrValues: unknown | Array<unknown>,
   formContext?: FormContextObject
 ) => true | ReactNode;
+
+export type FormFieldWriteHandler<IsMultiValue extends boolean> = (
+  newValue?: IsMultiValue extends true
+    ? Array<string | number>
+    : string | number,
+  formContext?: FormContextObject
+) => void;
 
 export type FormProps = Omit<BoxPropsWithoutRef<'form'>, 'onSubmit'> & {
   onDirtyStateChange?: (isStateDirty: boolean) => void;

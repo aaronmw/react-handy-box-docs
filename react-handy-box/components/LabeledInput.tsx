@@ -87,7 +87,7 @@ const LabeledInput = forwardRef(
           {isRequired && (
             <>
               {' '}
-              <Text color="red">*</Text>
+              <Text styles={{ color: 'accent' }}>*</Text>
             </>
           )}
         </Text>

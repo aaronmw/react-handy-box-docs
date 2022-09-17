@@ -14,6 +14,7 @@ import {
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
 import { zIndices } from '@/tokens/zIndices';
 import last from 'lodash/last';
+import merge from 'lodash/merge';
 import { ExtendedKeyboardEvent } from 'mousetrap';
 import {
   createContext,
@@ -105,7 +106,6 @@ BackdroppedBox.displayName = 'BackdroppedBox';
 const ModalLayer = forwardRef(
   (
     {
-      propsForBackdrop,
       children,
       disableBackdropClick = false,
       disableFocusTrap = false,
@@ -113,6 +113,11 @@ const ModalLayer = forwardRef(
       isOpen = initialIsOpen,
       renderTrigger,
       styles,
+      stylesForBackdrop,
+      stylesForBackdropOnClose,
+      stylesForBackdropOnOpen,
+      stylesOnClose,
+      stylesOnOpen,
       type,
       onBeforeClose,
       onBeforeOpen,
@@ -231,7 +236,7 @@ const ModalLayer = forwardRef(
       setOpacity(internalOpenState === 'opening' ? 1 : 0);
     }, [internalOpenState]);
 
-    const handleTransitionEnd = useCallback(() => {
+    const handleAnimationEnd = useCallback(() => {
       if (['opening', 'closing'].includes(internalOpenState) === false) {
         return;
       }
@@ -249,13 +254,8 @@ const ModalLayer = forwardRef(
     const handleClickBackdrop = (event: MouseEvent<HTMLDivElement>) => {
       if (!disableBackdropClick) {
         renderProps.closeModal();
-        propsForBackdrop?.onClick?.(event);
       }
     };
-
-    const backdropOpacity = opacity
-      ? propsForBackdrop?.styles?.opacity ?? opacity
-      : 0;
 
     const zIndex = zIndices['10--modalWindows'] + modalLayerStackIndex;
 
@@ -265,15 +265,17 @@ const ModalLayer = forwardRef(
         {internalOpenState !== 'closed' &&
           createPortal(
             <BackdroppedBox
-              {...propsForBackdrop}
-              styles={{
-                cursor: 'default',
-                opacity: backdropOpacity,
-                pointerEvents: disableBackdropClick ? 'none' : 'all',
-                transitionProperty: 'opacity',
-                zIndex: zIndex - 1,
-                ...propsForBackdrop?.styles,
-              }}
+              styles={merge(
+                {
+                  cursor: 'default',
+                  pointerEvents: disableBackdropClick ? 'none' : 'all',
+                  zIndex: zIndex - 1,
+                },
+                stylesForBackdrop,
+                opacity === 1
+                  ? stylesForBackdropOnOpen
+                  : stylesForBackdropOnClose
+              )}
               onClick={handleClickBackdrop}
             >
               <FocusTrap
@@ -285,13 +287,14 @@ const ModalLayer = forwardRef(
                 ref={multipleRefs}
                 role="dialog"
                 tabIndex={0}
-                styles={{
-                  opacity,
-                  transitionProperty: 'opacity',
-                  zIndex,
-                  ...styles,
-                }}
-                onTransitionEnd={handleTransitionEnd}
+                styles={merge(
+                  {
+                    zIndex,
+                  },
+                  styles,
+                  opacity === 1 ? stylesOnOpen : stylesOnClose
+                )}
+                onAnimationEnd={handleAnimationEnd}
                 {...otherProps}
               >
                 {typeof children === 'function'

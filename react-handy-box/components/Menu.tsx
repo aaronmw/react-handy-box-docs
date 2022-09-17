@@ -16,7 +16,8 @@ import {
   useKeyboardShortcuts,
 } from '@/react-handy-box/hooks/useKeyboardShortcuts';
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
-import { whiteSpacesAsCSSVariables } from '@/tokens/whiteSpaces';
+import { modalLayerStyles } from '@/tokens/modalLayerStyles';
+import merge from 'lodash/merge';
 import {
   forwardRef,
   MouseEvent,
@@ -178,19 +179,12 @@ const Menu = forwardRef(
       <Popover
         ref={multipleRefs}
         role="menu"
-        styles={{
-          borderRadius: 'small',
-          flexDirection: 'column',
-          maxHeight: `calc(100vh - ${whiteSpacesAsCSSVariables.normal} * 2)`,
-          maxWidth: `calc(100vw - ${whiteSpacesAsCSSVariables.normal} * 2)`,
-          minWidth: 200,
-          overflowY: 'auto',
-          padding: 'xtight',
-          transitionDuration: 'short',
-          transitionProperty: 'opacity',
-          width: triggerWidth <= 200 ? undefined : triggerWidth,
-          ...styles,
-        }}
+        styles={merge(
+          {},
+          modalLayerStyles.menu,
+          { width: triggerWidth <= 200 ? undefined : triggerWidth },
+          styles
+        )}
         type="menu"
         onBeforeOpen={sizeMenuToTriggerElement}
         {...otherProps}
@@ -258,7 +252,14 @@ type MenuItemComponentProps = Omit<MenuItemProps['MenuItem'], 'type'> & {
 
 const MenuItem = forwardRef(
   (
-    { hasIcons, icon, label, onClick, ...otherProps }: MenuItemComponentProps,
+    {
+      hasIcons,
+      icon,
+      label,
+      styles,
+      onClick,
+      ...otherProps
+    }: MenuItemComponentProps,
     ref: Ref<HTMLButtonElement>
   ): JSX.Element => {
     const handleClick = (event: MouseEvent<HTMLButtonElement>) =>
@@ -268,20 +269,24 @@ const MenuItem = forwardRef(
       <Box
         as="button"
         ref={ref}
-        styles={{
-          borderRadius: 'small',
-          columnGap: 'tight',
-          cursor: 'pointer',
-          padding: 'xtight',
-          stylesOnFocus: {
-            boxShadow: 'focusRing',
-            zIndex: '1--stickyElements',
+        styles={merge(
+          {},
+          {
+            borderRadius: 'small',
+            columnGap: 'tight',
+            cursor: 'pointer',
+            padding: 'xtight',
+            stylesOnFocus: {
+              boxShadow: 'focusRing',
+              zIndex: '1--stickyElements',
+            },
+            stylesOnHover: {
+              backgroundColor: 'selected',
+            },
+            whiteSpace: 'nowrap',
           },
-          stylesOnHover: {
-            backgroundColor: 'selected',
-          },
-          whiteSpace: 'nowrap',
-        }}
+          styles
+        )}
         onClick={handleClick}
         {...otherProps}
       >

@@ -9,6 +9,7 @@ import {
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
 import mapValues from 'lodash/mapValues';
 import {
+  ChangeEvent,
   createContext,
   FormEvent,
   forwardRef,
@@ -27,11 +28,14 @@ const emptyFormContext: FormContextObject = {
   resetForm: () => null,
   setFieldValue: () => null,
   setIsDirty: () => null,
+  submitForm: () => null,
 };
 
 const FormContext = createContext<FormContextObject>(emptyFormContext);
 
-const useFormField = (fieldDescriptor: FormFieldDescriptor) => {
+const useFormField = <IsMultiValue extends boolean>(
+  fieldDescriptor: FormFieldDescriptor<IsMultiValue>
+) => {
   const formContext = useContext(FormContext);
   const timer = useRef<ReturnType<typeof setTimeout>>();
   const [touched, setTouched] = useState(false);
@@ -51,9 +55,15 @@ const useFormField = (fieldDescriptor: FormFieldDescriptor) => {
     return fieldValues[fieldDescriptor.name];
   };
 
-  const formFieldRegistryEntry: FormFieldRegistryEntry = {
+  const defaultValue = (fieldDescriptor.defaultValue ??
+    (fieldDescriptor.isMultiValue ? [] : '')) as IsMultiValue extends true
+    ? Array<string>
+    : string;
+
+  const formFieldRegistryEntry: FormFieldRegistryEntry<IsMultiValue> = {
+    defaultValue,
     disabled: fieldDescriptor.disabled ?? false,
-    isMultiValue: fieldDescriptor.isMultiValue ?? false,
+    isMultiValue: (fieldDescriptor.isMultiValue ?? false) as IsMultiValue,
     isRequired: fieldDescriptor.isRequired ?? false,
     name: fieldDescriptor.name,
     ref: fieldDescriptor.ref ?? null,
@@ -63,7 +73,7 @@ const useFormField = (fieldDescriptor: FormFieldDescriptor) => {
       setTouched(true);
     },
 
-    onChange: (event) => {
+    onChange: (event?: ChangeEvent) => {
       fieldDescriptor.onChange?.(event, formContext);
 
       if (touched) {
@@ -76,17 +86,20 @@ const useFormField = (fieldDescriptor: FormFieldDescriptor) => {
       }
     },
 
-    onRead: (fieldValue) =>
-      fieldDescriptor.onRead?.(fieldValue, formContext) ?? fieldValue,
+    onRead: (
+      fieldValue: IsMultiValue extends true
+        ? Array<FormDataEntryValue>
+        : FormDataEntryValue
+    ) => fieldDescriptor.onRead?.(fieldValue, formContext) ?? fieldValue,
 
     onReset: () => {
       setTouched(false);
 
       setErrorMessage(null);
 
-      (fieldDescriptor.ref?.current as HTMLFormElement)?.form?.reset();
+      formContext.setFieldValue(fieldDescriptor.name, defaultValue);
 
-      fieldDescriptor?.onReset?.(formContext);
+      fieldDescriptor.onReset?.(formContext);
     },
 
     onValidate: (valueOrValues: unknown | Array<unknown>) => {
@@ -110,12 +123,18 @@ const useFormField = (fieldDescriptor: FormFieldDescriptor) => {
 
       return validationResult;
     },
+
+    onWrite: (newValue) => {
+      fieldDescriptor.onWrite?.(newValue, formContext);
+      fieldDescriptor.onChange?.(new Event('change') as any, formContext);
+    },
   };
 
   formContext.registerFormField(formFieldRegistryEntry);
 
   return {
     propsForInput: {
+      defaultValue: formFieldRegistryEntry.defaultValue,
       disabled: formFieldRegistryEntry.disabled,
       name: formFieldRegistryEntry.name,
       onBlur: formFieldRegistryEntry.onBlur,
@@ -132,7 +151,13 @@ const useFormField = (fieldDescriptor: FormFieldDescriptor) => {
 
 const Form = forwardRef(
   (
-    { children, onDirtyStateChange, onSubmit, ...otherProps }: FormProps,
+    {
+      children,
+      styles,
+      onDirtyStateChange,
+      onSubmit,
+      ...otherProps
+    }: FormProps,
     ref: Ref<HTMLFormElement>
   ): JSX.Element => {
     const [isDirty, setIsDirty] = useState(false);
@@ -144,7 +169,7 @@ const Form = forwardRef(
       onDirtyStateChange?.(isDirty);
     }, [isDirty, onDirtyStateChange]);
 
-    const getFieldValues = () => {
+    const getFieldValues: () => Record<string, unknown> = () => {
       const formElement = formElementRef.current;
       const formFieldRegistry = formFieldRegistryRef.current;
 
@@ -158,8 +183,8 @@ const Form = forwardRef(
         formFieldRegistry,
         (fieldDescriptor, fieldName) => {
           const fieldValueOrValues = fieldDescriptor.isMultiValue
-            ? formData.getAll(fieldName) ?? []
-            : formData.get(fieldName) ?? '';
+            ? ((formData.getAll(fieldName) ?? []) as Array<FormDataEntryValue>)
+            : ((formData.get(fieldName) ?? '') as FormDataEntryValue);
 
           return (
             fieldDescriptor.onRead(fieldValueOrValues) ?? fieldValueOrValues
@@ -170,8 +195,29 @@ const Form = forwardRef(
       return transformedData;
     };
 
-    const registerFormField = (
-      formFieldRegistryEntry: FormFieldRegistryEntry
+    const setFieldValue = (
+      fieldName: keyof typeof formFieldRegistryRef.current,
+      newValue: string | number | Array<string | number>
+    ) => {
+      const formElement = formElementRef.current;
+
+      if (!formElement) {
+        throw new Error('Cannot set value of field with no <Form> parent');
+      }
+
+      const formData = new FormData(formElement);
+
+      if (Array.isArray(newValue)) {
+        newValue.forEach((v) => formData.append(fieldName, String(v)));
+      } else {
+        formData.set(fieldName, String(newValue));
+      }
+
+      formFieldRegistryRef.current[fieldName].onWrite(newValue, formContext);
+    };
+
+    const registerFormField = <IsMultiValue extends boolean>(
+      formFieldRegistryEntry: FormFieldRegistryEntry<IsMultiValue>
     ) => {
       if (formFieldRegistryEntry.name) {
         formFieldRegistryRef.current[formFieldRegistryEntry.name] =
@@ -223,13 +269,20 @@ const Form = forwardRef(
       }
     };
 
+    const resetField = (
+      fieldName: keyof typeof formFieldRegistryRef.current
+    ) => {
+      formFieldRegistryRef.current[fieldName].onReset(formContext);
+    };
+
     const formContext: FormContextObject = {
       getFieldValues,
       registerFormField,
-      resetField: () => null,
+      resetField,
       resetForm: handleReset,
-      setFieldValue: () => null,
+      setFieldValue,
       setIsDirty,
+      submitForm: handleSubmit,
     };
 
     return (
@@ -237,6 +290,7 @@ const Form = forwardRef(
         <Box
           as="form"
           ref={multipleRefs}
+          styles={{ width: '100%', ...styles }}
           onReset={handleReset}
           onSubmit={handleSubmit}
           {...otherProps}

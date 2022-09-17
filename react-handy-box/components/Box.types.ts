@@ -1,20 +1,29 @@
-import { ComponentPropsWithRef, DetailedHTMLProps } from 'react';
-// https://github.com/kripod/react-polymorphic-box/blob/main/src/Box.tsx
 import { animationNames } from '@/tokens/animationNames';
 import { borderRadii } from '@/tokens/borderRadii';
 import { borderStyles } from '@/tokens/borderStyles';
 import { boxShadows } from '@/tokens/boxShadows';
 import { breakpoints } from '@/tokens/breakpoints';
 import {
-  ColorLightnessValue,
-  ColorOpacityValue,
-  colorPalette,
+  colorCodesBySwatchName,
+  colorSwatches,
+  coreColorCodes,
+  coreColorDefinitions,
+  defaultLightnessLevels,
+  opacityOptions,
+  swatchNameAliases,
+  themeNames,
+  utilityColors,
 } from '@/tokens/colorPalette';
 import { transitionDurations } from '@/tokens/transitionDurations';
 import { fontNames, fontSizes } from '@/tokens/typography';
 import { whiteSpaceNames } from '@/tokens/whiteSpaces';
 import { zIndices } from '@/tokens/zIndices';
-import { ComponentPropsWithoutRef, CSSProperties, ReactNode, Ref } from 'react';
+import {
+  ComponentPropsWithoutRef,
+  ComponentPropsWithRef,
+  CSSProperties,
+  ReactNode,
+} from 'react';
 
 export type AnimationDuration = TransitionDuration | `${number}${TimeUnit}`;
 
@@ -26,9 +35,31 @@ export type BorderStyle = keyof typeof borderStyles;
 
 export type Breakpoint = keyof typeof breakpoints;
 
-export type BoxShadow = keyof typeof boxShadows;
+export type BoxShadow = keyof ReturnType<typeof boxShadows>;
 
-export type Color = keyof typeof colorPalette;
+export type CoreColorName = keyof typeof coreColorDefinitions;
+
+export type UtilityColor = keyof typeof utilityColors;
+
+export type SwatchName = UtilityColor | CoreColorName | ValidColorSwatchName;
+
+export type SwatchNameAlias = typeof swatchNameAliases[number];
+
+export type SwatchNameOrAlias = SwatchNameAlias | SwatchName;
+
+export type ThemeName = typeof themeNames[number];
+
+export type ThemeObject = {
+  [K in SwatchNameAlias]: SwatchName;
+};
+
+export type ColorLightnessValue = keyof typeof defaultLightnessLevels;
+
+export type ColorOpacityValue = typeof opacityOptions[number] | 100;
+
+export type ValidColorSwatchName =
+  | `${keyof typeof coreColorCodes}--${ColorLightnessValue}`
+  | `${keyof typeof coreColorCodes}--${ColorLightnessValue}--${ColorOpacityValue}`;
 
 export type ColorLightnessAdjustmentValue =
   | ColorLightnessValue
@@ -52,7 +83,7 @@ export type GridSpace = keyof typeof whiteSpaceNames;
 
 export type GridSpaceOrLength = GridSpace | Length | number;
 
-export type Length = `${number}${LengthUnit}` | 'auto' | `calc(${string})`;
+export type Length = 0 | `${number}${LengthUnit}` | 'auto' | `calc(${string})`;
 
 export type TimeUnit = 's' | 'ms';
 
@@ -425,7 +456,7 @@ export const validStyleProps = [
 export type ThemedStyles = {
   animationDuration?: AnimationDuration;
   animationName?: AnimationName;
-  backgroundColor?: Color;
+  backgroundColor?: SwatchNameOrAlias;
   backgroundColorOpacity?: ColorOpacityAdjustmentValue;
   backgroundColorLightness?: ColorLightnessAdjustmentValue;
   border?: BorderStyle;
@@ -433,19 +464,19 @@ export type ThemedStyles = {
   borderBottomLeftRadius?: BorderRadius;
   borderBottomRadius?: BorderRadius;
   borderBottomRightRadius?: BorderRadius;
-  borderColor?: Color;
+  borderColor?: SwatchNameOrAlias;
   borderColorOpacity?: ColorOpacityAdjustmentValue;
   borderColorLightness?: ColorLightnessAdjustmentValue;
-  borderBottomColor?: Color;
+  borderBottomColor?: SwatchNameOrAlias;
   borderBottomColorOpacity?: ColorOpacityAdjustmentValue;
   borderBottomColorLightness?: ColorLightnessAdjustmentValue;
-  borderLeftColor?: Color;
+  borderLeftColor?: SwatchNameOrAlias;
   borderLeftColorOpacity?: ColorOpacityAdjustmentValue;
   borderLeftColorLightness?: ColorLightnessAdjustmentValue;
-  borderRightColor?: Color;
+  borderRightColor?: SwatchNameOrAlias;
   borderRightColorOpacity?: ColorOpacityAdjustmentValue;
   borderRightColorLightness?: ColorLightnessAdjustmentValue;
-  borderTopColor?: Color;
+  borderTopColor?: SwatchNameOrAlias;
   borderTopColorOpacity?: ColorOpacityAdjustmentValue;
   borderTopColorLightness?: ColorLightnessAdjustmentValue;
   borderLeft?: BorderStyle;
@@ -460,7 +491,7 @@ export type ThemedStyles = {
   bottom?: GridSpaceOrLength;
   boxShadow?: BoxShadow;
   children?: ReactNode;
-  color?: Color;
+  color?: SwatchNameOrAlias;
   colorOpacity?: ColorOpacityAdjustmentValue;
   colorLightness?: ColorLightnessAdjustmentValue;
   columnGap?: GridSpaceOrLength;
@@ -554,12 +585,14 @@ export type BoxPropsWithRef<E extends SupportedTags = 'div'> =
   ComponentPropsWithRef<E> & {
     as?: E;
     styles?: StyleProps;
+    theme?: ThemeObject;
   };
 
 export type BoxPropsWithoutRef<E extends SupportedTags = 'div'> =
   ComponentPropsWithoutRef<E> & {
     as?: E;
     styles?: StyleProps;
+    theme?: ThemeObject;
   };
 
 export type SupportedTags = keyof JSX.IntrinsicElements &

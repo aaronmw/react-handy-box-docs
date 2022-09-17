@@ -49,8 +49,8 @@ const ElasticTextInput = forwardRef(
         const { width: ghostElementWidth, height: ghostElementHeight } =
           ghostElement.getBoundingClientRect();
 
-        textareaElement.style.width = `${Math.round(ghostElementWidth)}px`;
-        textareaElement.style.height = `${Math.round(ghostElementHeight)}px`;
+        textareaElement.style.width = `${Math.ceil(ghostElementWidth)}px`;
+        textareaElement.style.height = `${Math.ceil(ghostElementHeight)}px`;
       };
 
       const removeAllListeners = addMultipleEventListeners(

@@ -1,22 +1,22 @@
 import {
   nestedSelectorPropAliases,
-  propsToStyleObject,
+  stylesToStyleObject,
 } from '@/react-handy-box/components/Box';
-import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
+import { StyleProps } from '@/react-handy-box/components/Box.types';
 import { borderRadii } from '@/tokens/borderRadii';
 import { borderStyles } from '@/tokens/borderStyles';
 import { breakpoints } from '@/tokens/breakpoints';
-import { colorPalette } from '@/tokens/colorPalette';
+import { colorCodesBySwatchName, themes } from '@/tokens/colorPalette';
 import { transitionDurations } from '@/tokens/transitionDurations';
 import { zIndices } from '@/tokens/zIndices';
 import { CSSObject } from 'styled-components';
 
 type TestDescriptor = [
   description: string,
-  tests: Array<
-    [it: string, given: BoxPropsWithoutRef<'div'>, expect: CSSObject]
-  >
+  tests: Array<[it: string, given: StyleProps, expect: CSSObject]>
 ];
+
+const theme = themes.light;
 
 const tests: Array<TestDescriptor> = [
   [
@@ -28,7 +28,7 @@ const tests: Array<TestDescriptor> = [
           backgroundColor: 'black',
         },
         {
-          backgroundColor: colorPalette.black,
+          backgroundColor: colorCodesBySwatchName.black,
         },
       ],
       [
@@ -38,7 +38,7 @@ const tests: Array<TestDescriptor> = [
           colorLightness: 200,
         },
         {
-          color: colorPalette['purple--200--40'],
+          color: colorCodesBySwatchName['purple--200--40'],
         },
       ],
       [
@@ -48,7 +48,7 @@ const tests: Array<TestDescriptor> = [
           colorOpacity: 100,
         },
         {
-          color: colorPalette['purple--100'],
+          color: colorCodesBySwatchName['purple--100'],
         },
       ],
       [
@@ -57,7 +57,7 @@ const tests: Array<TestDescriptor> = [
           colorLightness: 200,
         },
         {
-          color: colorPalette['blue--200'],
+          color: colorCodesBySwatchName['blue--200'],
         },
       ],
       [
@@ -67,7 +67,7 @@ const tests: Array<TestDescriptor> = [
           backgroundColorLightness: 200,
         },
         {
-          backgroundColor: colorPalette['orange--200'],
+          backgroundColor: colorCodesBySwatchName['orange--200'],
         },
       ],
       [
@@ -77,7 +77,7 @@ const tests: Array<TestDescriptor> = [
           backgroundColorLightness: '+200',
         },
         {
-          backgroundColor: colorPalette['orange--700'],
+          backgroundColor: colorCodesBySwatchName['orange--700'],
         },
       ],
       [
@@ -87,7 +87,7 @@ const tests: Array<TestDescriptor> = [
           backgroundColorLightness: '+700',
         },
         {
-          backgroundColor: colorPalette['orange--700'],
+          backgroundColor: colorCodesBySwatchName['orange--700'],
         },
       ],
       [
@@ -97,7 +97,7 @@ const tests: Array<TestDescriptor> = [
           backgroundColorOpacity: '-10',
         },
         {
-          backgroundColor: colorPalette['orange--500--90'],
+          backgroundColor: colorCodesBySwatchName['orange--500--90'],
         },
       ],
       [
@@ -107,7 +107,7 @@ const tests: Array<TestDescriptor> = [
           backgroundColorOpacity: 50,
         },
         {
-          backgroundColor: colorPalette['orange--500--50'],
+          backgroundColor: colorCodesBySwatchName['orange--500--50'],
         },
       ],
       [
@@ -118,7 +118,7 @@ const tests: Array<TestDescriptor> = [
           backgroundColorOpacity: '-10',
         },
         {
-          backgroundColor: colorPalette['orange--400--90'],
+          backgroundColor: colorCodesBySwatchName['orange--400--90'],
         },
       ],
       [
@@ -128,7 +128,7 @@ const tests: Array<TestDescriptor> = [
           borderLeftColorLightness: '+200',
         },
         {
-          borderLeftColor: colorPalette['gray--400'],
+          borderLeftColor: colorCodesBySwatchName['gray--400'],
           borderLeftStyle: borderStyles.normal.borderStyle as any,
           borderLeftWidth: borderStyles.normal.borderWidth,
         },
@@ -141,7 +141,7 @@ const tests: Array<TestDescriptor> = [
           borderLeftColorLightness: '+200',
         },
         {
-          borderLeftColor: colorPalette['blue--600'],
+          borderLeftColor: colorCodesBySwatchName['blue--600'],
           borderLeftStyle: borderStyles.normal.borderStyle as any,
           borderLeftWidth: borderStyles.normal.borderWidth,
         },
@@ -154,7 +154,7 @@ const tests: Array<TestDescriptor> = [
           borderLeftColorLightness: '+200',
         },
         {
-          borderLeftColor: colorPalette['blue--600'],
+          borderLeftColor: colorCodesBySwatchName['blue--600'],
           borderLeftStyle: borderStyles.thick.borderStyle as any,
           borderLeftWidth: borderStyles.thick.borderWidth,
         },
@@ -166,10 +166,10 @@ const tests: Array<TestDescriptor> = [
           borderTop: 'dashed',
         },
         {
-          borderLeftColor: colorPalette.border,
+          borderLeftColor: colorCodesBySwatchName[theme.border],
           borderLeftStyle: borderStyles.hairline.borderStyle as any,
           borderLeftWidth: borderStyles.hairline.borderWidth,
-          borderTopColor: colorPalette.border,
+          borderTopColor: colorCodesBySwatchName[theme.border],
           borderTopStyle: borderStyles.dashed.borderStyle as any,
           borderTopWidth: borderStyles.dashed.borderWidth,
         },
@@ -211,7 +211,7 @@ const tests: Array<TestDescriptor> = [
           padding: 'normal',
         },
         {
-          padding: 'var(--whiteSpace--normal)',
+          padding: 'var(--white-space--normal)',
         },
       ],
       [
@@ -221,8 +221,8 @@ const tests: Array<TestDescriptor> = [
           paddingTop: 'tight',
         },
         {
-          padding: 'var(--whiteSpace--normal)',
-          paddingTop: 'var(--whiteSpace--tight)',
+          padding: 'var(--white-space--normal)',
+          paddingTop: 'var(--white-space--tight)',
         },
       ],
       [
@@ -232,10 +232,10 @@ const tests: Array<TestDescriptor> = [
           paddingY: 'tight',
         },
         {
-          paddingBottom: 'var(--whiteSpace--tight)',
-          paddingLeft: 'var(--whiteSpace--normal)',
-          paddingRight: 'var(--whiteSpace--normal)',
-          paddingTop: 'var(--whiteSpace--tight)',
+          paddingBottom: 'var(--white-space--tight)',
+          paddingLeft: 'var(--white-space--normal)',
+          paddingRight: 'var(--white-space--normal)',
+          paddingTop: 'var(--white-space--tight)',
         },
       ],
       [
@@ -247,9 +247,9 @@ const tests: Array<TestDescriptor> = [
           },
         },
         {
-          color: colorPalette.black,
+          color: colorCodesBySwatchName.black,
           [nestedSelectorPropAliases.stylesOnHover]: {
-            color: colorPalette.white,
+            color: colorCodesBySwatchName.white,
           },
         },
       ],
@@ -263,9 +263,9 @@ const tests: Array<TestDescriptor> = [
           },
         },
         {
-          color: colorPalette.white,
+          color: colorCodesBySwatchName.white,
           [nestedSelectorPropAliases.stylesForAfterElement]: {
-            backgroundColor: colorPalette.black,
+            backgroundColor: colorCodesBySwatchName.black,
             content: '""',
             display: 'block',
           },
@@ -281,9 +281,9 @@ const tests: Array<TestDescriptor> = [
           },
         },
         {
-          color: colorPalette.black,
+          color: colorCodesBySwatchName.black,
           [nestedSelectorPropAliases.stylesForBeforeElement]: {
-            backgroundColor: colorPalette.white,
+            backgroundColor: colorCodesBySwatchName.white,
             content: '""',
             display: 'block',
           },
@@ -298,9 +298,9 @@ const tests: Array<TestDescriptor> = [
           },
         },
         {
-          color: colorPalette.black,
+          color: colorCodesBySwatchName.black,
           [nestedSelectorPropAliases.stylesForFirstElement]: {
-            color: colorPalette.white,
+            color: colorCodesBySwatchName.white,
           },
         },
       ],
@@ -313,9 +313,9 @@ const tests: Array<TestDescriptor> = [
           },
         },
         {
-          'color': colorPalette.black,
+          'color': colorCodesBySwatchName.black,
           '&:hover': {
-            color: colorPalette.white,
+            color: colorCodesBySwatchName.white,
           },
         },
       ],
@@ -331,12 +331,12 @@ const tests: Array<TestDescriptor> = [
           },
         },
         {
-          color: colorPalette.black,
+          color: colorCodesBySwatchName.black,
           [breakpoints.tabletOrLarger]: {
-            color: colorPalette.white,
+            color: colorCodesBySwatchName.white,
           },
           [breakpoints.phoneOnly]: {
-            color: colorPalette.white,
+            color: colorCodesBySwatchName.white,
           },
         },
       ],
@@ -390,9 +390,12 @@ const tests: Array<TestDescriptor> = [
 
 tests.forEach(([testDescription, tests]) => {
   describe(testDescription, () => {
-    tests.forEach(([testName, boxProps, expectedCSSObject]) => {
+    tests.forEach(([testName, styles, expectedCSSObject]) => {
       it(testName, () => {
-        const result = propsToStyleObject(boxProps);
+        const result = stylesToStyleObject({
+          styles,
+          theme: theme,
+        });
 
         expect(result).toStrictEqual(expectedCSSObject);
       });

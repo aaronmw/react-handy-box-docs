@@ -1,7 +1,7 @@
 import { StyleProps } from '@/react-handy-box/components/Box.types';
 
 const inputStyles: StyleProps = {
-  backgroundColor: 'white',
+  backgroundColor: 'background',
   border: 'normal',
   borderRadius: 'small',
   display: 'block',

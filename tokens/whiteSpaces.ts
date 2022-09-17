@@ -1,5 +1,3 @@
-import mapValues from 'lodash/mapValues';
-
 export const whiteSpaceNames = {
   xxloose: '15vh',
   xloose: '5rem',
@@ -9,8 +7,3 @@ export const whiteSpaceNames = {
   xtight: '0.5rem',
   xxtight: '0.25rem',
 };
-
-export const whiteSpacesAsCSSVariables = mapValues(
-  whiteSpaceNames,
-  (_, whiteSpaceName) => `var(--whiteSpace--${whiteSpaceName})`
-);

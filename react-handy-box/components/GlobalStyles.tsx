@@ -1,87 +1,91 @@
+import { ThemeObject } from '@/react-handy-box/components/Box.types';
 import { animationNames } from '@/tokens/animationNames';
-import { breakpoints } from '@/tokens/breakpoints';
-import { globalStyles } from '@/tokens/globalStyles';
-import get from 'lodash/get';
-import kebabCase from 'lodash/kebabCase';
-import { createGlobalStyle, CSSObject } from 'styled-components';
+import { borderRadii } from '@/tokens/borderRadii';
+import { colorCodesBySwatchName } from '@/tokens/colorPalette';
+import { fontSizes, lineHeights } from '@/tokens/typography';
+import { whiteSpaceNames } from '@/tokens/whiteSpaces';
+import { createGlobalStyle } from 'styled-components';
+import { stylesToStyleObject } from './Box';
 
-const toCSSPropertyDefinitions = (styleObject: CSSObject) =>
-  Object.entries(styleObject)
-    .map(
-      ([cssPropertyName, value]) => `${kebabCase(cssPropertyName)}: ${value};`
-    )
-    .join('\n');
+const toCSSVariables = (
+  variableName: string,
+  variableMap: Record<string, string>
+) =>
+  Object.fromEntries(
+    Object.entries(variableMap).map(([keyName, value]) => [
+      `--${variableName}--${keyName}`,
+      value,
+    ])
+  );
 
-const toCSSVariables = (variableMap: Record<string, Record<string, string>>) =>
-  Object.keys(variableMap)
-    .reduce<Array<string>>(
-      (acc, variableName) => [
-        ...acc,
-        ...Object.entries(variableMap[variableName]).map(
-          ([optionName, optionValue]) =>
-            `--${variableName}--${optionName}: ${optionValue};`
-        ),
-      ],
-      []
-    )
-    .join('\n');
-
-const GlobalStyles = createGlobalStyle`
-  * {
-    background-color: transparent;
-    border: none;
-    box-sizing: border-box;
-    color: inherit;
-    font-family: inherit;
-    font-size: inherit;
-    font-style: inherit;
-    font-weight: inherit;
-    line-height: inherit;
-    list-style-type: none;
-    margin: 0;
-    outline: none;
-    padding: 0;
-    text-align: inherit;
-    text-decoration: none;
-  }
-
-  ::placeholder {
-    color: inherit;
-    opacity: 0.5;
-  }
-
-  ${Object.entries(animationNames)
-    .map(
-      ([name, animation]) => `
-        @keyframes ${name} {
-          ${animation.keyframes}
-        }
-      `
-    )
-    .join('\n')}
-
-  ${Object.entries(breakpoints)
-    .reverse()
-    .map(([breakpointName, mediaQuery]) => {
-      const cssVariables = toCSSVariables(
-        get(globalStyles, `${breakpointName}.cssVariables`, {})
-      );
-
-      const styles = toCSSPropertyDefinitions(
-        get(globalStyles, `${breakpointName}.styles`, {})
-      );
-
-      return `
-        ${mediaQuery} {
-          :root {
-            --breakpoint--${breakpointName}--isActive: true;
-            ${cssVariables}
-            ${styles}
-          }
-        }
-      `;
-    })
-    .join('\n')}
-`;
+const GlobalStyles = createGlobalStyle<{
+  theme: ThemeObject;
+}>(({ theme }) => ({
+  '*': {
+    backgroundColor: 'transparent',
+    border: 'none',
+    boxSizing: 'border-box',
+    color: 'inherit',
+    fontFamily: 'inherit',
+    fontSize: 'inherit',
+    fontStyle: 'inherit',
+    fontWeight: 'inherit',
+    lineHeight: 'inherit',
+    listStyleType: 'none',
+    margin: 0,
+    outline: 'none',
+    padding: 0,
+    textAlign: 'inherit',
+    textDecoration: 'none',
+  },
+  '::placeholder': stylesToStyleObject({
+    styles: {
+      color: 'textFaded',
+    },
+    theme,
+  }),
+  '::-webkit-scrollbar': {
+    height: 10,
+    width: 10,
+  },
+  '::-webkit-scrollbar-corner': stylesToStyleObject({
+    styles: {
+      backgroundColor: 'shaded',
+    },
+    theme,
+  }),
+  '::-webkit-scrollbar-thumb': stylesToStyleObject({
+    styles: {
+      backgroundColor: 'primary',
+      border: 'hairline',
+      borderColor: 'background',
+      borderRadius: 'circle',
+    },
+    theme,
+  }),
+  '::-webkit-scrollbar-track': stylesToStyleObject({
+    styles: { backgroundColor: 'shaded' },
+    theme,
+  }),
+  ':root': {
+    ...toCSSVariables('border-radius', borderRadii),
+    ...toCSSVariables('font-size', fontSizes),
+    ...toCSSVariables('line-height', lineHeights),
+    ...toCSSVariables('white-space', whiteSpaceNames),
+    ...stylesToStyleObject({
+      styles: {
+        backgroundColor: 'background',
+        color: 'text',
+        fontName: 'body',
+        fontSize: 'normal',
+        scrollPaddingTop: '10vh',
+        scrollbarColor: `${colorCodesBySwatchName[theme.primary]} ${
+          colorCodesBySwatchName[theme.shaded]
+        }`,
+      },
+      theme,
+    }),
+  },
+}));
 
 export { GlobalStyles };

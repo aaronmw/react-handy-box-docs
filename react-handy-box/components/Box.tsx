@@ -1,28 +1,48 @@
 import {
+  AnimationName,
   BorderStyle,
   BoxPropsWithRef,
   Breakpoint,
   StyleProps,
   SupportedTags,
   ThemedStyles,
+  ThemeObject,
   validStyleProps,
 } from '@/react-handy-box/components/Box.types';
-import { adjustColor } from '@/react-handy-box/utilities/adjustColorLightness';
+import { getAdjustedColorCode } from '@/react-handy-box/utilities/getAdjustedColorCode';
 import { animationNames } from '@/tokens/animationNames';
 import { borderRadii } from '@/tokens/borderRadii';
 import { borderStyles } from '@/tokens/borderStyles';
 import { boxShadows } from '@/tokens/boxShadows';
 import { breakpoints } from '@/tokens/breakpoints';
-import { colorPalette } from '@/tokens/colorPalette';
+import { themes } from '@/tokens/colorPalette';
 import { transitionDurations } from '@/tokens/transitionDurations';
 import { fontNames } from '@/tokens/typography';
-import { whiteSpacesAsCSSVariables } from '@/tokens/whiteSpaces';
+import { whiteSpaceNames } from '@/tokens/whiteSpaces';
 import { zIndices } from '@/tokens/zIndices';
 import camelCase from 'lodash/camelCase';
 import kebabCase from 'lodash/kebabCase';
+import mapValues from 'lodash/mapValues';
 import upperFirst from 'lodash/upperFirst';
-import { forwardRef } from 'react';
-import styled, { CSSObject, CSSProperties } from 'styled-components';
+import styled, {
+  css,
+  CSSObject,
+  CSSProperties,
+  Keyframes,
+  keyframes,
+} from 'styled-components';
+
+const animationKeyframes = Object.fromEntries(
+  Object.entries(animationNames).map(([animationName, animation]) => [
+    animationName,
+    keyframes`${animation.keyframes}`,
+  ])
+) as Record<AnimationName, Keyframes>;
+
+const whiteSpacesAsCSSVariables = mapValues(
+  whiteSpaceNames,
+  (_, whiteSpaceName) => `var(--white-space--${whiteSpaceName})`
+);
 
 const nestedSelectorPropAliases = {
   stylesForAfterElement: '&:after',
@@ -39,9 +59,10 @@ type PropHandler<K extends keyof StyleProps> = {
   options:
     | Record<string, string | number | CSSObject>
     | ((args: {
-        propName: K;
-        props: StyleProps;
-        propValue: NonNullable<StyleProps[K]>;
+        styleName: K;
+        styles: StyleProps;
+        styleValue: NonNullable<StyleProps[K]>;
+        theme: ThemeObject;
       }) => CSSObject);
 };
 
@@ -55,15 +76,20 @@ const propHandlers: PropHandlers = {
     setDefaults: {
       display: 'flex',
     },
-    options: ({ propName, propValue }) => ({
-      [propName]: propValue,
+    options: ({ styleName, styleValue }) => ({
+      [styleName]: styleValue,
     }),
   },
   animationDuration: {
     options: transitionDurations,
   },
   animationName: {
-    options: ({ propValue }) => animationNames[propValue].cssObject,
+    options: ({ styleValue: animationName }) => ({
+      animationName: css`
+        ${animationKeyframes[animationName]}
+      `,
+      ...animationNames[animationName].style,
+    }),
   },
   borderRadius: {
     aliases: [
@@ -76,8 +102,8 @@ const propHandlers: PropHandlers = {
   },
   borderBottomRadius: {
     aliases: ['borderLeftRadius', 'borderRightRadius', 'borderTopRadius'],
-    options: ({ propName, propValue }) => {
-      const edgeName = propName.replace(/(border|Radius)/g, '');
+    options: ({ styleName, styleValue, theme }) => {
+      const edgeName = styleName.replace(/(border|Radius)/g, '');
       const isLeftOrRight = ['Left', 'Right'].includes(edgeName);
       const propNameA = isLeftOrRight
         ? `borderBottom${edgeName}Radius`
@@ -86,9 +112,12 @@ const propHandlers: PropHandlers = {
         ? `borderTop${edgeName}Radius`
         : `border${edgeName}RightRadius`;
 
-      return propsToStyleObject({
-        [propNameA]: propValue,
-        [propNameB]: propValue,
+      return stylesToStyleObject({
+        styles: {
+          [propNameA]: styleValue,
+          [propNameB]: styleValue,
+        },
+        theme,
       });
     },
   },
@@ -104,24 +133,25 @@ const propHandlers: PropHandlers = {
       'borderBottomColor',
       'borderLeftColor',
     ],
-    options: ({ props, propName }) => {
-      const borderEdgeName = propName.replace('Color', '') as
+    options: ({ styles, styleName, theme }) => {
+      const borderEdgeName = styleName.replace('Color', '') as
         | 'border'
         | 'borderBottom'
         | 'borderLeft'
         | 'borderRight'
         | 'borderTop';
       const borderStyleObject =
-        borderStyles[(props[borderEdgeName] ?? 'normal') as BorderStyle];
-      const borderColor = props[`${borderEdgeName}Color`] ?? 'border';
-      const adjustedBorderColor = adjustColor(
+        borderStyles[(styles[borderEdgeName] ?? 'normal') as BorderStyle];
+      const borderColor = styles[`${borderEdgeName}Color`] ?? 'border';
+      const adjustedBorderColor = getAdjustedColorCode(
+        theme,
         borderColor,
-        props[`${borderEdgeName}ColorLightness`],
-        props[`${borderEdgeName}ColorOpacity`]
+        styles[`${borderEdgeName}ColorLightness`],
+        styles[`${borderEdgeName}ColorOpacity`]
       );
 
       return {
-        [`${borderEdgeName}Color`]: colorPalette[adjustedBorderColor],
+        [`${borderEdgeName}Color`]: adjustedBorderColor,
         [`${borderEdgeName}Style`]: borderStyleObject.borderStyle,
         [`${borderEdgeName}Width`]: borderStyleObject.borderWidth,
       };
@@ -132,37 +162,35 @@ const propHandlers: PropHandlers = {
     options: whiteSpacesAsCSSVariables,
   },
   boxShadow: {
-    options: boxShadows,
+    options: ({ styleValue, theme }) => ({
+      boxShadow: boxShadows({ theme })[styleValue] ?? styleValue,
+    }),
   },
   color: {
     aliases: ['backgroundColor'],
-    options: ({ props, propName, propValue }) => {
-      const typedPropName = propName as 'color' | 'backgroundColor';
+    options: ({ styleName, styleValue, styles, theme }) => {
+      const typedPropName = styleName as 'color' | 'backgroundColor';
 
       return {
-        [propName]:
-          colorPalette[
-            adjustColor(
-              propValue,
-              props[`${typedPropName}Lightness`],
-              props[`${typedPropName}Opacity`]
-            )
-          ],
+        [styleName]: getAdjustedColorCode(
+          theme,
+          styleValue,
+          styles[`${typedPropName}Lightness`],
+          styles[`${typedPropName}Opacity`]
+        ),
       };
     },
   },
   colorLightness: {
     aliases: ['colorOpacity'],
-    options: ({ props }) => {
+    options: ({ styles, theme }) => {
       return {
-        color:
-          colorPalette[
-            adjustColor(
-              props.color ?? 'text',
-              props.colorLightness,
-              props.colorOpacity
-            )
-          ],
+        color: getAdjustedColorCode(
+          theme,
+          styles.color ?? 'text',
+          styles.colorLightness,
+          styles.colorOpacity
+        ),
       };
     },
   },
@@ -178,17 +206,17 @@ const propHandlers: PropHandlers = {
     setDefaults: {
       gridAutoRows: 'auto',
     },
-    options: ({ propName, propValue }) => {
-      const typedPropName = propName as 'columns' | 'rows';
+    options: ({ styleName, styleValue }) => {
+      const typedPropName = styleName as 'columns' | 'rows';
 
       let result;
 
-      if (typeof propValue === 'number') {
-        result = Array(propValue).fill('1fr').join(' ');
-      } else if (Array.isArray(propValue)) {
-        result = propValue.join(' ');
+      if (typeof styleValue === 'number') {
+        result = Array(styleValue).fill('1fr').join(' ');
+      } else if (Array.isArray(styleValue)) {
+        result = styleValue.join(' ');
       } else {
-        result = propValue;
+        result = styleValue;
       }
 
       return {
@@ -201,25 +229,25 @@ const propHandlers: PropHandlers = {
     setDefaults: {
       display: 'flex',
     },
-    options: ({ propValue }) => ({
-      flexDirection: propValue,
+    options: ({ styleValue }) => ({
+      flexDirection: styleValue,
     }),
   },
   flexWrap: {
     setDefaults: {
       display: 'flex',
     },
-    options: ({ propValue }) => ({
-      flexWrap: propValue,
+    options: ({ styleValue }) => ({
+      flexWrap: styleValue,
     }),
   },
   fontName: {
-    options: fontNames,
+    options: ({ styleValue }) => fontNames[styleValue],
   },
   fontSize: {
-    options: ({ props: { fontSize, lineHeight } }) => ({
-      fontSize: `var(--fontSize--${fontSize})`,
-      lineHeight: lineHeight ?? `var(--lineHeight--${fontSize})`,
+    options: ({ styles: { fontSize, lineHeight } }) => ({
+      fontSize: `var(--font-size--${fontSize})`,
+      lineHeight: lineHeight ?? `var(--line-height--${fontSize})`,
     }),
   },
   gap: {
@@ -256,8 +284,8 @@ const propHandlers: PropHandlers = {
   },
   marginX: {
     aliases: ['marginY', 'paddingX', 'paddingY'],
-    options: ({ propName, propValue }) => {
-      const typedPropName = propName as
+    options: ({ styleName, styleValue, theme }) => {
+      const typedPropName = styleName as
         | 'marginX'
         | 'marginY'
         | 'paddingX'
@@ -268,29 +296,32 @@ const propHandlers: PropHandlers = {
       const propNameLeftOrBottom = typedPropName.replace(XorY, LeftOrBottom);
       const propNameRightOrTop = typedPropName.replace(XorY, RightOrTop);
 
-      return propsToStyleObject({
-        [`${propNameLeftOrBottom}`]: propValue,
-        [`${propNameRightOrTop}`]: propValue,
+      return stylesToStyleObject({
+        styles: {
+          [`${propNameLeftOrBottom}`]: styleValue,
+          [`${propNameRightOrTop}`]: styleValue,
+        },
+        theme,
       });
     },
   },
   stylesForAfterElement: {
     aliases: ['stylesForBeforeElement'],
-    options: ({ propName, propValue }) => ({
+    options: ({ styleName, styleValue, theme }) => ({
       [nestedSelectorPropAliases[
-        propName as keyof typeof nestedSelectorPropAliases
+        styleName as keyof typeof nestedSelectorPropAliases
       ]]: {
-        ...propsToStyleObject(propValue),
-        content: `"${propValue.content ?? ''}"`,
+        ...stylesToStyleObject({ styles: styleValue, theme }),
+        content: `"${styleValue.content ?? ''}"`,
       },
     }),
   },
   stylesForCustomSelector: {
-    options: ({ propValue }) => {
+    options: ({ styleValue, theme }) => {
       return Object.fromEntries(
-        Object.entries(propValue).map(([customSelector, props]) => [
+        Object.entries(styleValue).map(([customSelector, styles]) => [
           customSelector,
-          propsToStyleObject(props as any),
+          stylesToStyleObject({ styles, theme }),
         ])
       );
     },
@@ -299,28 +330,28 @@ const propHandlers: PropHandlers = {
     aliases: Object.keys(breakpoints).map(
       (breakpointName) => `stylesFor${upperFirst(breakpointName)}`
     ) as Array<`stylesFor${Capitalize<Breakpoint>}`>,
-    options: ({ propName, propValue }) => {
+    options: ({ styleName, styleValue, theme }) => {
       const breakpointName = camelCase(
-        propName.replace('stylesFor', '')
+        styleName.replace('stylesFor', '')
       ) as Breakpoint;
 
       const mediaQuery = breakpoints[breakpointName];
 
       return {
-        [mediaQuery]: propsToStyleObject(propValue),
+        [mediaQuery]: stylesToStyleObject({ styles: styleValue, theme }),
       };
     },
   },
   stylesOnHover: {
     aliases: ['stylesOnFocus', 'stylesForFirstElement', 'stylesForLastElement'],
-    options: ({ propName, propValue }) => {
+    options: ({ styleName, styleValue, theme }) => {
       const propSelector =
         nestedSelectorPropAliases[
-          propName as keyof typeof nestedSelectorPropAliases
+          styleName as keyof typeof nestedSelectorPropAliases
         ];
 
       return {
-        [propSelector!]: propsToStyleObject(propValue),
+        [propSelector!]: stylesToStyleObject({ styles: styleValue, theme }),
       };
     },
   },
@@ -334,7 +365,7 @@ const propHandlers: PropHandlers = {
   transitionDuration: {
     aliases: ['transitionProperty', 'transitionTimingFunction'],
     options: ({
-      props: {
+      styles: {
         transitionDuration,
         transitionProperty,
         transitionTimingFunction,
@@ -355,25 +386,28 @@ const propHandlers: PropHandlers = {
   },
 };
 
-Object.entries(propHandlers).forEach(([propName, propHandler]) => {
+Object.entries(propHandlers).forEach(([styleName, propHandler]) => {
   propHandler.aliases?.forEach((aliasedPropName: keyof StyleProps) => {
     propHandlers[aliasedPropName] = propHandlers[
-      propName as keyof PropHandlers
+      styleName as keyof PropHandlers
     ] as PropHandler<any>;
   });
 });
 
-const propsToStyleObject: (boxProps: StyleProps) => CSSObject = (boxProps) =>
-  Object.keys(boxProps).reduce((acc, propName) => {
-    const typedPropName = propName as keyof PropHandlers;
+const stylesToStyleObject: (args: {
+  styles: StyleProps;
+  theme: ThemeObject;
+}) => CSSObject = ({ styles = {}, theme = {} }) =>
+  Object.keys(styles).reduce((acc, styleName) => {
+    const typedPropName = styleName as keyof PropHandlers;
 
     const propHandler = propHandlers[typedPropName] as PropHandler<
       keyof ThemedStyles
     >;
 
-    const propValue = boxProps[typedPropName];
+    const styleValue = styles[typedPropName];
 
-    if (typeof propValue === 'undefined') {
+    if (typeof styleValue === 'undefined') {
       return acc;
     }
 
@@ -385,7 +419,7 @@ const propsToStyleObject: (boxProps: StyleProps) => CSSObject = (boxProps) =>
       return validStyleProps.includes(typedPropName)
         ? {
             ...acc,
-            [typedPropName]: propValue,
+            [typedPropName]: styleValue,
           }
         : acc;
     }
@@ -397,9 +431,10 @@ const propsToStyleObject: (boxProps: StyleProps) => CSSObject = (boxProps) =>
         ...defaults,
         ...acc,
         ...(propHandler.options as Function)({
-          props: boxProps,
-          propName: typedPropName,
-          propValue,
+          styles,
+          styleName: typedPropName,
+          styleValue,
+          theme,
         }),
       };
     } else if (typeof propHandler.options === 'object') {
@@ -407,21 +442,24 @@ const propsToStyleObject: (boxProps: StyleProps) => CSSObject = (boxProps) =>
         ...defaults,
         ...acc,
         [typedPropName]:
-          propHandler.options[propValue as keyof typeof propHandler.options] ??
-          propValue,
+          propHandler.options[styleValue as keyof typeof propHandler.options] ??
+          styleValue,
       };
     }
 
     return acc;
   }, {});
 
-// TODO: Re-casting with `as` for speed boost; not sure why this type is so slow
 const Box = styled('div')(
-  <E extends SupportedTags = 'div'>(props: BoxPropsWithRef<E>) =>
-    propsToStyleObject(props.styles ?? {})
+  <E extends SupportedTags = 'div'>(props: BoxPropsWithRef<E>) => {
+    return stylesToStyleObject({
+      styles: props.styles ?? {},
+      theme: props.theme ?? themes.light,
+    });
+  }
 ) as <E extends SupportedTags = 'div'>(
   props: BoxPropsWithRef<E>
 ) => JSX.Element;
 
 export { Box };
-export { nestedSelectorPropAliases, propsToStyleObject };
+export { nestedSelectorPropAliases, stylesToStyleObject };
