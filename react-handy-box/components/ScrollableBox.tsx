@@ -1,11 +1,11 @@
 import { Box } from '@/react-handy-box/components/Box';
 import {
   BoxPropsWithoutRef,
-  GridSpaceOrLength,
   HTMLElementFor,
   SupportedTags,
+  WhiteSpaceNameOrLength,
 } from '@/react-handy-box/components/Box.types';
-import { useDOMWatcher } from '@/react-handy-box/hooks/useDOMWatcher';
+import { useGlobalInterval } from '@/react-handy-box/hooks/useGlobalInterval';
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
 import { forwardRef, ReactNode, Ref, useEffect, useRef, useState } from 'react';
 
@@ -47,8 +47,8 @@ type ScrollableBoxProps<TagName extends SupportedTags = 'div'> = Omit<
   'children'
 > & {
   children: ReactNode;
-  offsetBottomOverflowIndicator?: GridSpaceOrLength;
-  offsetTopOverflowIndicator?: GridSpaceOrLength;
+  offsetBottomOverflowIndicator?: WhiteSpaceNameOrLength;
+  offsetTopOverflowIndicator?: WhiteSpaceNameOrLength;
 };
 
 const ScrollableBox = forwardRef(
@@ -63,7 +63,7 @@ const ScrollableBox = forwardRef(
     }: ScrollableBoxProps<TagName>,
     ref: Ref<HTMLElementFor<TagName>>
   ) => {
-    const { addDOMWatcher, removeDOMWatcher } = useDOMWatcher();
+    const { setGlobalInterval, clearGlobalInterval } = useGlobalInterval();
     const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
     const [isScrolledToTop, setIsScrolledToTop] = useState(false);
     const [isOverflowing, setIsOverflowing] = useState(false);
@@ -108,7 +108,7 @@ const ScrollableBox = forwardRef(
         scrollingElement.addEventListener('scroll', updateScrollInfo);
         scrollingElement.addEventListener('transitionend', updateScrollInfo);
 
-        addDOMWatcher(updateScrollInfo);
+        setGlobalInterval(updateScrollInfo, 250);
 
         return () => {
           scrollingElement.removeEventListener('scroll', updateScrollInfo);
@@ -116,7 +116,7 @@ const ScrollableBox = forwardRef(
             'transitionend',
             updateScrollInfo
           );
-          removeDOMWatcher(updateScrollInfo);
+          clearGlobalInterval(updateScrollInfo, 250);
         };
       }
     });

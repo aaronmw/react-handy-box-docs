@@ -6,13 +6,11 @@ import {
   ColumnDescriptor,
   SortDirection,
   TableCellProps,
-  TableContextObject,
   TableHeaderCellProps,
   TableHeaderRowProps,
   TableProps,
   TableRowProps,
 } from '@/react-handy-box/components/Table.types';
-import isEqual from 'lodash/isEqual';
 import merge from 'lodash/merge';
 import omit from 'lodash/omit';
 import sortBy from 'lodash/sortBy';
@@ -22,7 +20,6 @@ import {
   MouseEvent,
   Ref,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useState,
@@ -66,6 +63,21 @@ const Table = forwardRef(
     const [sortedAndFilteredRowObjects, setSortedAndFilteredRowObjects] =
       useState<Array<RowShape>>(rowObjects);
 
+    const tableContext = useMemo(
+      () => ({
+        columnDescriptors,
+        rowObjects: sortedAndFilteredRowObjects,
+        sortDirection,
+        sortedColumnDescriptor,
+      }),
+      [
+        columnDescriptors,
+        sortDirection,
+        sortedAndFilteredRowObjects,
+        sortedColumnDescriptor,
+      ]
+    );
+
     useEffect(() => {
       if (!sortedColumnDescriptor) {
         setSortedAndFilteredRowObjects(rowObjects);
@@ -84,27 +96,7 @@ const Table = forwardRef(
         sortedRowObjects.reverse();
       }
 
-      // Avoids clicking the heading of another column that
-      // just so happens to have been sorted already; nothing
-      // would happen. This just flips sort direction one more time.
-      setSortedAndFilteredRowObjects((currentSortedAndFilteredRowObjects) => {
-        const newSortedAndFilteredRowObjects = sortedRowObjects;
-
-        if (
-          isEqual(
-            currentSortedAndFilteredRowObjects,
-            newSortedAndFilteredRowObjects
-          )
-        ) {
-          newSortedAndFilteredRowObjects.reverse();
-
-          setSortDirection((currentSortDirection) =>
-            currentSortDirection === 'ASC' ? 'DESC' : 'ASC'
-          );
-        }
-
-        return newSortedAndFilteredRowObjects;
-      });
+      setSortedAndFilteredRowObjects(sortedRowObjects);
     }, [rowObjects, sortDirection, sortedColumnDescriptor]);
 
     const handleClickColumnHeading = useCallback(
@@ -127,56 +119,50 @@ const Table = forwardRef(
       [sortDirection]
     );
 
-    const renderedRows = useMemo(
-      () =>
-        sortedAndFilteredRowObjects.map((rowObject, rowObjectIndex) => {
-          const customRowRenderer = renderRow;
+    const renderedRows = useMemo(() => {
+      return sortedAndFilteredRowObjects.map((rowObject, rowObjectIndex) => {
+        const customRowRenderer = renderRow;
 
-          const rowContents = columnDescriptors.map((columnDescriptor) => {
-            const cellContents = rowObject[columnDescriptor.key];
+        const rowContents = columnDescriptors.map((columnDescriptor) => {
+          const cellContents = rowObject[columnDescriptor.key];
 
-            const customCellRenderer = renderCells?.[columnDescriptor.key];
+          const customCellRenderer = renderCells?.[columnDescriptor.key];
 
-            const tableCellRenderProps = {
-              cellContents,
-              columnDescriptor,
-              columnDescriptors,
-              key: String(columnDescriptor.key),
-              rowObject,
-              rowObjectIndex,
-              rowObjects,
-            };
-
-            return (
-              customCellRenderer?.(tableCellRenderProps) ?? (
-                <TableCell {...tableCellRenderProps} />
-              )
-            );
-          });
-
-          const tableRowRenderProps = {
-            columnDescriptors,
-            key: rowObject.key,
-            rowContents,
+          const tableCellRenderProps = {
+            cellContents,
+            columnDescriptor,
+            key: String(columnDescriptor.key),
             rowObject,
-            rowObjectIndex,
-            rowObjects,
-          } as const;
+            tableContext,
+          };
 
           return (
-            customRowRenderer?.(tableRowRenderProps) ?? (
-              <TableRow {...tableRowRenderProps} />
+            customCellRenderer?.(tableCellRenderProps) ?? (
+              <TableCell {...tableCellRenderProps} />
             )
           );
-        }),
-      [
-        columnDescriptors,
-        renderCells,
-        renderRow,
-        rowObjects,
-        sortedAndFilteredRowObjects,
-      ]
-    );
+        });
+
+        const tableRowRenderProps = {
+          key: rowObject.key,
+          rowContents,
+          rowObject,
+          tableContext,
+        } as const;
+
+        return (
+          customRowRenderer?.(tableRowRenderProps) ?? (
+            <TableRow {...tableRowRenderProps} />
+          )
+        );
+      });
+    }, [
+      columnDescriptors,
+      renderCells,
+      renderRow,
+      sortedAndFilteredRowObjects,
+      tableContext,
+    ]);
 
     const renderedHeaderCells = useMemo(
       () =>
@@ -189,12 +175,9 @@ const Table = forwardRef(
           const tableHeaderCellRenderProps = {
             cellContents: columnDescriptor.label,
             columnDescriptor,
-            columnDescriptors,
             key: String(columnDescriptor.key),
             propsForCellContentsWrapper: {},
-            rowObjects,
-            sortDirection,
-            sortedColumnDescriptor,
+            tableContext,
           };
 
           if (isSortable) {
@@ -224,15 +207,12 @@ const Table = forwardRef(
         columnDescriptors,
         handleClickColumnHeading,
         renderHeaderCells,
-        rowObjects,
-        sortDirection,
-        sortedColumnDescriptor,
+        tableContext,
       ]
     );
 
     const renderedHeaderRow = useMemo(() => {
       const tableHeaderRowRenderProps = {
-        columnDescriptors,
         propsForTableRowElement: {
           styles: {
             color: 'textFaded',
@@ -240,7 +220,7 @@ const Table = forwardRef(
           },
         },
         rowContents: renderedHeaderCells,
-        rowObjects,
+        tableContext,
       } as const;
 
       return (
@@ -248,49 +228,40 @@ const Table = forwardRef(
           <TableHeaderRow {...tableHeaderRowRenderProps} />
         )
       );
-    }, [columnDescriptors, renderHeaderRow, renderedHeaderCells, rowObjects]);
-
-    const tableContext = {
-      columnDescriptors,
-      rowObjects: sortedAndFilteredRowObjects,
-      sortDirection,
-      sortedColumnDescriptor,
-    };
+    }, [renderHeaderRow, renderedHeaderCells, tableContext]);
 
     return (
-      <TableContext.Provider value={tableContext}>
-        <Box
-          as="table"
-          ref={ref}
-          styles={{
-            backgroundColor: 'background',
-            borderCollapse: 'collapse',
+      <Box
+        as="table"
+        ref={ref}
+        styles={{
+          backgroundColor: 'background',
+          borderCollapse: 'collapse',
+          borderRadius: 'small',
+          stylesForAfterElement: {
+            border: 'normal',
             borderRadius: 'small',
-            stylesForAfterElement: {
-              border: 'normal',
-              borderRadius: 'small',
-              bottom: 0,
-              boxSizing: 'content-box',
-              height: '100%',
-              left: 0,
-              marginLeft: -2,
-              marginTop: -2,
-              pointerEvents: 'none',
-              position: 'absolute',
-              right: 0,
-              top: 0,
-              width: '100%',
-            },
-            position: 'relative',
+            bottom: 0,
+            boxSizing: 'content-box',
+            height: '100%',
+            left: 0,
+            marginLeft: -2,
+            marginTop: -2,
+            pointerEvents: 'none',
+            position: 'absolute',
+            right: 0,
+            top: 0,
             width: '100%',
-            ...styles,
-          }}
-          {...otherProps}
-        >
-          <Box as="thead">{renderedHeaderRow}</Box>
-          <Box as="tbody">{renderedRows}</Box>
-        </Box>
-      </TableContext.Provider>
+          },
+          position: 'relative',
+          width: '100%',
+          ...styles,
+        }}
+        {...otherProps}
+      >
+        <Box as="thead">{renderedHeaderRow}</Box>
+        <Box as="tbody">{renderedRows}</Box>
+      </Box>
     );
   }
 ) as <RowShape extends BaseRowShape, K extends keyof RowShape>(
@@ -304,11 +275,13 @@ const TableHeaderRow = forwardRef(
   <RowShape extends BaseRowShape, K extends keyof RowShape>(
     { rowContents, ...otherProps }: TableHeaderRowProps<RowShape, K>,
     ref: Ref<HTMLTableRowElement>
-  ): JSX.Element => (
-    <Box as="tr" ref={ref} {...otherProps}>
-      {rowContents}
-    </Box>
-  )
+  ): JSX.Element => {
+    return (
+      <Box as="tr" ref={ref} {...otherProps}>
+        {rowContents}
+      </Box>
+    );
+  }
 ) as <RowShape extends BaseRowShape, K extends keyof RowShape>(
   props: TableHeaderRowProps<RowShape, K>
 ) => JSX.Element;
@@ -322,12 +295,13 @@ const TableHeaderCell = forwardRef(
       cellContents,
       columnDescriptor,
       propsForCellContentsWrapper,
+      tableContext,
       ...otherProps
     }: TableHeaderCellProps<RowShape, K>,
     ref: Ref<HTMLTableCellElement>
   ): JSX.Element => {
     const { columnDescriptors, sortDirection, sortedColumnDescriptor } =
-      useContext<TableContextObject<RowShape, K>>(TableContext);
+      tableContext;
 
     const isFirstColumn = columnDescriptors[0].key === columnDescriptor.key;
 
@@ -348,15 +322,11 @@ const TableHeaderCell = forwardRef(
         styles: {
           backgroundColor: isSorted ? 'shaded' : undefined,
           borderBottom: 'normal',
-          borderTopLeftRadius: isFirstColumn
-            ? `calc(var(--border-radius--small) - 1px)`
-            : undefined,
-          borderTopRightRadius: isLastColumn
-            ? `calc(var(--border-radius--small) - 1px)`
-            : undefined,
+          borderTopLeftRadius: isFirstColumn ? `calc(small - 1px)` : undefined,
+          borderTopRightRadius: isLastColumn ? `calc(small - 1px)` : undefined,
           color: 'textFaded',
           fontSize: 'small',
-          paddingX: 'normal',
+          paddingX: 'tight',
           paddingY: 'xtight',
           textAlign: 'left',
           width: '100%',
@@ -434,11 +404,15 @@ const TableHeaderCell = forwardRef(
 // eslint-disable-next-line react/display-name
 const TableRow = forwardRef(
   <RowShape extends BaseRowShape, K extends keyof RowShape>(
-    { rowContents, rowObject, ...otherProps }: TableRowProps<RowShape, K>,
+    {
+      rowContents,
+      rowObject,
+      tableContext,
+      ...otherProps
+    }: TableRowProps<RowShape, K>,
     ref: Ref<HTMLTableRowElement>
   ): JSX.Element => {
-    const { rowObjects } =
-      useContext<TableContextObject<RowShape, K>>(TableContext);
+    const { rowObjects } = tableContext;
 
     const rowIndex = rowObjects.indexOf(rowObject);
 
@@ -476,12 +450,13 @@ const TableCell = forwardRef(
       columnDescriptor,
       rowObject,
       styles,
+      tableContext,
       ...otherProps
     }: TableCellProps<RowShape, K>,
     ref: Ref<HTMLTableCellElement>
   ): JSX.Element => {
     const { columnDescriptors, rowObjects, sortedColumnDescriptor } =
-      useContext<TableContextObject<RowShape, K>>(TableContext);
+      tableContext;
 
     const isColumnSorted =
       columnDescriptors.length >= 2 &&
@@ -507,7 +482,7 @@ const TableCell = forwardRef(
                 isLastRow && isFirstColumn ? 'small' : undefined,
               borderBottomRightRadius:
                 isLastRow && isLastColumn ? 'small' : undefined,
-              paddingX: 'normal',
+              paddingX: 'tight',
               paddingY: 'tight',
             },
           } as const,

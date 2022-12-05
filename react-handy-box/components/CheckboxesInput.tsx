@@ -85,7 +85,7 @@ const CheckboxesOrRadioInput = forwardRef(
       renderOptions={({ options }) => (
         <Box styles={{ rowGap: 'tight' }}>
           <Box
-            styles={{ columnGap: 'xtight', flexWrap: 'wrap', rowGap: 'xtight' }}
+            styles={{ columnGap: 'tight', flexWrap: 'wrap', rowGap: 'xtight' }}
           >
             {options.map(({ option, propsForOption, isSelected }) => (
               <Button
@@ -98,7 +98,7 @@ const CheckboxesOrRadioInput = forwardRef(
                 }}
                 variant="bare"
                 onBlur={propsForOption.onBlur}
-                onClick={(event: MouseEvent<HTMLButtonElement>) => {
+                onClick={(event: MouseEvent) => {
                   event.preventDefault();
                   event.stopPropagation();
                   propsForOption.onClick?.(event);

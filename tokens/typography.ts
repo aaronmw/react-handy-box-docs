@@ -1,3 +1,5 @@
+import { TokensByBreakpoint } from '@/react-handy-box/components/Box.types';
+
 export const fontNames = {
   body: {
     fontFamily: `Inter, sans-serif`,
@@ -5,22 +7,27 @@ export const fontNames = {
   },
 };
 
-export const fontSizes = {
-  xxlarge: '3.75rem',
-  xlarge: '2.5rem',
-  large: '1.5rem',
-  normal: '16px',
-  small: '0.833rem',
-  xsmall: '0.588rem',
-};
+export const fontSizeNames = [
+  'xxlarge',
+  'xlarge',
+  'large',
+  'normal',
+  'small',
+  'xsmall',
+] as const;
 
-export const lineHeights = {
-  xxlarge: '3.75rem',
-  xlarge: '2.5rem',
-  large: '1.5rem',
-  normal: '1.4rem',
-  small: '1.2rem',
-  xsmall: '1rem',
+export const fontSizesAndLineHeights: TokensByBreakpoint<
+  [string, string],
+  typeof fontSizeNames[number]
+> = {
+  root: {
+    xxlarge: ['3.75rem', '3.75rem'],
+    xlarge: ['2.5rem', '2.5rem'],
+    large: ['1.5rem', '1.5rem'],
+    normal: ['16px', '1.4rem'],
+    small: ['0.833rem', '1.2rem'],
+    xsmall: ['0.588rem', '1rem'],
+  },
 };
 
 export const textStyles = {

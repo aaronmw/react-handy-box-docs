@@ -84,7 +84,6 @@ const FormDemo = () => {
           placeholder="Single-Line Text Input"
         />
 
-        {/* TODO: doesn't resize upon reset / remote value set */}
         <ElasticTextInput
           disabled={allFieldsDisabled}
           isRequired={allFieldsRequired}

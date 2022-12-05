@@ -74,16 +74,15 @@ const useFormField = <IsMultiValue extends boolean>(
     },
 
     onChange: (event?: ChangeEvent) => {
-      fieldDescriptor.onChange?.(event, formContext);
+      // Allow the field to re-render before validating
+      timer.current = setTimeout(() => {
+        fieldDescriptor.onChange?.(event, formContext);
 
-      if (touched) {
-        formContext.setIsDirty(true);
-
-        // Allow the field to re-render before validating
-        timer.current = setTimeout(() => {
+        if (touched) {
+          formContext.setIsDirty(true);
           formFieldRegistryEntry.onValidate(getFieldValue());
-        }, 1);
-      }
+        }
+      }, 1);
     },
 
     onRead: (
@@ -197,7 +196,7 @@ const Form = forwardRef(
 
     const setFieldValue = (
       fieldName: keyof typeof formFieldRegistryRef.current,
-      newValue: string | number | Array<string | number>
+      newValue: string | number | Array<string | number> = ''
     ) => {
       const formElement = formElementRef.current;
 
@@ -208,9 +207,11 @@ const Form = forwardRef(
       const formData = new FormData(formElement);
 
       if (Array.isArray(newValue)) {
+        formData.set(fieldName, '');
         newValue.forEach((v) => formData.append(fieldName, String(v)));
       } else {
         formData.set(fieldName, String(newValue));
+        (formElement[fieldName] as HTMLInputElement).value = String(newValue);
       }
 
       formFieldRegistryRef.current[fieldName].onWrite(newValue, formContext);

@@ -1,35 +1,45 @@
+import { BoxPropsWithRef } from '@/react-handy-box/components/Box.types';
+import { IconName, IconVariant } from '@/react-handy-box/components/Icon.types';
 import {
-  BoxPropsWithoutRef,
-  StyleProps,
-} from '@/react-handy-box/components/Box.types';
-import { IconName } from '@/react-handy-box/components/Icon.types';
-import { PopoverProps } from '@/react-handy-box/components/Popover.types';
+  PopoverProps,
+  PopoverRenderProps,
+} from '@/react-handy-box/components/Popover.types';
 import { ReactNode } from 'react';
 
-export type MenuItemProps = {
-  DividingLine: BoxPropsWithoutRef & {
-    type: 'dividing-line';
-  };
-
-  GroupLabel: BoxPropsWithoutRef & {
-    type: 'group-label';
-    label: ReactNode;
-  };
-
-  MenuItem: Omit<BoxPropsWithoutRef<'button'>, 'type'> & {
-    icon?: IconName;
-    label: ReactNode;
-    type: 'menu-item';
-  };
-
-  MenuItemWithChildren: Omit<BoxPropsWithoutRef<'button'>, 'type'> & {
-    icon?: IconName;
-    label: ReactNode;
-    options: Array<MenuItemProps[keyof MenuItemProps]>;
-    type: 'child-menu';
-  };
+export type DividingLine = BoxPropsWithRef & {
+  type: 'dividing-line';
 };
 
-export type MenuProps = Omit<PopoverProps, 'children' | 'type'> & {
-  options: Array<MenuItemProps[keyof MenuItemProps]>;
+export type GroupLabel = BoxPropsWithRef & {
+  type: 'group-label';
+  label: ReactNode;
+};
+
+export type MenuItem = Omit<BoxPropsWithRef<'button'>, 'type'> & {
+  iconName?: IconName;
+  iconVariant?: IconVariant;
+  label: ReactNode;
+  type: 'menu-item';
+};
+
+export type MenuItemWithChildren = Omit<BoxPropsWithRef<'button'>, 'type'> & {
+  iconName?: IconName;
+  iconVariant?: IconVariant;
+  label: ReactNode;
+  options: Array<AnyMenuItem>;
+  type: 'child-menu';
+};
+
+export type AnyMenuItem =
+  | DividingLine
+  | GroupLabel
+  | MenuItem
+  | MenuItemWithChildren;
+
+export type MenuProps = Omit<PopoverProps, 'children' | 'options' | 'type'> & {
+  options: Array<AnyMenuItem>;
+  renderOptions?: (args: {
+    renderedOptions: ReactNode;
+    menuRenderProps: PopoverRenderProps;
+  }) => ReactNode;
 };

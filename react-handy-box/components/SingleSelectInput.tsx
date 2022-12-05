@@ -8,19 +8,20 @@ import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { Button } from '@/react-handy-box/components/Button';
 import { Icon } from '@/react-handy-box/components/Icon';
 import { Menu } from '@/react-handy-box/components/Menu';
-import { MenuItemProps } from '@/react-handy-box/components/Menu.types';
+import { MenuItem } from '@/react-handy-box/components/Menu.types';
 import { inputStyles } from '@/tokens/inputStyles';
 import { forwardRef, MouseEvent, Ref } from 'react';
 
 type SingleSelectInputProps<T extends BaseOptionShape> = Omit<
   BoxPropsWithoutRef<'div'>,
-  'children'
+  'children' | 'onChange'
 > &
   Omit<
     AbstractMultiSelectInputProps<T, false>,
     'isMultiValue' | 'renderOptions'
   >;
 
+// eslint-disable-next-line react/display-name
 const SingleSelectInput = forwardRef(
   <T extends BaseOptionShape>(
     { placeholder = 'Select...', ...otherProps }: SingleSelectInputProps<T>,
@@ -41,12 +42,10 @@ const SingleSelectInput = forwardRef(
               label: option.label,
               type: 'menu-item',
               onClick: propsForOption.onClick,
-            } as MenuItemProps['MenuItem'])
+            } as MenuItem)
         );
 
-        const handleClickClearSelection = (
-          event: MouseEvent<HTMLButtonElement>
-        ) => {
+        const handleClickClearSelection = (event: MouseEvent) => {
           event.stopPropagation();
           event.preventDefault();
 
@@ -66,7 +65,6 @@ const SingleSelectInput = forwardRef(
                     columnGap: 'tight',
                     display: 'flex',
                     justifyContent: 'space-between',
-                    paddingY: 'xxtight',
                     whiteSpace: 'nowrap',
                   }}
                   tabIndex={0}
@@ -107,8 +105,11 @@ const SingleSelectInput = forwardRef(
       {...otherProps}
     />
   )
-);
+) as <T extends BaseOptionShape>(
+  props: SingleSelectInputProps<T>,
+  ref: Ref<HTMLLabelElement>
+) => JSX.Element;
 
-SingleSelectInput.displayName = 'SingleSelectInput';
+(SingleSelectInput as any).displayName = 'SingleSelectInput';
 
 export { SingleSelectInput };

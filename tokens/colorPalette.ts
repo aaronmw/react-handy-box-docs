@@ -7,9 +7,8 @@ import {
 } from '@/react-handy-box/components/Box.types';
 import mapValues from 'lodash/mapValues';
 import { parseToHsl, rgba, setLightness } from 'polished';
-import { SwatchNameOrAlias } from './../react-handy-box/components/Box.types';
 
-const defaultLightnessLevels = {
+const lightnessLevels = {
   100: -0.925,
   200: -0.775,
   300: -0.6,
@@ -21,69 +20,47 @@ const defaultLightnessLevels = {
 
 const opacityOptions = [10, 20, 30, 40, 50, 60, 70, 80, 90] as const;
 
-const coreColorDefinitions = {
+const coreColorDefinitions: Record<
+  string,
+  {
+    code: string;
+    lightnessLevels?: typeof lightnessLevels;
+  }
+> = {
   blue: {
     code: '#1599FF',
-    lightnessLevels: {
-      ...defaultLightnessLevels,
-    },
   },
   gray: {
     code: '#958F8F',
-    lightnessLevels: {
-      ...defaultLightnessLevels,
-    },
   },
   green: {
     code: '#00C980',
-    lightnessLevels: {
-      ...defaultLightnessLevels,
-    },
   },
   orange: {
     code: '#FF5C00',
-    lightnessLevels: {
-      ...defaultLightnessLevels,
-    },
   },
   pink: {
     code: '#D566DB',
-    lightnessLevels: {
-      ...defaultLightnessLevels,
-    },
   },
   purple: {
     code: '#9B00E3',
-    lightnessLevels: {
-      ...defaultLightnessLevels,
-    },
   },
   red: {
     code: '#FF002E',
-    lightnessLevels: {
-      ...defaultLightnessLevels,
-    },
   },
   teal: {
     code: '#32CCB1',
-    lightnessLevels: {
-      ...defaultLightnessLevels,
-    },
   },
   yellow: {
     code: '#FFC700',
-    lightnessLevels: {
-      ...defaultLightnessLevels,
-    },
   },
-} as const;
+};
 
 const colorSwatches = Object.keys(coreColorDefinitions).reduce(
   (acc, colorName) => {
     const coreColorName = colorName as keyof typeof coreColorDefinitions;
 
-    const { code: coreColorCode, lightnessLevels } =
-      coreColorDefinitions[coreColorName];
+    const { code: coreColorCode } = coreColorDefinitions[coreColorName];
 
     const { lightness: baseLightness } = parseToHsl(coreColorCode);
 
@@ -228,7 +205,7 @@ export {
   themes,
   coreColorCodes,
   coreColorDefinitions,
-  defaultLightnessLevels,
+  lightnessLevels,
   opacityOptions,
   swatchNameAliases,
   themeNames,

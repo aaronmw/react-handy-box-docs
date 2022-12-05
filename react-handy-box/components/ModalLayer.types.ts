@@ -1,17 +1,10 @@
 import {
-  AnimationName,
-  BoxPropsWithoutRef,
+  BoxPropsWithRef,
   StyleProps,
 } from '@/react-handy-box/components/Box.types';
 import { FormProps } from '@/react-handy-box/components/Form.types';
 import { variantStylesMap } from '@/react-handy-box/components/ModalWindow';
-import {
-  MouseEventHandler,
-  MutableRefObject,
-  ReactNode,
-  Ref,
-  RefObject,
-} from 'react';
+import { MouseEvent, MutableRefObject, ReactNode, Ref, RefObject } from 'react';
 
 export type ModalLayerType =
   | 'dialog'
@@ -48,13 +41,13 @@ export type ModalLayerRenderProps = {
   triggerElementRef?: RefObject<HTMLButtonElement>;
   propsForTrigger: {
     ref: Ref<HTMLButtonElement>;
-    onClick: MouseEventHandler;
+    onClick: (event: MouseEvent) => void;
   };
 };
 
-type BasicModalLayerProps = Omit<BoxPropsWithoutRef, 'children' | 'type'> & {
+type BasicModalLayerProps = Omit<BoxPropsWithRef, 'children' | 'type'> & {
   children: ReactNode | ModalLayerRenderFunction;
-  disableBackdropClick?: boolean;
+  disableBackdropClickToClose?: boolean;
   disableFocusTrap?: boolean;
   stylesForBackdrop?: StyleProps;
   stylesForBackdropOnClose?: StyleProps;

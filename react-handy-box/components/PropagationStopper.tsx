@@ -1,6 +1,6 @@
 import { Box } from '@/react-handy-box/components/Box';
 import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
-import { forwardRef, MouseEventHandler, Ref } from 'react';
+import { forwardRef, MouseEvent, Ref } from 'react';
 
 type PropagationStopperProps = BoxPropsWithoutRef & {
   disabled?: boolean;
@@ -11,7 +11,7 @@ const PropagationStopper = forwardRef(
     { children, disabled, ...otherProps }: PropagationStopperProps,
     ref: Ref<HTMLDivElement>
   ): JSX.Element => {
-    const handleClick: MouseEventHandler = (event) => {
+    const handleClick = (event: MouseEvent) => {
       event.preventDefault();
       event.stopPropagation();
     };

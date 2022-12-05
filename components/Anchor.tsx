@@ -1,5 +1,6 @@
 import { Box } from '@/react-handy-box/components/Box';
 import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
+import merge from 'lodash/merge';
 import Link from 'next/link';
 
 export type AnchorProps = Omit<BoxPropsWithoutRef<'a'>, 'href'> & {
@@ -30,20 +31,21 @@ const variantPropMap = {
 const Anchor = ({
   children,
   href,
-  styles,
   variant = 'normal',
   ...otherProps
 }: AnchorProps) => (
   <Link href={href} as={href} passHref={true} shallow={true}>
     <Box
       as="a"
-      cursor="pointer"
-      styles={{
-        cursor: 'pointer',
-        ...(variantPropMap[variant] as BoxPropsWithoutRef<'a'>['styles']),
-        ...styles,
-      }}
-      {...otherProps}
+      {...merge(
+        {
+          styles: {
+            cursor: 'pointer',
+          },
+        },
+        variantPropMap[variant],
+        otherProps
+      )}
     >
       {children}
     </Box>

@@ -1,103 +1,94 @@
-import { StyleProps } from '@/react-handy-box/components/Box.types';
-import merge from 'lodash/merge';
+import { handyStyles } from '@/react-handy-box/utilities/handyStyles';
 
-type ButtonStylesGenerator = (styles?: StyleProps) => StyleProps;
-
-const mergeBaseButtonStyles: ButtonStylesGenerator = (styles) =>
-  merge(
-    {},
-    {
-      cursor: 'pointer',
-      display: 'inline-block',
-      stylesForCustomSelector: {
-        ':disabled': {
-          opacity: 0.6,
-          pointerEvents: 'none',
-        },
-      },
-      stylesOnFocus: {
-        boxShadow: 'focusRing',
-        position: 'relative',
-        zIndex: '1--stickyElements',
-      },
-      width: 'fit-content',
-      whiteSpace: 'nowrap',
+const baseButtonStyles = handyStyles({
+  cursor: 'pointer',
+  display: 'inline-block',
+  stylesForCustomSelector: {
+    ':disabled': {
+      opacity: 0.6,
+      pointerEvents: 'none',
     },
-    styles
-  );
+  },
+  stylesOnFocus: {
+    boxShadow: 'focusRing',
+    position: 'relative',
+    zIndex: '1--stickyElements',
+  },
+  width: 'fit-content',
+  whiteSpace: 'nowrap',
+});
 
-const mergePrimaryButtonStyles: ButtonStylesGenerator = (styles) => {
-  const renderedBaseButtonStyles = mergeBaseButtonStyles(styles);
-
-  return merge({}, renderedBaseButtonStyles, {
+const primaryButtonStyles = handyStyles(baseButtonStyles, {
+  backgroundColor: 'primary',
+  borderRadius: 'small',
+  boxSizing: 'content-box',
+  color: 'white',
+  paddingX: 'tight',
+  paddingY: 'xtight',
+  transform: 'scale(1)',
+  transitionProperty: ['transform'],
+  stylesOnHover: {
     backgroundColor: 'primary',
-    borderRadius: 'small',
-    boxSizing: 'content-box',
+    backgroundColorLightness: '+100',
     color: 'white',
-    paddingX: 'tight',
-    paddingY: 'xtight',
-    transform: 'scale(1)',
-    transitionProperty: ['transform'].concat(
-      renderedBaseButtonStyles?.transitionProperty ?? []
-    ),
-    stylesOnHover: {
-      backgroundColor: 'purple',
-      color: 'white',
-      transform: 'scale(1.05)',
-    },
-  });
-};
+    transform: 'scale(1.05)',
+  },
+});
 
 const buttonStyles = {
-  bare: mergeBaseButtonStyles,
+  bare: baseButtonStyles,
 
-  caution: (styles: StyleProps) =>
-    merge({}, mergePrimaryButtonStyles(styles), {
-      borderColor: 'transparent',
-      color: 'danger',
-      stylesOnHover: {
-        borderColor: 'danger',
-      },
-    }),
-
-  danger: (styles: StyleProps) =>
-    merge({}, mergePrimaryButtonStyles(styles), {
+  caution: handyStyles(primaryButtonStyles, {
+    borderColor: 'transparent',
+    color: 'danger',
+    stylesOnHover: {
       borderColor: 'danger',
-      borderStyle: 'thick',
-      color: 'danger',
-      stylesOnHover: {
-        backgroundColor: 'danger',
-        borderColor: 'danger',
-        color: 'white',
-      },
-    }),
+    },
+  }),
 
-  iconOnly: (styles: StyleProps) =>
-    merge({}, mergeBaseButtonStyles(styles), {
-      paddingX: 'xtight',
-      paddingY: 'xxtight',
-      stylesOnHover: {
-        color: 'primary',
-      },
-    }),
+  danger: handyStyles(primaryButtonStyles, {
+    borderColor: 'transparent',
+    color: 'danger',
+    stylesOnHover: {
+      borderColor: 'danger',
+    },
+  }),
 
-  pill: (styles: StyleProps) =>
-    merge({}, mergeBaseButtonStyles(styles), {
-      alignItems: 'center',
+  iconOnly: handyStyles(baseButtonStyles, {
+    paddingX: 'xtight',
+    paddingY: 'xxtight',
+    stylesOnHover: {
+      color: 'primary',
+    },
+  }),
+
+  pill: handyStyles(baseButtonStyles, {
+    alignItems: 'center',
+    backgroundColor: 'selected',
+    borderRadius: 'small',
+    columnGap: 'xtight',
+    cursor: 'pointer',
+    display: 'flex',
+    paddingX: 'tight',
+    paddingY: 'xxtight',
+    stylesOnHover: {
       backgroundColor: 'selected',
-      borderRadius: 'small',
-      columnGap: 'xtight',
-      cursor: 'pointer',
-      display: 'flex',
-      paddingX: 'tight',
-      paddingY: 'xxtight',
-      stylesOnHover: {
-        backgroundColor: 'selected',
-        backgroundColorLightness: '+100',
-      },
-    }),
+      backgroundColorLightness: '+100',
+    },
+  }),
 
-  primary: mergePrimaryButtonStyles,
+  primary: primaryButtonStyles,
+
+  textLink: handyStyles(baseButtonStyles, {
+    color: 'link',
+    cursor: 'pointer',
+    fontWeight: 'bold',
+    stylesOnHover: {
+      color: 'link--hovered',
+    },
+    textDecoration: 'underline',
+    whiteSpace: 'normal',
+  }),
 };
 
 export { buttonStyles };

@@ -1,27 +1,24 @@
 import { ReactNode } from 'react';
 import { BoxPropsWithoutRef, BoxPropsWithRef } from './Box.types';
 
-export type TableContextObject<
+type TableContextObject<
   RowShape extends BaseRowShape,
   K extends keyof RowShape
 > = {
   columnDescriptors: Array<ColumnDescriptor<RowShape, K>>;
   rowObjects: Array<RowShape>;
   sortDirection?: SortDirection;
-  sortedColumnDescriptor: ColumnDescriptor<RowShape, K>;
+  sortedColumnDescriptor?: ColumnDescriptor<RowShape, K>;
 };
 
-export type BaseRowShape = {
+type BaseRowShape = {
   key: string | number;
   propsForContainer?: BoxPropsWithoutRef<'tr'>;
 } & Record<string, ReactNode>;
 
-export type SortDirection = 'ASC' | 'DESC';
+type SortDirection = 'ASC' | 'DESC';
 
-export type BaseTableProps<
-  RowShape extends BaseRowShape,
-  K extends keyof RowShape
-> = {
+type BaseTableProps<RowShape extends BaseRowShape, K extends keyof RowShape> = {
   columnDescriptors: Array<ColumnDescriptor<RowShape, K>>;
   initialSortedColumnKey?: K;
   renderCells?: Record<K, TableCellRenderFunction<RowShape, K>>;
@@ -31,12 +28,12 @@ export type BaseTableProps<
   rowObjects: Array<RowShape>;
 };
 
-export type TableProps<
+type TableProps<
   RowShape extends BaseRowShape,
   K extends keyof RowShape
 > = BoxPropsWithoutRef<'table'> & BaseTableProps<RowShape, K>;
 
-export type ColumnDescriptor<
+type ColumnDescriptor<
   RowShape extends BaseRowShape,
   K extends keyof RowShape
 > = {
@@ -51,87 +48,100 @@ export type ColumnDescriptor<
   propsForCells?: BoxPropsWithRef<'td'>;
 };
 
-export type TableCellRenderProps<
+type TableCellRenderProps<
   RowShape extends BaseRowShape,
   K extends keyof RowShape
 > = {
   cellContents: ReactNode;
   columnDescriptor: ColumnDescriptor<RowShape, K>;
-  columnDescriptors: Array<ColumnDescriptor<RowShape, K>>;
   rowObject: RowShape;
-  rowObjectIndex: number;
-  rowObjects: Array<RowShape>;
+  tableContext: TableContextObject<RowShape, K>;
 };
 
-export type TableCellRenderFunction<
+type TableCellRenderFunction<
   RowShape extends BaseRowShape,
   K extends keyof RowShape
 > = (args: TableCellRenderProps<RowShape, K>) => JSX.Element;
 
-export type TableHeaderCellRenderProps<
+type TableHeaderCellRenderProps<
   RowShape extends BaseRowShape,
   K extends keyof RowShape
 > = {
   cellContents: ReactNode;
   columnDescriptor: ColumnDescriptor<RowShape, K>;
-  columnDescriptors: Array<ColumnDescriptor<RowShape, K>>;
   propsForCellContentsWrapper: BoxPropsWithRef<'button' | 'div'>;
-  rowObjects: Array<RowShape>;
-  sortDirection?: SortDirection;
-  sortedColumnDescriptor?: ColumnDescriptor<RowShape, K>;
+  tableContext: TableContextObject<RowShape, K>;
 };
 
-export type TableHeaderCellRenderFunction<
+type TableHeaderCellRenderFunction<
   RowShape extends BaseRowShape,
   K extends keyof RowShape
 > = (args: TableHeaderCellRenderProps<RowShape, K>) => JSX.Element;
 
-export type TableRowRenderProps<
+type TableRowRenderProps<
   RowShape extends BaseRowShape,
   K extends keyof RowShape
 > = {
-  columnDescriptors: Array<ColumnDescriptor<RowShape, K>>;
   rowContents: ReactNode;
   rowObject: RowShape;
-  rowObjectIndex: number;
-  rowObjects: Array<RowShape>;
+  tableContext: TableContextObject<RowShape, K>;
 };
 
-export type TableRowRenderFunction<
+type TableRowRenderFunction<
   RowShape extends BaseRowShape,
   K extends keyof RowShape
 > = (args: TableRowRenderProps<RowShape, K>) => JSX.Element;
 
-export type TableHeaderRowRenderProps<
+type TableHeaderRowRenderProps<
   RowShape extends BaseRowShape,
   K extends keyof RowShape
 > = {
-  columnDescriptors: Array<ColumnDescriptor<RowShape, K>>;
   rowContents: ReactNode;
-  rowObjects: Array<RowShape>;
+  tableContext: TableContextObject<RowShape, K>;
 };
 
-export type TableHeaderRowRenderFunction<
+type TableHeaderRowRenderFunction<
   RowShape extends BaseRowShape,
   K extends keyof RowShape
 > = (args: TableHeaderRowRenderProps<RowShape, K>) => JSX.Element;
 
-export type TableHeaderRowProps<
+type TableHeaderRowProps<
   RowShape extends BaseRowShape,
   K extends keyof RowShape
 > = BoxPropsWithoutRef<'tr'> & TableHeaderRowRenderProps<RowShape, K>;
 
-export type TableHeaderCellProps<
+type TableHeaderCellProps<
   RowShape extends BaseRowShape,
   K extends keyof RowShape
 > = BoxPropsWithoutRef<'td'> & TableHeaderCellRenderProps<RowShape, K>;
 
-export type TableRowProps<
+type TableRowProps<
   RowShape extends BaseRowShape,
   K extends keyof RowShape
 > = BoxPropsWithoutRef<'tr'> & TableRowRenderProps<RowShape, K>;
 
-export type TableCellProps<
+type TableCellProps<
   RowShape extends BaseRowShape,
   K extends keyof RowShape
 > = BoxPropsWithoutRef<'td'> & TableCellRenderProps<RowShape, K>;
+
+export type {
+  BaseRowShape,
+  BaseTableProps,
+  ColumnDescriptor,
+  SortDirection,
+  TableCellProps,
+  TableCellRenderFunction,
+  TableCellRenderProps,
+  TableContextObject,
+  TableHeaderCellProps,
+  TableHeaderCellRenderFunction,
+  TableHeaderCellRenderProps,
+  TableHeaderRowProps,
+  TableHeaderRowRenderFunction,
+  TableHeaderRowRenderProps,
+  TableProps,
+  TableRowProps,
+  TableRowRenderFunction,
+  TableRowRenderProps,
+};

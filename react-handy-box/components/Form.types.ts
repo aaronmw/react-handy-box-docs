@@ -55,7 +55,7 @@ export type FormFieldChangeHandler = (
 ) => void;
 
 export type FormFieldClickHandler = (
-  event?: MouseEvent,
+  event: MouseEvent,
   formContext?: FormContextObject
 ) => void;
 

@@ -3,19 +3,22 @@ import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { Popover } from '@/react-handy-box/components/Popover';
 import { PopoverRenderProps } from '@/react-handy-box/components/Popover.types';
 import { modalLayerStyles } from '@/tokens/modalLayerStyles';
+import merge from 'lodash/merge';
 import { forwardRef, ReactNode, Ref, useCallback, useRef } from 'react';
 
 type TooltipProps = Omit<BoxPropsWithoutRef, 'content'> & {
   content: ReactNode;
   disabled?: boolean;
+  isInteractive?: boolean;
 };
 
 const Tooltip = forwardRef(
   (
-    { children, content, styles, ...otherProps }: TooltipProps,
+    { children, content, isInteractive = false, ...otherProps }: TooltipProps,
     ref: Ref<HTMLDivElement>
   ) => {
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
     const hoistedPropsForTrigger = useRef<PopoverRenderProps | null>(null);
 
     const cancelTooltipTimers = useCallback(() => {
@@ -49,10 +52,7 @@ const Tooltip = forwardRef(
         return (
           <Box
             ref={renderProps.propsForTrigger.ref as any}
-            styles={{
-              display: 'inline-block',
-              ...styles,
-            }}
+            onBlur={dismissTooltip}
             onMouseEnter={scheduleTooltipReveal}
             onMouseLeave={scheduleTooltipDismissal}
             {...otherProps}
@@ -63,20 +63,23 @@ const Tooltip = forwardRef(
       },
       [
         children,
+        dismissTooltip,
         otherProps,
         scheduleTooltipDismissal,
         scheduleTooltipReveal,
-        styles,
       ]
     );
 
     return (
       <Popover
-        disableBackdropClick={true}
+        disableBackdropClickToClose={true}
         popperPlacementOrder={['top', 'bottom', 'left', 'right']}
         ref={ref}
         renderTrigger={innerRenderTrigger}
-        styles={modalLayerStyles.tooltip}
+        styles={merge(
+          { pointerEvents: isInteractive ? 'all' : 'none' },
+          modalLayerStyles.tooltip
+        )}
         type="tooltip"
         onMouseEnter={cancelTooltipTimers}
         onMouseLeave={scheduleTooltipDismissal}

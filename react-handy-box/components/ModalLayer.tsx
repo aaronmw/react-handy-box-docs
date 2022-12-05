@@ -49,6 +49,7 @@ const ModalLayerProvider = ({ children }: { children: ReactNode }) => {
       switch (combo) {
         case 'escape':
           event.preventDefault();
+          event.stopPropagation();
           last(modalLayerStack.current)?.setIsOpen(false);
           break;
       }
@@ -107,7 +108,7 @@ const ModalLayer = forwardRef(
   (
     {
       children,
-      disableBackdropClick = false,
+      disableBackdropClickToClose = false,
       disableFocusTrap = false,
       initialIsOpen = false,
       isOpen = initialIsOpen,
@@ -133,7 +134,13 @@ const ModalLayer = forwardRef(
       'opening' | 'open' | 'closing' | 'closed'
     >('closed');
 
-    const [opacity, setOpacity] = useState(0);
+    const layerIsOpening = internalOpenState === 'opening';
+    const layerIsClosing = internalOpenState === 'closing';
+    const layerIsClosed = internalOpenState === 'closed';
+    const layerIsOpen = internalOpenState === 'open';
+    const layerIsClosedOrClosing = layerIsClosed || layerIsClosing;
+    const layerIsOpenOrOpening = layerIsOpen || layerIsOpening;
+    const layerIsOpeningOrClosing = layerIsOpening || layerIsClosing;
 
     const [modalLayerElement, setModalLayerElement] =
       useState<HTMLElement | null>(null);
@@ -167,6 +174,8 @@ const ModalLayer = forwardRef(
             ref: triggerElementRef,
             onClick: (event: MouseEvent) => {
               event.preventDefault();
+              event.stopPropagation();
+
               setDesiredOpenState(!desiredOpenState);
             },
           },
@@ -203,10 +212,8 @@ const ModalLayer = forwardRef(
 
     useEffect(() => {
       if (
-        (desiredOpenState === false &&
-          ['closed', 'closing'].includes(internalOpenState)) ||
-        (desiredOpenState === true &&
-          ['open', 'opening'].includes(internalOpenState))
+        (desiredOpenState === false && layerIsClosedOrClosing) ||
+        (desiredOpenState === true && layerIsOpenOrOpening)
       ) {
         return;
       }
@@ -222,22 +229,15 @@ const ModalLayer = forwardRef(
       eventHandler?.(renderProps);
     }, [
       desiredOpenState,
-      internalOpenState,
+      layerIsClosedOrClosing,
+      layerIsOpenOrOpening,
       onBeforeClose,
       onBeforeOpen,
       renderProps,
     ]);
 
-    useEffect(() => {
-      if (['opening', 'closing'].includes(internalOpenState) === false) {
-        return;
-      }
-
-      setOpacity(internalOpenState === 'opening' ? 1 : 0);
-    }, [internalOpenState]);
-
     const handleAnimationEnd = useCallback(() => {
-      if (['opening', 'closing'].includes(internalOpenState) === false) {
+      if (!layerIsOpeningOrClosing) {
         return;
       }
 
@@ -249,10 +249,19 @@ const ModalLayer = forwardRef(
       setInternalOpenState(nextInternalOpenState);
 
       eventHandler?.(renderProps);
-    }, [internalOpenState, onClose, onOpen, renderProps]);
+    }, [
+      internalOpenState,
+      layerIsOpeningOrClosing,
+      onClose,
+      onOpen,
+      renderProps,
+    ]);
 
-    const handleClickBackdrop = (event: MouseEvent<HTMLDivElement>) => {
-      if (!disableBackdropClick) {
+    const handleClickBackdrop = (event: MouseEvent) => {
+      if (!disableBackdropClickToClose) {
+        event.preventDefault();
+        event.stopPropagation();
+
         renderProps.closeModal();
       }
     };
@@ -268,11 +277,11 @@ const ModalLayer = forwardRef(
               styles={merge(
                 {
                   cursor: 'default',
-                  pointerEvents: disableBackdropClick ? 'none' : 'all',
+                  pointerEvents: disableBackdropClickToClose ? 'none' : 'all',
                   zIndex: zIndex - 1,
                 },
                 stylesForBackdrop,
-                opacity === 1
+                layerIsOpenOrOpening
                   ? stylesForBackdropOnOpen
                   : stylesForBackdropOnClose
               )}
@@ -280,19 +289,20 @@ const ModalLayer = forwardRef(
             >
               <FocusTrap
                 data-modal-layer-type={type}
-                disabled={Boolean(
-                  disableFocusTrap ||
-                    ['closing', 'closed'].includes(internalOpenState)
-                )}
+                disabled={disableFocusTrap || layerIsClosedOrClosing}
                 ref={multipleRefs}
                 role="dialog"
                 tabIndex={0}
                 styles={merge(
                   {
+                    animationFillMode: 'both',
+                    animationName: layerIsOpenOrOpening
+                      ? 'modalLayerEntry'
+                      : 'modalLayerExit',
                     zIndex,
                   },
                   styles,
-                  opacity === 1 ? stylesOnOpen : stylesOnClose
+                  layerIsOpenOrOpening ? stylesOnOpen : stylesOnClose
                 )}
                 onAnimationEnd={handleAnimationEnd}
                 {...otherProps}

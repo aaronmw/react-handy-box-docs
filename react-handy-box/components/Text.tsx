@@ -6,12 +6,13 @@ import {
   SupportedTags,
 } from '@/react-handy-box/components/Box.types';
 import { textStyles } from '@/tokens/typography';
-import { forwardRef, Ref } from 'react';
+import { Children, forwardRef, Ref } from 'react';
 
 type TextProps<E extends SupportedTags = 'span'> = Omit<
   BoxPropsWithoutRef<E>,
   'size' | 'style' | 'weight'
 > & {
+  preventWidows?: boolean;
   size?: StyleProps['fontSize'];
   style?: StyleProps['fontStyle'];
   variant?: keyof typeof textStyles;
@@ -23,6 +24,7 @@ const Text = forwardRef(
     {
       as = 'span',
       children,
+      preventWidows = false,
       size,
       style,
       styles,
@@ -37,6 +39,13 @@ const Text = forwardRef(
     return (
       <Box
         as={as}
+        dangerouslySetInnerHTML={
+          preventWidows
+            ? {
+                __html: Children.map(children, (child) => child),
+              }
+            : undefined
+        }
         ref={ref}
         styles={{
           ...variantStyles,
@@ -48,7 +57,7 @@ const Text = forwardRef(
         {...variantProps}
         {...otherProps}
       >
-        {children}
+        {!preventWidows && children}
       </Box>
     );
   }

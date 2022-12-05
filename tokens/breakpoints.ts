@@ -1,3 +1,13 @@
+export const breakpointNames = [
+  'bigDesktopOrLarger',
+  'desktopOrLarger',
+  'tabletOrLarger',
+  'phoneOrTablet',
+  'tabletOnly',
+  'phoneOnly',
+  'root',
+] as const;
+
 export const breakpoints = {
   bigDesktopOrLarger: '@media screen and (min-width: 1600px)',
   desktopOrLarger: '@media screen and (min-width: 1200px)',

@@ -52,11 +52,8 @@ const PhraseCycler = forwardRef(
               as="span"
               key={index}
               styles={{
-                animationDuration: 'short',
                 animationFillMode: 'forwards',
-                animationName: isActive
-                  ? 'modalWindowEntry'
-                  : 'modalWindowExit',
+                animationName: isActive ? 'dropIn' : 'dropOut',
                 left: 0,
                 position: 'absolute',
                 top: 0,

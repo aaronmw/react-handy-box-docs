@@ -1,8 +1,11 @@
 {
   "name": "react-handy-box",
   "description": "A growing set of UI building blocks for (very) quickly expressing just about any kind of layout",
-  "author": {"name": "Aaron M. Wright", "url": "http://github.com/aaronmw"},
-  "version": "0.1.0",
+  "author": {
+    "name": "Aaron M. Wright",
+    "url": "http://github.com/aaronmw"
+  },
+  "version": "0.1.10",
   "private": false,
   "scripts": {
     "dev": "next dev",
@@ -23,6 +26,8 @@
     "react-markdown": "^8.0.3",
     "react-popper": "^2.3.0",
     "react-syntax-highlighter": "^15.5.0",
+    "rehype-raw": "^6.1.1",
+    "remark-gfm": "^3.0.1",
     "styled-components": "^5.3.5"
   },
   "devDependencies": {

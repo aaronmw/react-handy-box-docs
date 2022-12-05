@@ -1,27 +1,26 @@
 import { animationNames } from '@/tokens/animationNames';
-import { borderRadii } from '@/tokens/borderRadii';
+import { borderRadiiNames } from '@/tokens/borderRadii';
 import { borderStyles } from '@/tokens/borderStyles';
 import { boxShadows } from '@/tokens/boxShadows';
-import { breakpoints } from '@/tokens/breakpoints';
+import { breakpointNames } from '@/tokens/breakpoints';
 import {
-  colorCodesBySwatchName,
-  colorSwatches,
   coreColorCodes,
   coreColorDefinitions,
-  defaultLightnessLevels,
+  lightnessLevels,
   opacityOptions,
   swatchNameAliases,
   themeNames,
   utilityColors,
 } from '@/tokens/colorPalette';
 import { transitionDurations } from '@/tokens/transitionDurations';
-import { fontNames, fontSizes } from '@/tokens/typography';
+import { fontNames, fontSizeNames } from '@/tokens/typography';
 import { whiteSpaceNames } from '@/tokens/whiteSpaces';
 import { zIndices } from '@/tokens/zIndices';
 import {
   ComponentPropsWithoutRef,
   ComponentPropsWithRef,
   CSSProperties,
+  MouseEvent,
   ReactNode,
 } from 'react';
 
@@ -29,11 +28,11 @@ export type AnimationDuration = TransitionDuration | `${number}${TimeUnit}`;
 
 export type AnimationName = keyof typeof animationNames;
 
-export type BorderRadius = keyof typeof borderRadii | Length | number;
+export type BorderRadius = typeof borderRadiiNames[number] | Length | number;
 
 export type BorderStyle = keyof typeof borderStyles;
 
-export type Breakpoint = keyof typeof breakpoints;
+export type Breakpoint = typeof breakpointNames[number];
 
 export type BoxShadow = keyof ReturnType<typeof boxShadows>;
 
@@ -53,7 +52,7 @@ export type ThemeObject = {
   [K in SwatchNameAlias]: SwatchName;
 };
 
-export type ColorLightnessValue = keyof typeof defaultLightnessLevels;
+export type ColorLightnessValue = keyof typeof lightnessLevels;
 
 export type ColorOpacityValue = typeof opacityOptions[number] | 100;
 
@@ -77,17 +76,32 @@ export type FlexWrap = 'nowrap' | 'wrap' | 'wrap-reverse';
 
 export type FontName = keyof typeof fontNames;
 
-export type FontSize = keyof typeof fontSizes | Length;
+export type FontSize = typeof fontSizeNames[number] | Length;
 
-export type GridSpace = keyof typeof whiteSpaceNames;
+export type WhiteSpaceName = typeof whiteSpaceNames[number];
 
-export type GridSpaceOrLength = GridSpace | Length | number;
+export type WhiteSpaceNameOrLength =
+  | WhiteSpaceName
+  | Length
+  | number
+  | 'none'
+  | 'inherit'
+  | 'initial'
+  | 'revert'
+  | 'revert-layer'
+  | 'unset'
+  | 'fit-content'
+  | 'max-content'
+  | 'min-content';
 
 export type Length = 0 | `${number}${LengthUnit}` | 'auto' | `calc(${string})`;
 
 export type TimeUnit = 's' | 'ms';
 
-export type TransitionDuration = keyof typeof transitionDurations;
+export type TransitionDuration =
+  | keyof typeof transitionDurations
+  | number
+  | `${number}${'s' | 'ms'}`;
 
 export type LengthUnit = 'px' | 'em' | 'rem' | '%' | 'vh' | 'vw';
 
@@ -488,44 +502,56 @@ export type ThemedStyles = {
   borderTopLeftRadius?: BorderRadius;
   borderTopRadius?: BorderRadius;
   borderTopRightRadius?: BorderRadius;
-  bottom?: GridSpaceOrLength;
-  boxShadow?: BoxShadow;
+  bottom?: WhiteSpaceNameOrLength;
+  /**
+   * One of the boxShadow tokens, or a string matching the
+   * usual CSS format:
+   *
+   * ```
+   * X Y Blur Color
+   * X Y Blur Spread Color
+   * ```
+   */
+  boxShadow?:
+    | BoxShadow
+    | `${string} ${string} ${string} ${string}`
+    | `${string} ${string} ${string} ${string} ${string}`;
   children?: ReactNode;
   color?: SwatchNameOrAlias;
   colorOpacity?: ColorOpacityAdjustmentValue;
   colorLightness?: ColorLightnessAdjustmentValue;
-  columnGap?: GridSpaceOrLength;
+  columnGap?: WhiteSpaceNameOrLength;
   columns?: ColumnsOrRows;
   debug?: boolean;
   fontName?: FontName;
   fontSize?: FontSize;
-  gap?: GridSpaceOrLength;
-  height?: GridSpaceOrLength;
+  gap?: WhiteSpaceNameOrLength;
+  height?: WhiteSpaceNameOrLength;
   isOnlyForScreenReaders?: boolean;
-  left?: GridSpaceOrLength;
+  left?: WhiteSpaceNameOrLength;
   lineHeight?: FontSize;
-  margin?: GridSpaceOrLength;
-  marginBottom?: GridSpaceOrLength;
-  marginLeft?: GridSpaceOrLength;
-  marginRight?: GridSpaceOrLength;
-  marginTop?: GridSpaceOrLength;
+  margin?: WhiteSpaceNameOrLength;
+  marginBottom?: WhiteSpaceNameOrLength;
+  marginLeft?: WhiteSpaceNameOrLength;
+  marginRight?: WhiteSpaceNameOrLength;
+  marginTop?: WhiteSpaceNameOrLength;
   /** Sets both `marginLeft` and `marginRight` */
-  marginX?: GridSpaceOrLength;
+  marginX?: WhiteSpaceNameOrLength;
   /** Sets both `marginTop` and `marginBottom` */
-  marginY?: GridSpaceOrLength;
-  maxHeight?: GridSpaceOrLength;
-  maxWidth?: GridSpaceOrLength;
-  minHeight?: GridSpaceOrLength;
-  minWidth?: GridSpaceOrLength;
-  padding?: GridSpaceOrLength;
-  paddingBottom?: GridSpaceOrLength;
-  paddingLeft?: GridSpaceOrLength;
-  paddingRight?: GridSpaceOrLength;
-  paddingTop?: GridSpaceOrLength;
+  marginY?: WhiteSpaceNameOrLength;
+  maxHeight?: WhiteSpaceNameOrLength;
+  maxWidth?: WhiteSpaceNameOrLength;
+  minHeight?: WhiteSpaceNameOrLength;
+  minWidth?: WhiteSpaceNameOrLength;
+  padding?: WhiteSpaceNameOrLength;
+  paddingBottom?: WhiteSpaceNameOrLength;
+  paddingLeft?: WhiteSpaceNameOrLength;
+  paddingRight?: WhiteSpaceNameOrLength;
+  paddingTop?: WhiteSpaceNameOrLength;
   /** Sets both `paddingLeft` and `paddingRight` */
-  paddingX?: GridSpaceOrLength;
+  paddingX?: WhiteSpaceNameOrLength;
   /** Sets both `paddingTop` and `paddingBottom` */
-  paddingY?: GridSpaceOrLength;
+  paddingY?: WhiteSpaceNameOrLength;
 } & {
   [K in `stylesFor${Capitalize<Breakpoint>}`]?: StyleProps;
 } & {
@@ -569,33 +595,44 @@ export type ThemedStyles = {
    */
   stylesOnHover?: StyleProps;
   pointerEvents?: 'all' | 'auto' | 'none';
-  right?: GridSpaceOrLength;
-  rowGap?: GridSpaceOrLength;
+  right?: WhiteSpaceNameOrLength;
+  rowGap?: WhiteSpaceNameOrLength;
   rows?: ColumnsOrRows;
-  top?: GridSpaceOrLength;
+  top?: WhiteSpaceNameOrLength;
   transitionDuration?: TransitionDuration;
   transitionProperty?: string | Array<string>;
-  width?: GridSpaceOrLength | 'fit-content';
+  width?: WhiteSpaceNameOrLength;
   zIndex?: ZIndex;
 };
 
 export type StyleProps<T = ThemedStyles> = Omit<CSSProperties, keyof T> & T;
 
-export type BoxPropsWithRef<E extends SupportedTags = 'div'> =
-  ComponentPropsWithRef<E> & {
-    as?: E;
-    styles?: StyleProps;
-    theme?: ThemeObject;
-  };
+export type BoxPropsWithRef<E extends SupportedTags = 'div'> = Omit<
+  ComponentPropsWithRef<E>,
+  'onClick'
+> & {
+  as?: E;
+  styles?: StyleProps;
+  theme?: ThemeObject;
+  onClick?: (event: MouseEvent) => void;
+};
 
-export type BoxPropsWithoutRef<E extends SupportedTags = 'div'> =
-  ComponentPropsWithoutRef<E> & {
-    as?: E;
-    styles?: StyleProps;
-    theme?: ThemeObject;
-  };
+export type BoxPropsWithoutRef<E extends SupportedTags = 'div'> = Omit<
+  ComponentPropsWithoutRef<E>,
+  'onClick'
+> & {
+  as?: E;
+  styles?: StyleProps;
+  theme?: ThemeObject;
+  onClick?: (event: MouseEvent) => void;
+};
 
 export type SupportedTags = keyof JSX.IntrinsicElements &
   keyof HTMLElementTagNameMap;
 
 export type HTMLElementFor<T extends SupportedTags> = HTMLElementTagNameMap[T];
+
+export type TokensByBreakpoint<
+  TokenShape extends unknown,
+  TokenNames extends string
+> = Partial<Record<Breakpoint, Record<TokenNames[number], TokenShape>>>;

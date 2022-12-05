@@ -6,7 +6,7 @@ import { boxShadows } from '@/tokens/boxShadows';
 import { themes } from '@/tokens/colorPalette';
 import { transitionDurations } from '@/tokens/transitionDurations';
 import { fontSizes } from '@/tokens/typography';
-import { whiteSpaceNames } from '@/tokens/whiteSpaces';
+import { whiteSpaceByBreakpoint } from '@/tokens/whiteSpaces';
 import range from 'lodash/range';
 
 const docs: DocumentationPageDescriptor = {
@@ -298,7 +298,7 @@ const docs: DocumentationPageDescriptor = {
       description:
         'Setting this prop automatically sets `display: flex` for you.',
       values: ([] as Array<string | number>).concat(
-        Object.keys(whiteSpaceNames),
+        Object.keys(whiteSpaceByBreakpoint),
         1
       ),
       renderDemo: (whiteSpaceName) => (
@@ -419,7 +419,7 @@ const docs: DocumentationPageDescriptor = {
 
     {
       title: 'margin/padding',
-      values: Object.keys(whiteSpaceNames),
+      values: Object.keys(whiteSpaceByBreakpoint),
       renderDemo: (whiteSpaceName) => (
         <Box
           styles={{

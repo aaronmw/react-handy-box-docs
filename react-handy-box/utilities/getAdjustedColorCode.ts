@@ -1,8 +1,10 @@
 import {
   ColorLightnessAdjustmentValue,
   ColorOpacityAdjustmentValue,
+  SwatchNameAlias,
   SwatchNameOrAlias,
   ThemeObject,
+  UtilityColor,
   ValidColorSwatchName,
 } from '@/react-handy-box/components/Box.types';
 import {
@@ -12,8 +14,6 @@ import {
   utilityColors,
 } from '@/tokens/colorPalette';
 import clamp from 'lodash/clamp';
-import { SwatchNameAlias } from '../components/Box.types';
-import { UtilityColor } from './../components/Box.types';
 
 const getAdjustableSwatchName = (
   theme: ThemeObject,

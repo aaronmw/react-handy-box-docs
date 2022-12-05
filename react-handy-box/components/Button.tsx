@@ -3,6 +3,7 @@ import { ButtonComponentProps } from '@/react-handy-box/components/Button.types'
 import { FormContext } from '@/react-handy-box/components/Form';
 import { FormFieldClickHandler } from '@/react-handy-box/components/Form.types';
 import { buttonStyles } from '@/tokens/buttonStyles';
+import merge from 'lodash/merge';
 import { forwardRef, MouseEvent, Ref, useContext } from 'react';
 
 const Button = forwardRef(
@@ -10,7 +11,7 @@ const Button = forwardRef(
     {
       children,
       stopClickPropagation = false,
-      styles = {},
+      styles,
       variant = 'primary',
       onClick,
       ...otherProps
@@ -23,8 +24,8 @@ const Button = forwardRef(
       <Box
         as="button"
         ref={ref}
-        styles={buttonStyles[variant](styles)}
-        onClick={(event: MouseEvent<HTMLButtonElement>) => {
+        styles={merge({}, buttonStyles[variant], styles)}
+        onClick={(event: MouseEvent) => {
           if (stopClickPropagation) {
             event.stopPropagation();
           }
@@ -45,8 +46,8 @@ const AnchorButton = forwardRef(
   (
     {
       children,
+      styles,
       variant = 'primary',
-      styles = {},
       ...otherProps
     }: ButtonComponentProps<'a'>,
     ref: Ref<HTMLAnchorElement>
@@ -55,7 +56,7 @@ const AnchorButton = forwardRef(
       <Box
         as="a"
         ref={ref}
-        styles={buttonStyles[variant](styles)}
+        styles={merge({}, buttonStyles[variant], styles)}
         {...otherProps}
       >
         {children}

@@ -10,9 +10,9 @@ import {
 import { ModalWindowProps } from '@/react-handy-box/components/ModalLayer.types';
 import { ScrollableBox } from '@/react-handy-box/components/ScrollableBox';
 import { Tooltip } from '@/react-handy-box/components/Tooltip';
-import { useDOMWatcher } from '@/react-handy-box/hooks/useDOMWatcher';
+import { useGlobalInterval } from '@/react-handy-box/hooks/useGlobalInterval';
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
-import { modalLayerStyles } from '@/tokens/modalLayerStyles';
+import { backdropStyles, modalLayerStyles } from '@/tokens/modalLayerStyles';
 import merge from 'lodash/merge';
 import {
   forwardRef,
@@ -43,7 +43,7 @@ const ModalWindow = forwardRef(
   (
     {
       children,
-      disableBackdropClick,
+      disableBackdropClickToClose,
       propsForForm,
       renderFooter,
       renderHeader,
@@ -63,7 +63,7 @@ const ModalWindow = forwardRef(
 
     const multipleRefs = useMultipleRefs(ref, innerRef);
 
-    const { addDOMWatcher, removeDOMWatcher } = useDOMWatcher();
+    const { setGlobalInterval, clearGlobalInterval } = useGlobalInterval();
 
     const modalWindowsInStack = modalLayerStack.current.filter(
       (layer) => layer.type === 'window'
@@ -84,18 +84,17 @@ const ModalWindow = forwardRef(
           });
         };
 
-        addDOMWatcher(positionMultipleWindows);
+        setGlobalInterval(positionMultipleWindows, 250);
 
         return () => {
-          removeDOMWatcher(positionMultipleWindows);
+          clearGlobalInterval(positionMultipleWindows, 250);
         };
       }
     }, [
-      addDOMWatcher,
+      clearGlobalInterval,
       isLowestModalWindowInStack,
-      modalLayerStack,
       modalWindowsInStack,
-      removeDOMWatcher,
+      setGlobalInterval,
     ]);
 
     const WrapperComponent = propsForForm ? Form : Box;
@@ -115,28 +114,25 @@ const ModalWindow = forwardRef(
           stylesForBackdrop={merge(
             isLowestModalWindowInStack
               ? {
-                  animationFillMode: 'forwards',
-                  backgroundColor: 'shadow',
+                  ...backdropStyles,
                   ...stylesForBackdrop,
                 }
               : {},
-            disableBackdropClick === true ? { pointerEvents: 'none' } : {}
+            disableBackdropClickToClose === true
+              ? { pointerEvents: 'none' }
+              : {}
           )}
           stylesForBackdropOnClose={{
             animationName: 'backdropExit',
-            opacity: 0,
           }}
           stylesForBackdropOnOpen={{
             animationName: 'backdropEntry',
-            opacity: 1,
           }}
           stylesOnClose={{
             animationName: 'modalWindowExit',
-            opacity: 0,
           }}
           stylesOnOpen={{
             animationName: 'modalWindowEntry',
-            opacity: 1,
           }}
           type={type}
           {...(otherProps as any)}
@@ -154,6 +150,7 @@ const ModalWindow = forwardRef(
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'stretch',
+                  width: '100%',
                   ...resolvedPropsForForm.styles,
                 }}
                 {...resolvedPropsForForm}
@@ -185,11 +182,15 @@ const ModalWindow = forwardRef(
                 {renderHeader && (
                   <Box
                     as="header"
-                    styles={{
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: 'normal',
-                    }}
+                    styles={
+                      !renderHeader
+                        ? {
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: 'normal',
+                          }
+                        : {}
+                    }
                   >
                     {renderHeader(renderProps)}
                   </Box>
@@ -202,8 +203,8 @@ const ModalWindow = forwardRef(
                   styles={{
                     flexGrow: 1,
                     flexShrink: 1,
-                    paddingBottom: renderFooter ? undefined : 'normal',
-                    paddingTop: renderHeader ? undefined : 'normal',
+                    marginBottom: renderFooter ? undefined : 'normal',
+                    marginTop: renderHeader ? undefined : 'normal',
                     paddingX: 'normal',
                     width: '100%',
                   }}
@@ -216,10 +217,14 @@ const ModalWindow = forwardRef(
                 {renderFooter && (
                   <Box
                     as="footer"
-                    styles={{
-                      paddingX: 'normal',
-                      paddingY: 'tight',
-                    }}
+                    styles={
+                      !renderFooter
+                        ? {
+                            paddingX: 'normal',
+                            paddingY: 'tight',
+                          }
+                        : {}
+                    }
                   >
                     {renderFooter(renderProps)}
                   </Box>

@@ -14,13 +14,13 @@ const docs: DocumentationPageDescriptor = {
         <Menu
           options={[
             {
-              icon: 'pencil',
+              iconName: 'pencil',
               label: 'Edit',
               type: 'menu-item',
               onClick: () => console.log(`Clicked "Edit"`),
             },
             {
-              icon: 'floppy-disk',
+              iconName: 'floppy-disk',
               label: 'Save',
               type: 'menu-item',
               onClick: () => console.log(`Clicked "Save"`),
@@ -62,13 +62,13 @@ const docs: DocumentationPageDescriptor = {
         <Menu
           options={[
             {
-              icon: 'pencil',
+              iconName: 'pencil',
               label: 'Edit',
               type: 'menu-item',
               onClick: () => console.log(`Clicked "Edit"`),
             },
             {
-              icon: 'floppy-disk',
+              iconName: 'floppy-disk',
               label: 'Save',
               type: 'menu-item',
               onClick: () => console.log(`Clicked "Save"`),
@@ -78,7 +78,7 @@ const docs: DocumentationPageDescriptor = {
               type: 'child-menu',
               options: [
                 {
-                  icon: 'trash',
+                  iconName: 'trash',
                   label: 'Delete',
                   type: 'menu-item',
                   onClick: () =>
@@ -143,13 +143,13 @@ const docs: DocumentationPageDescriptor = {
               type: 'group-label',
             },
             {
-              icon: 'pencil',
+              iconName: 'pencil',
               label: 'Edit',
               type: 'menu-item',
               onClick: () => console.log(`Clicked "Edit"`),
             },
             {
-              icon: 'floppy-disk',
+              iconName: 'floppy-disk',
               label: 'Save',
               type: 'menu-item',
               onClick: () => console.log(`Clicked "Save"`),
@@ -159,8 +159,15 @@ const docs: DocumentationPageDescriptor = {
               type: 'group-label',
             },
             {
-              icon: 'trash',
+              iconName: 'trash',
               label: 'Delete',
+              styles: {
+                color: 'danger',
+                stylesOnHover: {
+                  backgroundColor: 'danger',
+                  color: 'white',
+                },
+              },
               type: 'menu-item',
               onClick: () => console.log(`Clicked "Delete"`),
             },
@@ -216,13 +223,13 @@ const docs: DocumentationPageDescriptor = {
         <Menu
           options={[
             {
-              icon: 'pencil',
+              iconName: 'pencil',
               label: 'Edit',
               type: 'menu-item',
               onClick: () => console.log(`Clicked "Edit"`),
             },
             {
-              icon: 'floppy-disk',
+              iconName: 'floppy-disk',
               label: 'Save',
               type: 'menu-item',
               onClick: () => console.log(`Clicked "Save"`),
@@ -231,7 +238,7 @@ const docs: DocumentationPageDescriptor = {
               type: 'dividing-line',
             },
             {
-              icon: 'trash',
+              iconName: 'trash',
               label: 'Delete',
               type: 'menu-item',
               onClick: () => console.log(`Clicked "Delete"`),
@@ -326,7 +333,7 @@ const ModalLaunchingMenuDemo = () => {
       <Menu
         options={[
           {
-            icon: 'up-right-from-square',
+            iconName: 'up-right-from-square',
             label: 'Launch a Modal...',
             type: 'menu-item',
             onClick: () => {

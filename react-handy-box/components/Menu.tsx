@@ -2,7 +2,10 @@ import { Box } from '@/react-handy-box/components/Box';
 import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { Icon } from '@/react-handy-box/components/Icon';
 import {
-  MenuItemProps,
+  DividingLine,
+  GroupLabel,
+  MenuItem,
+  MenuItemWithChildren,
   MenuProps,
 } from '@/react-handy-box/components/Menu.types';
 import { Popover } from '@/react-handy-box/components/Popover';
@@ -30,7 +33,7 @@ import {
 
 const Menu = forwardRef(
   (
-    { options, styles, ...otherProps }: MenuProps,
+    { options, renderOptions, styles, onBeforeOpen, ...otherProps }: MenuProps,
     ref: Ref<HTMLDivElement>
   ): JSX.Element => {
     const hoistedPopoverRenderPropsRef = useRef<PopoverRenderProps | null>(
@@ -58,7 +61,9 @@ const Menu = forwardRef(
     useKeyboardShortcuts(memoizedKeyMap, menuElementRef);
 
     const menuOptionRenderer: PopoverRenderFunction = (popoverRenderProps) => {
-      const hasIcons = options.some((option) => 'icon' in option);
+      const hasIcons = options.some(
+        (option) => option.type === 'menu-item' && !!option.iconName
+      );
 
       hoistedPopoverRenderPropsRef.current = popoverRenderProps;
 
@@ -77,17 +82,24 @@ const Menu = forwardRef(
         options.map((option, optionIndex) => {
           switch (option.type) {
             case 'menu-item': {
-              const { icon, label, type, onClick, ...otherOptionProps } =
-                option as MenuItemProps['MenuItem'];
+              const {
+                iconName,
+                iconVariant,
+                label,
+                type,
+                onClick,
+                ...otherOptionProps
+              } = option as MenuItem;
 
               return (
                 <MenuItem
                   {...otherOptionProps}
                   hasIcons={hasIcons}
-                  icon={icon}
+                  iconName={iconName}
+                  iconVariant={iconVariant}
                   key={optionIndex}
                   label={label}
-                  onClick={(event) => {
+                  onClick={(event: MouseEvent) => {
                     onClick?.(event);
                     popoverRenderProps.closeModal();
                   }}
@@ -96,14 +108,20 @@ const Menu = forwardRef(
             }
 
             case 'child-menu': {
-              const { icon, label, options, type, ...otherOptionProps } =
-                option as MenuItemProps['MenuItemWithChildren'];
+              const {
+                iconName,
+                iconVariant,
+                label,
+                options,
+                type,
+                ...otherOptionProps
+              } = option as MenuItemWithChildren;
 
               const childMenuOptions = options.map((subOption) =>
                 subOption.type === 'menu-item'
                   ? {
                       ...subOption,
-                      onClick: (event: MouseEvent<HTMLButtonElement>) => {
+                      onClick: (event: MouseEvent) => {
                         subOption.onClick?.(event);
                         popoverRenderProps.closeModal(); // <- close entire menu
                       },
@@ -120,16 +138,21 @@ const Menu = forwardRef(
                     <MenuItem
                       {...otherOptionProps}
                       hasIcons={hasIcons}
-                      icon={icon}
+                      iconName={iconName}
+                      iconVariant={iconVariant}
                       label={
                         <Box
                           styles={{
+                            alignItems: 'center',
                             columnGap: 'tight',
                             justifyContent: 'space-between',
                           }}
                         >
                           {label}
-                          <Icon name="caret-right" variant="solid" />
+                          <Icon
+                            name="caret-right"
+                            variant={iconVariant ?? 'solid'}
+                          />
                         </Box>
                       }
                       {...propsForTrigger}
@@ -140,8 +163,7 @@ const Menu = forwardRef(
             }
 
             case 'group-label': {
-              const { label, type, ...otherOptionProps } =
-                option as MenuItemProps['GroupLabel'];
+              const { label, type, ...otherOptionProps } = option as GroupLabel;
 
               return (
                 <GroupLabel
@@ -153,8 +175,7 @@ const Menu = forwardRef(
             }
 
             case 'dividing-line': {
-              const { type, ...otherOptionProps } =
-                option as MenuItemProps['DividingLine'];
+              const { type, ...otherOptionProps } = option as DividingLine;
 
               return <DividingLine {...otherOptionProps} key={optionIndex} />;
             }
@@ -186,10 +207,18 @@ const Menu = forwardRef(
           styles
         )}
         type="menu"
-        onBeforeOpen={sizeMenuToTriggerElement}
+        onBeforeOpen={(renderProps) => {
+          sizeMenuToTriggerElement(renderProps);
+          onBeforeOpen?.(renderProps);
+        }}
         {...otherProps}
       >
-        {menuOptionRenderer}
+        {(popoverRenderProps) =>
+          renderOptions?.({
+            renderedOptions: menuOptionRenderer(popoverRenderProps),
+            menuRenderProps: popoverRenderProps,
+          }) ?? menuOptionRenderer(popoverRenderProps)
+        }
       </Popover>
     );
   }
@@ -218,8 +247,7 @@ const DividingLine = forwardRef(
 
 DividingLine.displayName = 'DividingLine';
 
-type GroupLabelComponentProps = BoxPropsWithoutRef &
-  Omit<MenuItemProps['GroupLabel'], 'type'>;
+type GroupLabelComponentProps = BoxPropsWithoutRef & Omit<GroupLabel, 'type'>;
 
 const GroupLabel = forwardRef(
   (
@@ -246,7 +274,7 @@ const GroupLabel = forwardRef(
 
 GroupLabel.displayName = 'GroupLabel';
 
-type MenuItemComponentProps = Omit<MenuItemProps['MenuItem'], 'type'> & {
+type MenuItemComponentProps = Omit<MenuItem, 'type'> & {
   hasIcons?: boolean;
 };
 
@@ -254,54 +282,49 @@ const MenuItem = forwardRef(
   (
     {
       hasIcons,
-      icon,
+      iconName,
+      iconVariant,
       label,
       styles,
-      onClick,
       ...otherProps
     }: MenuItemComponentProps,
     ref: Ref<HTMLButtonElement>
-  ): JSX.Element => {
-    const handleClick = (event: MouseEvent<HTMLButtonElement>) =>
-      onClick?.(event);
-
-    return (
-      <Box
-        as="button"
-        ref={ref}
-        styles={merge(
-          {},
-          {
-            borderRadius: 'small',
-            columnGap: 'tight',
-            cursor: 'pointer',
-            padding: 'xtight',
-            stylesOnFocus: {
-              boxShadow: 'focusRing',
-              zIndex: '1--stickyElements',
-            },
-            stylesOnHover: {
-              backgroundColor: 'selected',
-            },
-            whiteSpace: 'nowrap',
+  ): JSX.Element => (
+    <Box
+      as="button"
+      ref={ref}
+      styles={merge(
+        {
+          alignItems: 'center',
+          borderRadius: 'small',
+          columnGap: 'tight',
+          cursor: 'pointer',
+          padding: 'xtight',
+          stylesOnFocus: {
+            boxShadow: 'focusRing',
+            zIndex: '1--stickyElements',
           },
-          styles
-        )}
-        onClick={handleClick}
-        {...otherProps}
-      >
-        {hasIcons && (
-          <Icon
-            name={icon ?? 'arrow-right'}
-            styles={{
-              visibility: icon ? 'visible' : 'hidden',
-            }}
-          />
-        )}
-        {label}
-      </Box>
-    );
-  }
+          stylesOnHover: {
+            backgroundColor: 'selected',
+          },
+          whiteSpace: 'nowrap',
+        },
+        styles
+      )}
+      {...otherProps}
+    >
+      {hasIcons && (
+        <Icon
+          name={iconName ?? 'arrow-right'}
+          styles={{
+            visibility: iconName ? 'visible' : 'hidden',
+          }}
+          variant={iconVariant}
+        />
+      )}
+      {label}
+    </Box>
+  )
 );
 
 MenuItem.displayName = 'MenuItem';

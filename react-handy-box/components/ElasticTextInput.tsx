@@ -3,11 +3,11 @@ import {
   TextInput,
   TextInputProps,
 } from '@/react-handy-box/components/TextInput';
+import { useGlobalInterval } from '@/react-handy-box/hooks/useGlobalInterval';
 import { useKeyboardShortcuts } from '@/react-handy-box/hooks/useKeyboardShortcuts';
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
-import { addMultipleEventListeners } from '@/react-handy-box/utilities/addMultipleEventListeners';
 import { inputStyles } from '@/tokens/inputStyles';
-import { forwardRef, Ref, useEffect, useRef } from 'react';
+import { forwardRef, Ref, useCallback, useEffect, useRef } from 'react';
 
 const ElasticTextInput = forwardRef(
   (
@@ -30,8 +30,9 @@ const ElasticTextInput = forwardRef(
       labelElementRef
     );
 
-    useEffect(() => {
+    const resizeTextareaElement = useCallback(() => {
       const ghostElement = ghostElementRef.current;
+
       const textareaElement =
         labelElementRef.current?.querySelector('textarea');
 
@@ -39,30 +40,18 @@ const ElasticTextInput = forwardRef(
         return;
       }
 
-      const events = ['change', 'keyup'];
+      const typedText = textareaElement.value;
 
-      const resizeTextareaElement: EventListener = (event) => {
-        const typedText = (event.target as HTMLTextAreaElement).value;
+      ghostElement.innerText = `${typedText}.`;
 
-        ghostElement.innerText = `${typedText}.`;
+      const { width: ghostElementWidth, height: ghostElementHeight } =
+        ghostElement.getBoundingClientRect();
 
-        const { width: ghostElementWidth, height: ghostElementHeight } =
-          ghostElement.getBoundingClientRect();
-
-        textareaElement.style.width = `${Math.ceil(ghostElementWidth)}px`;
-        textareaElement.style.height = `${Math.ceil(ghostElementHeight)}px`;
-      };
-
-      const removeAllListeners = addMultipleEventListeners(
-        textareaElement,
-        events,
-        resizeTextareaElement
-      );
-
-      textareaElement.dispatchEvent(new Event('change', { bubbles: true }));
-
-      return removeAllListeners;
+      textareaElement.style.width = `${Math.ceil(ghostElementWidth)}px`;
+      textareaElement.style.height = `${Math.ceil(ghostElementHeight)}px`;
     }, []);
+
+    useGlobalInterval(resizeTextareaElement, 250);
 
     return (
       <Box
@@ -76,9 +65,13 @@ const ElasticTextInput = forwardRef(
           rows={1}
           styles={{
             overflow: 'hidden',
+            width: '100%',
             ...styles,
           }}
           type="textarea"
+          onChange={resizeTextareaElement}
+          onKeyUp={resizeTextareaElement}
+          onReset={resizeTextareaElement}
           {...otherProps}
         />
         <Box

@@ -2,13 +2,16 @@ const getScrollingParent = (
   element: HTMLElement,
   includeHidden: boolean = false
 ) => {
-  var style = getComputedStyle(element);
-  var excludeStaticParent = style.position === 'absolute';
-  var overflowRegex = includeHidden ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
+  let style = getComputedStyle(element);
 
-  if (style.position === 'fixed') return document.body;
+  const excludeStaticParent = style.position === 'absolute';
+
+  const overflowRegex = includeHidden
+    ? /(auto|scroll|hidden)/
+    : /(auto|scroll)/;
+
   for (
-    var parent: HTMLElement | null = element;
+    let parent: HTMLElement | null = element;
     (parent = parent.parentElement);
 
   ) {

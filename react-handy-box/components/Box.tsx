@@ -1,5 +1,4 @@
 import {
-  AnimationName,
   BorderStyle,
   BoxPropsWithRef,
   Breakpoint,
@@ -7,41 +6,33 @@ import {
   SupportedTags,
   ThemedStyles,
   ThemeObject,
+  TransitionDuration,
   validStyleProps,
 } from '@/react-handy-box/components/Box.types';
 import { getAdjustedColorCode } from '@/react-handy-box/utilities/getAdjustedColorCode';
+import { replaceEach } from '@/react-handy-box/utilities/replaceEach';
 import { animationNames } from '@/tokens/animationNames';
-import { borderRadii } from '@/tokens/borderRadii';
+import { borderRadiiNames } from '@/tokens/borderRadii';
 import { borderStyles } from '@/tokens/borderStyles';
 import { boxShadows } from '@/tokens/boxShadows';
 import { breakpoints } from '@/tokens/breakpoints';
 import { themes } from '@/tokens/colorPalette';
 import { transitionDurations } from '@/tokens/transitionDurations';
-import { fontNames } from '@/tokens/typography';
+import { fontNames, fontSizeNames } from '@/tokens/typography';
 import { whiteSpaceNames } from '@/tokens/whiteSpaces';
 import { zIndices } from '@/tokens/zIndices';
 import camelCase from 'lodash/camelCase';
+import get from 'lodash/get';
+import isNumber from 'lodash/isNumber';
 import kebabCase from 'lodash/kebabCase';
-import mapValues from 'lodash/mapValues';
 import upperFirst from 'lodash/upperFirst';
-import styled, {
-  css,
-  CSSObject,
-  CSSProperties,
-  Keyframes,
-  keyframes,
-} from 'styled-components';
+import styled, { CSSObject, CSSProperties } from 'styled-components';
 
-const animationKeyframes = Object.fromEntries(
-  Object.entries(animationNames).map(([animationName, animation]) => [
-    animationName,
-    keyframes`${animation.keyframes}`,
+const whiteSpacesAsCSSVariables = Object.fromEntries(
+  whiteSpaceNames.map((whiteSpaceName) => [
+    whiteSpaceName,
+    `var(--white-space--${whiteSpaceName})`,
   ])
-) as Record<AnimationName, Keyframes>;
-
-const whiteSpacesAsCSSVariables = mapValues(
-  whiteSpaceNames,
-  (_, whiteSpaceName) => `var(--white-space--${whiteSpaceName})`
 );
 
 const nestedSelectorPropAliases = {
@@ -84,12 +75,12 @@ const propHandlers: PropHandlers = {
     options: transitionDurations,
   },
   animationName: {
-    options: ({ styleValue: animationName }) => ({
-      animationName: css`
-        ${animationKeyframes[animationName]}
-      `,
-      ...animationNames[animationName].style,
-    }),
+    options: ({ styleValue: animationName }) => {
+      return {
+        animationName,
+        ...animationNames[animationName].style,
+      };
+    },
   },
   borderRadius: {
     aliases: [
@@ -98,7 +89,13 @@ const propHandlers: PropHandlers = {
       'borderTopLeftRadius',
       'borderTopRightRadius',
     ],
-    options: borderRadii,
+    options: ({ styleName, styleValue }) => ({
+      [styleName]: replaceEach(
+        String(styleValue),
+        borderRadiiNames.map((v) => String(v)),
+        (borderRadius) => `var(--border-radius--${kebabCase(borderRadius)})`
+      ),
+    }),
   },
   borderBottomRadius: {
     aliases: ['borderLeftRadius', 'borderRightRadius', 'borderTopRadius'],
@@ -152,19 +149,34 @@ const propHandlers: PropHandlers = {
 
       return {
         [`${borderEdgeName}Color`]: adjustedBorderColor,
-        [`${borderEdgeName}Style`]: borderStyleObject.borderStyle,
-        [`${borderEdgeName}Width`]: borderStyleObject.borderWidth,
+        [`${borderEdgeName}Style`]: get(borderStyleObject, 'borderStyle'),
+        [`${borderEdgeName}Width`]: get(borderStyleObject, 'borderWidth'),
       };
     },
   },
   bottom: {
     aliases: ['left', 'right', 'top'],
-    options: whiteSpacesAsCSSVariables,
+    options: ({ styleName, styleValue }) => ({
+      [styleName]:
+        typeof styleValue === 'number'
+          ? `${styleValue}px`
+          : replaceEach(
+              String(styleValue),
+              whiteSpaceNames.map((v) => String(v)),
+              (whiteSpaceName) =>
+                `var(--white-space--${kebabCase(whiteSpaceName)})`
+            ),
+    }),
   },
   boxShadow: {
-    options: ({ styleValue, theme }) => ({
-      boxShadow: boxShadows({ theme })[styleValue] ?? styleValue,
-    }),
+    options: ({ styleValue, theme }) => {
+      const shadowStyles = boxShadows({ theme });
+
+      return {
+        boxShadow:
+          shadowStyles[styleValue as keyof typeof shadowStyles] ?? styleValue,
+      };
+    },
   },
   color: {
     aliases: ['backgroundColor'],
@@ -196,6 +208,7 @@ const propHandlers: PropHandlers = {
   },
   columnGap: {
     setDefaults: {
+      alignItems: 'center',
       display: 'flex',
       flexDirection: 'row',
     },
@@ -245,9 +258,18 @@ const propHandlers: PropHandlers = {
     options: ({ styleValue }) => fontNames[styleValue],
   },
   fontSize: {
-    options: ({ styles: { fontSize, lineHeight } }) => ({
-      fontSize: `var(--font-size--${fontSize})`,
-      lineHeight: lineHeight ?? `var(--line-height--${fontSize})`,
+    options: ({ styles: { fontSize, lineHeight = fontSize } }) => ({
+      fontSize: replaceEach(
+        String(fontSize),
+        fontSizeNames.map((v) => String(v)),
+        (fontSize) => `var(--font-size--${kebabCase(fontSize)})`
+      ),
+      lineHeight:
+        replaceEach(
+          String(lineHeight),
+          fontSizeNames.map((v) => String(v)),
+          (lineHeight) => `var(--line-height--${kebabCase(lineHeight)})`
+        ) || `var(--line-height--${lineHeight})`,
     }),
   },
   gap: {
@@ -280,21 +302,26 @@ const propHandlers: PropHandlers = {
       'marginTop',
       'marginBottom',
     ],
-    options: whiteSpacesAsCSSVariables,
+    options: ({ styleName, styleValue }) => ({
+      [styleName]:
+        typeof styleValue === 'number'
+          ? `${styleValue}px`
+          : replaceEach(
+              String(styleValue),
+              whiteSpaceNames.map((v) => String(v)),
+              (whiteSpaceName) =>
+                `var(--white-space--${kebabCase(whiteSpaceName)})`
+            ),
+    }),
   },
   marginX: {
     aliases: ['marginY', 'paddingX', 'paddingY'],
     options: ({ styleName, styleValue, theme }) => {
-      const typedPropName = styleName as
-        | 'marginX'
-        | 'marginY'
-        | 'paddingX'
-        | 'paddingY';
-      const XorY = typedPropName.includes('X') ? 'X' : 'Y';
+      const XorY = styleName.includes('X') ? 'X' : 'Y';
       const LeftOrBottom = XorY === 'X' ? 'Left' : 'Bottom';
       const RightOrTop = XorY === 'X' ? 'Right' : 'Top';
-      const propNameLeftOrBottom = typedPropName.replace(XorY, LeftOrBottom);
-      const propNameRightOrTop = typedPropName.replace(XorY, RightOrTop);
+      const propNameLeftOrBottom = styleName.replace(XorY, LeftOrBottom);
+      const propNameRightOrTop = styleName.replace(XorY, RightOrTop);
 
       return stylesToStyleObject({
         styles: {
@@ -304,6 +331,20 @@ const propHandlers: PropHandlers = {
         theme,
       });
     },
+  },
+  maxHeight: {
+    aliases: ['maxWidth', 'minHeight', 'minWidth'],
+    options: ({ styleName, styleValue }) => ({
+      [styleName]:
+        typeof styleValue === 'number'
+          ? `${styleValue}px`
+          : replaceEach(
+              String(styleValue),
+              whiteSpaceNames.map((v) => String(v)),
+              (whiteSpaceName) =>
+                `var(--white-space--${kebabCase(whiteSpaceName)})`
+            ),
+    }),
   },
   stylesForAfterElement: {
     aliases: ['stylesForBeforeElement'],
@@ -362,6 +403,26 @@ const propHandlers: PropHandlers = {
     },
     options: whiteSpacesAsCSSVariables,
   },
+  transform: {
+    aliases: [
+      'width',
+      'height',
+      'maxWidth',
+      'maxHeight',
+      'minWidth',
+      'minHeight',
+    ],
+    options: ({ styleName, styleValue }) => ({
+      [styleName]: isNumber(styleValue)
+        ? `${styleValue}px`
+        : replaceEach(
+            String(styleValue),
+            whiteSpaceNames.map((v) => String(v)),
+            (whiteSpaceName) =>
+              `var(--white-space--${kebabCase(whiteSpaceName)})`
+          ),
+    }),
+  },
   transitionDuration: {
     aliases: ['transitionProperty', 'transitionTimingFunction'],
     options: ({
@@ -371,7 +432,16 @@ const propHandlers: PropHandlers = {
         transitionTimingFunction,
       },
     }) => ({
-      transitionDuration: transitionDurations[transitionDuration ?? 'normal'],
+      transitionDuration:
+        typeof transitionDuration === 'undefined'
+          ? transitionDurations['normal']
+          : typeof transitionDuration === 'number'
+          ? `${transitionDuration}ms`
+          : transitionDuration in transitionDurations
+          ? transitionDurations[
+              transitionDuration as keyof typeof transitionDurations
+            ]
+          : transitionDuration,
       transitionProperty: Array.isArray(transitionProperty)
         ? transitionProperty.map(kebabCase).join(', ')
         : kebabCase(transitionProperty) ?? 'all',
@@ -398,7 +468,7 @@ const stylesToStyleObject: (args: {
   styles: StyleProps;
   theme: ThemeObject;
 }) => CSSObject = ({ styles = {}, theme = {} }) =>
-  Object.keys(styles).reduce((acc, styleName) => {
+  Object.keys(styles).reduce((currentStyleObject, styleName) => {
     const typedPropName = styleName as keyof PropHandlers;
 
     const propHandler = propHandlers[typedPropName] as PropHandler<
@@ -408,20 +478,20 @@ const stylesToStyleObject: (args: {
     const styleValue = styles[typedPropName];
 
     if (typeof styleValue === 'undefined') {
-      return acc;
+      return currentStyleObject;
     }
 
     if (!propHandler) {
       if (typedPropName === 'debug') {
-        console.log(acc);
+        console.log(currentStyleObject);
       }
 
       return validStyleProps.includes(typedPropName)
         ? {
-            ...acc,
+            ...currentStyleObject,
             [typedPropName]: styleValue,
           }
-        : acc;
+        : currentStyleObject;
     }
 
     const defaults = propHandler.setDefaults ?? {};
@@ -429,7 +499,7 @@ const stylesToStyleObject: (args: {
     if (typeof propHandler.options === 'function') {
       return {
         ...defaults,
-        ...acc,
+        ...currentStyleObject,
         ...(propHandler.options as Function)({
           styles,
           styleName: typedPropName,
@@ -440,14 +510,14 @@ const stylesToStyleObject: (args: {
     } else if (typeof propHandler.options === 'object') {
       return {
         ...defaults,
-        ...acc,
+        ...currentStyleObject,
         [typedPropName]:
           propHandler.options[styleValue as keyof typeof propHandler.options] ??
           styleValue,
       };
     }
 
-    return acc;
+    return currentStyleObject;
   }, {});
 
 const Box = styled('div')(

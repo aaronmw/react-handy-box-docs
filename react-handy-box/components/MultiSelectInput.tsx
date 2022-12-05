@@ -8,9 +8,9 @@ import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { Button } from '@/react-handy-box/components/Button';
 import { Icon } from '@/react-handy-box/components/Icon';
 import { Menu } from '@/react-handy-box/components/Menu';
-import { MenuItemProps } from '@/react-handy-box/components/Menu.types';
+import { MenuItem } from '@/react-handy-box/components/Menu.types';
 import { inputStyles } from '@/tokens/inputStyles';
-import { forwardRef, MouseEvent, ReactNode, Ref } from 'react';
+import { forwardRef, Ref } from 'react';
 
 type MultiSelectInputProps<T extends BaseOptionShape> = Omit<
   BoxPropsWithoutRef<'label'>,
@@ -46,7 +46,7 @@ const MultiSelectInput = forwardRef(
               label: option.label,
               type: 'menu-item',
               onClick: propsForOption.onClick,
-            } as MenuItemProps['MenuItem'])
+            } as MenuItem)
         );
 
         return (

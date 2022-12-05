@@ -22,11 +22,12 @@ export type TagNameForInputType<InputType extends SupportedInputTypes> =
 export type TextInputProps<InputType extends SupportedInputTypes = 'text'> =
   Omit<
     BoxPropsWithoutRef<TagNameForInputType<InputType>>,
-    'type' | 'defaultValue'
+    'type' | 'defaultValue' | 'onChange'
   > & {
     type?: InputType;
   } & CommonFormInputProps<false>;
 
+// eslint-disable-next-line react/display-name
 const TextInput = forwardRef(
   <InputType extends SupportedInputTypes = 'text'>(
     {
@@ -85,8 +86,10 @@ const TextInput = forwardRef(
       </LabeledInput>
     );
   }
-);
+) as <InputType extends SupportedInputTypes = 'text'>(
+  props: TextInputProps<InputType> & { ref?: Ref<HTMLLabelElement> }
+) => JSX.Element;
 
-TextInput.displayName = 'TextInput';
+(TextInput as any).displayName = 'TextInput';
 
 export { TextInput };

@@ -1,11 +1,11 @@
 const indentLines = (lines: string, numSpaces: number = 2): string => {
   const result = lines
-    .split("\n")
+    .split('\n')
     .map(
       (line, lineNumber) =>
-        `${" ".repeat(lineNumber > 0 ? numSpaces : 0)}${line}`
+        `${' '.repeat(lineNumber > 0 ? numSpaces : 0)}${line}`
     )
-    .join("\n");
+    .join('\n');
 
   return result;
 };

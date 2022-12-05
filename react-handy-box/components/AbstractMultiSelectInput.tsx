@@ -31,6 +31,7 @@ export type AbstractMultiSelectInputRenderProps<
     option: OptionShape;
     propsForOption: BoxPropsWithRef<'button'>;
   }>;
+  selectedOptions: Array<OptionShape>;
 };
 
 export type AbstractMultiSelectInputProps<
@@ -45,7 +46,7 @@ export type AbstractMultiSelectInputProps<
     props: AbstractMultiSelectInputRenderProps<OptionShape>
   ) => JSX.Element | Array<JSX.Element>;
 } & CommonFormInputProps<IsMultiValue> &
-  BoxPropsWithoutRef<'div'>;
+  Omit<BoxPropsWithoutRef<'div'>, 'children' | 'onChange'>;
 
 // eslint-disable-next-line react/display-name
 const AbstractMultiSelectInput = forwardRef(
@@ -161,17 +162,20 @@ const AbstractMultiSelectInput = forwardRef(
         <Box {...otherProps}>
           {renderOptions({
             options: options.map((option) => ({
+              isSelected: selectedOptions.includes(option),
               option,
               propsForOption: {
                 key: option.key,
                 ref: createRef(),
-                styles: { cursor: 'pointer' },
+                styles: {
+                  cursor: 'pointer',
+                },
                 tabIndex: 0,
                 onBlur: propsForInput.onBlur,
                 onClick: handleClickOption.bind(null, option),
               },
-              isSelected: selectedOptions.includes(option),
             })),
+            selectedOptions,
           })}
 
           {selectedOptions.map((selectedOption) => (
