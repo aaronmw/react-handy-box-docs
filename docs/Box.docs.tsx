@@ -1,11 +1,11 @@
 import { DocumentationPageDescriptor } from '@/pages/index';
 import { Box } from '@/react-handy-box/components/Box';
-import { borderRadii } from '@/tokens/borderRadii';
+import { borderRadii, borderRadiiNames } from '@/tokens/borderRadii';
 import { borderStyles } from '@/tokens/borderStyles';
 import { boxShadows } from '@/tokens/boxShadows';
 import { themes } from '@/tokens/colorPalette';
 import { transitionDurations } from '@/tokens/transitionDurations';
-import { fontSizes } from '@/tokens/typography';
+import { fontSizeNames } from '@/tokens/typography';
 import { whiteSpaceByBreakpoint } from '@/tokens/whiteSpaces';
 import range from 'lodash/range';
 
@@ -178,10 +178,7 @@ const docs: DocumentationPageDescriptor = {
 
     {
       title: 'borderRadius',
-      values: ([] as Array<string | number>).concat(
-        Object.keys(borderRadii),
-        25
-      ),
+      values: ([] as Array<string | number>).concat(borderRadiiNames, 25),
       renderDemo: (borderRadius) => (
         <Box
           styles={{
@@ -298,7 +295,7 @@ const docs: DocumentationPageDescriptor = {
       description:
         'Setting this prop automatically sets `display: flex` for you.',
       values: ([] as Array<string | number>).concat(
-        Object.keys(whiteSpaceByBreakpoint),
+        Object.keys(whiteSpaceByBreakpoint.root ?? {}),
         1
       ),
       renderDemo: (whiteSpaceName) => (
@@ -411,7 +408,7 @@ const docs: DocumentationPageDescriptor = {
       title: 'fontSize',
       description:
         'Check out the [Text](/docs/text) component for slightly nicer syntax.',
-      values: Object.keys(fontSizes),
+      values: fontSizeNames.map((v) => v),
       renderDemo: (fontSize) => <Box styles={{ fontSize }}>{fontSize}</Box>,
       renderSnippet: true,
       highlightLines: [3],
@@ -419,7 +416,7 @@ const docs: DocumentationPageDescriptor = {
 
     {
       title: 'margin/padding',
-      values: Object.keys(whiteSpaceByBreakpoint),
+      values: Object.keys(whiteSpaceByBreakpoint.root ?? {}),
       renderDemo: (whiteSpaceName) => (
         <Box
           styles={{

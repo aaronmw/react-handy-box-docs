@@ -30,7 +30,7 @@ type DocumentationSectionDescriptor = {
   renderDemo: (value: any) => JSX.Element;
   renderSnippet?: ((value: any) => string) | boolean;
   title: string;
-  values?: Array<any>;
+  values?: Array<unknown>;
 };
 
 const Home: NextPage<{

@@ -90,11 +90,15 @@ const propHandlers: PropHandlers = {
       'borderTopRightRadius',
     ],
     options: ({ styleName, styleValue }) => ({
-      [styleName]: replaceEach(
-        String(styleValue),
-        borderRadiiNames.map((v) => String(v)),
-        (borderRadius) => `var(--border-radius--${kebabCase(borderRadius)})`
-      ),
+      [styleName]:
+        typeof styleValue === 'number'
+          ? `${styleValue}px`
+          : replaceEach(
+              String(styleValue),
+              borderRadiiNames.map(String),
+              (borderRadius) =>
+                `var(--border-radius--${kebabCase(borderRadius)})`
+            ),
     }),
   },
   borderBottomRadius: {
@@ -162,7 +166,7 @@ const propHandlers: PropHandlers = {
           ? `${styleValue}px`
           : replaceEach(
               String(styleValue),
-              whiteSpaceNames.map((v) => String(v)),
+              whiteSpaceNames.map(String),
               (whiteSpaceName) =>
                 `var(--white-space--${kebabCase(whiteSpaceName)})`
             ),
@@ -261,13 +265,13 @@ const propHandlers: PropHandlers = {
     options: ({ styles: { fontSize, lineHeight = fontSize } }) => ({
       fontSize: replaceEach(
         String(fontSize),
-        fontSizeNames.map((v) => String(v)),
+        fontSizeNames.map(String),
         (fontSize) => `var(--font-size--${kebabCase(fontSize)})`
       ),
       lineHeight:
         replaceEach(
           String(lineHeight),
-          fontSizeNames.map((v) => String(v)),
+          fontSizeNames.map(String),
           (lineHeight) => `var(--line-height--${kebabCase(lineHeight)})`
         ) || `var(--line-height--${lineHeight})`,
     }),
@@ -308,7 +312,7 @@ const propHandlers: PropHandlers = {
           ? `${styleValue}px`
           : replaceEach(
               String(styleValue),
-              whiteSpaceNames.map((v) => String(v)),
+              whiteSpaceNames.map(String),
               (whiteSpaceName) =>
                 `var(--white-space--${kebabCase(whiteSpaceName)})`
             ),
@@ -340,7 +344,7 @@ const propHandlers: PropHandlers = {
           ? `${styleValue}px`
           : replaceEach(
               String(styleValue),
-              whiteSpaceNames.map((v) => String(v)),
+              whiteSpaceNames.map(String),
               (whiteSpaceName) =>
                 `var(--white-space--${kebabCase(whiteSpaceName)})`
             ),
@@ -417,7 +421,7 @@ const propHandlers: PropHandlers = {
         ? `${styleValue}px`
         : replaceEach(
             String(styleValue),
-            whiteSpaceNames.map((v) => String(v)),
+            whiteSpaceNames.map(String),
             (whiteSpaceName) =>
               `var(--white-space--${kebabCase(whiteSpaceName)})`
           ),
