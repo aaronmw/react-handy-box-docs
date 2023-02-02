@@ -461,10 +461,8 @@ const propHandlers: PropHandlers = {
 };
 
 Object.entries(propHandlers).forEach(([styleName, propHandler]) => {
-  propHandler.aliases?.forEach((aliasedPropName: keyof StyleProps) => {
-    propHandlers[aliasedPropName] = propHandlers[
-      styleName as keyof PropHandlers
-    ] as PropHandler<any>;
+  propHandler.aliases?.forEach((aliasedPropName) => {
+    propHandlers[aliasedPropName] = (propHandlers as any)[styleName];
   });
 });
 

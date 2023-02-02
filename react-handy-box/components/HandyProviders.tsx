@@ -17,13 +17,19 @@ export type HandyProviderRenderProps = {
 const HandyProviders = ({
   activeThemeName = 'light',
   children,
+  disableVendorPrefixesInDevMode = true,
 }: {
   activeThemeName?: ThemeName;
   children: ReactNode;
+  disableVendorPrefixesInDevMode?: boolean;
 }) => {
   return (
     <StyleSheetManager
-      disableVendorPrefixes={process.env.NODE_ENV === 'development'}
+      disableVendorPrefixes={
+        disableVendorPrefixesInDevMode
+          ? process.env.NODE_ENV === 'development'
+          : undefined
+      }
     >
       <ThemeProvider theme={themes[activeThemeName]}>
         <GlobalIntervalProvider>

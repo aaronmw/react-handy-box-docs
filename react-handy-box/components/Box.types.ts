@@ -427,6 +427,7 @@ export const validStyleProps = [
   'textDecorationLine',
   'textDecorationSkipInk',
   'textDecorationStyle',
+  'textFillColor',
   'textIndent',
   'textOrientation',
   'textOverflow',
@@ -465,6 +466,8 @@ export const validStyleProps = [
   'y',
   'zIndex',
   'zoom',
+  'WebkitBackgroundClip',
+  'WebkitTextFillColor',
 ];
 
 export type ThemedStyles = {

@@ -90,6 +90,12 @@ const GlobalStyles = createGlobalStyle<{
         },
         theme,
       }),
+      'body': stylesToStyleObject({
+        styles: {
+          fontSize: 'normal',
+        },
+        theme,
+      }),
       ...Object.fromEntries(
         breakpointNames
           .map((breakpointName) => {
