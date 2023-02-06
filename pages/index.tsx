@@ -178,14 +178,6 @@ const Home: NextPage<{
                 rowGap: 'loose',
               }}
             >
-              <FancyTestBox
-                styles={{
-                  border: 'dashed',
-                }}
-              >
-                I am a test Box
-              </FancyTestBox>
-
               <Text variant="heading--2">{pageData.title}</Text>
 
               <Box styles={{ rowGap: 'loose' }}>
@@ -202,12 +194,6 @@ const Home: NextPage<{
     </HandyProviders>
   );
 };
-
-const FancyTestBox = styled(Box)((props) => {
-  return {
-    color: 'red',
-  };
-});
 
 export { getServerSideProps as getStaticProps } from '@/utilities/getServerSideProps';
 export type { DocumentationPageDescriptor, DocumentationSectionDescriptor };
