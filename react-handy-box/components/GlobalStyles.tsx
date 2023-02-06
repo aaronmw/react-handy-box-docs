@@ -151,33 +151,31 @@ const GlobalStyles = createGlobalStyle<{
         colorThemeName,
       }),
       ...Object.fromEntries(
-        tokenNames.breakpoints
-          .map((breakpointName) => [
-            tokens.breakpoints[breakpointName],
-            {
-              ':root': {
-                ...mapKeysToCSSVariables(
-                  (breakpointName in tokens.borderRadii
-                    ? (tokens.borderRadii as any)[breakpointName]
-                    : tokens.borderRadii) ?? {},
-                  'border-radius'
-                ),
-                ...mapKeysToCSSVariables(
-                  fontSizesByBreakpoint[breakpointName] ?? {},
-                  'font-size'
-                ),
-                ...mapKeysToCSSVariables(
-                  lineHeightsByBreakpoint[breakpointName] ?? {},
-                  'line-height'
-                ),
-                ...mapKeysToCSSVariables(
-                  whitespacesByBreakpoint[breakpointName] ?? {},
-                  'white-space'
-                ),
-              },
+        [...tokenNames.breakpoints].reverse().map((breakpointName) => [
+          tokens.breakpoints[breakpointName],
+          {
+            ':root': {
+              ...mapKeysToCSSVariables(
+                (breakpointName in tokens.borderRadii
+                  ? (tokens.borderRadii as any)[breakpointName]
+                  : tokens.borderRadii) ?? {},
+                'border-radius'
+              ),
+              ...mapKeysToCSSVariables(
+                fontSizesByBreakpoint[breakpointName] ?? {},
+                'font-size'
+              ),
+              ...mapKeysToCSSVariables(
+                lineHeightsByBreakpoint[breakpointName] ?? {},
+                'line-height'
+              ),
+              ...mapKeysToCSSVariables(
+                whitespacesByBreakpoint[breakpointName] ?? {},
+                'white-space'
+              ),
             },
-          ])
-          .reverse()
+          },
+        ])
       ),
     } as const,
 

@@ -1,4 +1,3 @@
-import { Button } from '@/react-handy-box/components/Button';
 import { Text } from '@/react-handy-box/components/Text';
 import { DocumentationPageDescriptor } from '../pages';
 

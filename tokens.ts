@@ -208,28 +208,76 @@ export const tokens: HandyTokens = {
   },
 
   buttonVariants: {
-    base: {
+    caution: {
+      extends: ['unstyled', 'primary'],
       styles: {
+        backgroundColor: 'transparent',
+        borderColor: 'danger',
+        color: 'danger',
+        stylesOnHover: {
+          backgroundColor: 'danger',
+          borderColor: 'danger',
+        },
+      },
+    },
+
+    danger: {
+      extends: ['unstyled', 'primary'],
+      styles: {
+        backgroundColor: 'danger',
+        borderColor: 'transparent',
+        color: 'white',
+        stylesOnHover: {
+          backgroundColor: 'danger',
+          borderColor: 'danger',
+        },
+      },
+    },
+
+    iconOnly: {
+      extends: ['unstyled'],
+      styles: {
+        paddingX: 'xtight',
+        paddingY: 'xxtight',
+        stylesOnHover: {
+          color: 'primary',
+        },
+      },
+    },
+
+    link: {
+      extends: ['unstyled'],
+      styles: {
+        color: 'text--link',
         cursor: 'pointer',
-        display: 'inline-block',
-        stylesForCustomSelector: {
-          ':disabled': {
-            opacity: 0.6,
-            pointerEvents: 'none',
-          },
+        stylesOnHover: {
+          color: 'text--link--hovered',
         },
-        stylesOnFocus: {
-          boxShadow: 'focusRing',
-          position: 'relative',
-          zIndex: '1--stickyElements',
+        textDecoration: 'underline',
+        whiteSpace: 'normal',
+      },
+    },
+
+    pill: {
+      extends: ['unstyled'],
+      styles: {
+        alignItems: 'center',
+        backgroundColor: 'background--selected',
+        borderRadius: 'circle',
+        columnGap: 'xtight',
+        cursor: 'pointer',
+        display: 'flex',
+        paddingX: 'tight',
+        paddingY: 'xxtight',
+        stylesOnHover: {
+          backgroundColor: 'background--selected',
+          backgroundColorLightness: '+100',
         },
-        width: 'fit-content',
-        whiteSpace: 'nowrap',
       },
     },
 
     primary: {
-      extends: ['base'],
+      extends: ['unstyled'],
       styles: {
         backgroundColor: 'primary',
         borderRadius: 'small',
@@ -248,68 +296,23 @@ export const tokens: HandyTokens = {
       },
     },
 
-    caution: {
-      extends: ['primary'],
+    unstyled: {
       styles: {
-        borderColor: 'transparent',
-        color: 'danger',
-        stylesOnHover: {
-          borderColor: 'danger',
-        },
-      },
-    },
-
-    danger: {
-      extends: ['primary'],
-      styles: {
-        borderColor: 'transparent',
-        color: 'danger',
-        stylesOnHover: {
-          borderColor: 'danger',
-        },
-      },
-    },
-
-    iconOnly: {
-      extends: ['base'],
-      styles: {
-        paddingX: 'xtight',
-        paddingY: 'xxtight',
-        stylesOnHover: {
-          color: 'primary',
-        },
-      },
-    },
-
-    pill: {
-      extends: ['base'],
-      styles: {
-        alignItems: 'center',
-        backgroundColor: 'background--selected',
-        borderRadius: 'small',
-        columnGap: 'xtight',
         cursor: 'pointer',
-        display: 'flex',
-        paddingX: 'tight',
-        paddingY: 'xxtight',
-        stylesOnHover: {
-          backgroundColor: 'background--selected',
-          backgroundColorLightness: '+100',
+        display: 'inline-block',
+        stylesForCustomSelector: {
+          ':disabled': {
+            opacity: 0.6,
+            pointerEvents: 'none',
+          },
         },
-      },
-    },
-
-    textLink: {
-      extends: ['base'],
-      styles: {
-        color: 'text--link',
-        cursor: 'pointer',
-        fontWeight: 'bold',
-        stylesOnHover: {
-          color: 'text--link--hovered',
+        stylesOnFocus: {
+          boxShadow: 'focusRing',
+          position: 'relative',
+          zIndex: '1--stickyElements',
         },
-        textDecoration: 'underline',
-        whiteSpace: 'normal',
+        width: 'fit-content',
+        whiteSpace: 'nowrap',
       },
     },
   },
@@ -328,7 +331,7 @@ export const tokens: HandyTokens = {
     'code--numbers': ['teal--500', 'blue--300'],
     'code--string': ['purple--500', 'teal--300'],
     'code--tags': ['purple--600', 'purple--200'],
-    'danger': ['red--400', 'purple--300'],
+    'danger': 'red--400',
     'shadow': ['gray--400--20', 'purple--600--80'],
     'success': 'green--400',
     'text': ['blue--700', 'white'],

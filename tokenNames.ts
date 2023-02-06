@@ -1,5 +1,6 @@
 export const tokenNames = {
   animationDurations: ['short', 'normal', 'long'],
+
   animationNames: [
     'backdropEntry',
     'backdropExit',
@@ -11,9 +12,13 @@ export const tokenNames = {
     'modalWindowEntry',
     'modalWindowExit',
   ],
+
   borderRadii: ['small', 'normal', 'circle'],
+
   borderStyles: ['dashed', 'hairline', 'none', 'normal', 'thick'],
+
   boxShadows: ['focusRing', 'inset', 'normal'],
+
   breakpoints: [
     'bigDesktopOrLarger',
     'desktopOrLarger',
@@ -23,15 +28,17 @@ export const tokenNames = {
     'phoneOnly',
     'root',
   ],
+
   buttonVariants: [
-    'base',
-    'primary',
     'caution',
     'danger',
     'iconOnly',
+    'link',
     'pill',
-    'textLink',
+    'primary',
+    'unstyled',
   ],
+
   colorAliases: [
     'accent',
     'background',
@@ -55,8 +62,11 @@ export const tokenNames = {
     'text--link--hovered',
     'text--selected',
   ],
+
   colorLightnesses: [100, 200, 300, 400, 500, 600, 700],
+
   colorOpacities: [10, 20, 30, 40, 50, 60, 70, 80, 90],
+
   colorsCore: [
     'blue',
     'gray',
@@ -68,6 +78,7 @@ export const tokenNames = {
     'teal',
     'yellow',
   ],
+
   colorsUtility: [
     'black',
     'transparent',
@@ -82,11 +93,17 @@ export const tokenNames = {
     'white--80',
     'white--90',
   ],
+
   colorThemes: ['light', 'dark'],
+
   fontNames: ['body', 'display'],
+
   fontSizes: ['xxlarge', 'xlarge', 'large', 'normal', 'small', 'xsmall'],
+
   modalLayerVariants: ['dialog', 'menu', 'popover', 'tooltip', 'window'],
+
   textVariants: ['code', 'heading--1', 'heading--2', 'heading--3', 'label'],
+
   whitespaces: [
     'xxloose',
     'xloose',
@@ -96,6 +113,7 @@ export const tokenNames = {
     'xtight',
     'xxtight',
   ],
+
   zIndices: [
     '1000--maximum',
     '100--popoversAndTooltips',

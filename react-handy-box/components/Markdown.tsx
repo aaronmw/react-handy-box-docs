@@ -37,7 +37,7 @@ const Markdown = forwardRef(
                           wordBreak: 'break-word',
                         },
                         target: href?.startsWith('http') ? '_blank' : undefined,
-                        variant: 'textLink',
+                        variant: 'link',
                       },
                       props as any
                     )}

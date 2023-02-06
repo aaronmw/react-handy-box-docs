@@ -2,6 +2,8 @@ import { DocumentationPageDescriptor } from '@/pages/index';
 import { Box } from '@/react-handy-box/components/Box';
 import { tokenNames } from '@/tokenNames';
 import range from 'lodash/range';
+import upperFirst from 'lodash/upperFirst';
+import without from 'lodash/without';
 
 const docs: DocumentationPageDescriptor = {
   title: 'Box',
@@ -421,20 +423,26 @@ const docs: DocumentationPageDescriptor = {
     },
 
     {
-      title: 'stylesForPhoneOnly',
-      renderDemo: () => (
-        <Box
-          styles={{
-            stylesForPhoneOnly: {
-              color: 'danger',
-            },
-          }}
-        >
-          Resize the Window
-        </Box>
-      ),
+      title: 'stylesForBreakpointName',
+      values: without(tokenNames.breakpoints, 'root'),
+      renderDemo: (breakpointName) => {
+        const breakpointIndex = tokenNames.breakpoints.indexOf(breakpointName);
+        return (
+          <Box
+            styles={{
+              color: 'text--faded',
+              [`stylesFor${upperFirst(breakpointName)}`]: {
+                color: tokenNames.colorsCore[breakpointIndex],
+                fontWeight: 'bold',
+              },
+            }}
+          >
+            Resize the Window
+          </Box>
+        );
+      },
       renderSnippet: true,
-      highlightLines: range(3, 6),
+      highlightLines: range(4, 8),
     },
 
     {

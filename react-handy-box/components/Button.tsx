@@ -20,11 +20,24 @@ const Button = forwardRef(
   ) => {
     const formContext = useContext(FormContext);
 
+    const extendedVariantStyles = (
+      tokens.buttonVariants[variant].extends ?? []
+    ).reduce(
+      (acc, variantName) =>
+        merge(acc, tokens.buttonVariants[variantName].styles),
+      {}
+    );
+
     return (
       <Box
         as="button"
         ref={ref}
-        styles={merge({}, tokens.buttonVariants[variant].styles, styles)}
+        styles={merge(
+          {},
+          extendedVariantStyles,
+          tokens.buttonVariants[variant].styles,
+          styles
+        )}
         onClick={(event: MouseEvent) => {
           if (stopClickPropagation) {
             event.stopPropagation();
