@@ -6,20 +6,20 @@ import { ColorValue } from '@/react-handy-box/types';
 import { tokenNames } from '@/tokenNames';
 
 const swatchDescriptions = {
+  'background--highlighted': 'For highlighted text / elements',
+  'background--shaded':
+    'For darkening the background. Often a lighter version of `primary`',
   'black': 'Handy to have around, sometimes.',
   'border': 'The default `borderColor` if none is specified',
   'primary':
     'The primary color used for buttons and as the base for many other UI elements. Change this to make sweeping changes to the overall theme.',
   'danger': 'For dangerous buttons, warnings, errors, etc.',
-  'highlighted': 'For highlighted text / elements',
-  'link--hovered': 'Pretty self-explanatory.',
-  'link':
-    'The color of clickable text links. Often the same as `primary`, but can be configured separately.',
-  'shaded':
-    'For darkening the background. Often a lighter version of `primary`',
   'shadow': 'The color of shadows cast by `boxShadow`',
   'text': 'The default color of all text on the page.',
-  'textFaded': 'A lighter version of `text` for secondary or footnote copy.',
+  'text--faded': 'A lighter version of `text` for secondary or footnote copy.',
+  'text--link':
+    'The color of clickable text links. Often the same as `primary`, but can be configured separately.',
+  'text--link--hovered': 'Pretty self-explanatory.',
   'transparent': 'Description goes here...',
   'white': 'Description goes here...',
   'white--translucent': 'Description goes here...',
@@ -214,7 +214,7 @@ const ColorSwatch = ({
         borderColor: colorName,
         borderColorLightness: '+100',
         borderRadius: 'circle',
-        color: 'textFaded',
+        color: 'text--faded',
         display: 'inline-block',
         fontFamily: 'monospace',
         fontSize: 'small',

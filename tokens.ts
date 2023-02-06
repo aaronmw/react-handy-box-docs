@@ -285,7 +285,7 @@ export const tokens: HandyTokens = {
       extends: ['base'],
       styles: {
         alignItems: 'center',
-        backgroundColor: 'selected',
+        backgroundColor: 'background--selected',
         borderRadius: 'small',
         columnGap: 'xtight',
         cursor: 'pointer',
@@ -293,7 +293,7 @@ export const tokens: HandyTokens = {
         paddingX: 'tight',
         paddingY: 'xxtight',
         stylesOnHover: {
-          backgroundColor: 'selected',
+          backgroundColor: 'background--selected',
           backgroundColorLightness: '+100',
         },
       },
@@ -302,11 +302,11 @@ export const tokens: HandyTokens = {
     textLink: {
       extends: ['base'],
       styles: {
-        color: 'link',
+        color: 'text--link',
         cursor: 'pointer',
         fontWeight: 'bold',
         stylesOnHover: {
-          color: 'link--hovered',
+          color: 'text--link--hovered',
         },
         textDecoration: 'underline',
         whiteSpace: 'normal',
@@ -317,25 +317,25 @@ export const tokens: HandyTokens = {
   colorAliases: {
     'accent': 'orange--400',
     'background': ['white', 'purple--700'],
+    'background--highlighted': ['yellow--300--70', 'yellow--400--20'],
+    'background--selected': ['purple--200--40', 'purple--400'],
+    'background--shaded': ['purple--100--40', 'purple--300--10'],
     'border': ['gray--200', 'purple--300--20'],
     'primary': 'purple--400',
-    'codeSnippet--comment': ['gray--500', 'red--400'],
-    'codeSnippet--function': ['red--500', 'gray--300'],
-    'codeSnippet--keyword': ['blue--500', 'red--300'],
-    'codeSnippet--numbers': ['teal--500', 'blue--300'],
-    'codeSnippet--string': ['purple--500', 'teal--300'],
-    'codeSnippet--tags': ['purple--600', 'purple--200'],
+    'code--comment': ['gray--500', 'red--400'],
+    'code--function': ['red--500', 'gray--300'],
+    'code--keyword': ['blue--500', 'red--300'],
+    'code--numbers': ['teal--500', 'blue--300'],
+    'code--string': ['purple--500', 'teal--300'],
+    'code--tags': ['purple--600', 'purple--200'],
     'danger': ['red--400', 'purple--300'],
-    'highlighted': ['yellow--300--70', 'yellow--400--20'],
-    'link--hovered': 'purple--200',
-    'link': 'blue--400',
-    'selected': ['purple--200--40', 'purple--400'],
-    'selectedText': ['purple--400', 'white'],
-    'shaded': ['purple--100--40', 'purple--300--10'],
     'shadow': ['gray--400--20', 'purple--600--80'],
     'success': 'green--400',
     'text': ['blue--700', 'white'],
-    'textFaded': ['gray--400', 'white--70'],
+    'text--faded': ['gray--400', 'white--70'],
+    'text--link': 'blue--400',
+    'text--link--hovered': 'purple--200',
+    'text--selected': ['purple--400', 'white'],
   },
 
   colorLightnessScale: {
@@ -479,7 +479,7 @@ export const tokens: HandyTokens = {
   },
 
   scrollbarCornerStyles: {
-    backgroundColor: 'shaded',
+    backgroundColor: 'background--shaded',
   },
 
   scrollbarThumbStyles: {
@@ -489,7 +489,7 @@ export const tokens: HandyTokens = {
     borderRadius: 'circle',
   },
 
-  scrollbarTrackStyles: { backgroundColor: 'shaded' },
+  scrollbarTrackStyles: { backgroundColor: 'background--shaded' },
 
   textVariants: {
     'code': {
@@ -509,7 +509,7 @@ export const tokens: HandyTokens = {
       styles: { fontSize: 'large', fontWeight: 'bold' },
     },
     'label': {
-      styles: { color: 'textFaded', fontSize: 'small' },
+      styles: { color: 'text--faded', fontSize: 'small' },
     },
   },
 

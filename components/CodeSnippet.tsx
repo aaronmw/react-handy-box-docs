@@ -81,7 +81,7 @@ const removeIndentation = (code: string) => {
 };
 
 const themedHighlightedLineStyles = {
-  backgroundColor: 'var(--color--highlighted)',
+  backgroundColor: 'var(--color--background--highlighted)',
   borderRadius: '4px',
   display: 'block',
 };
@@ -109,92 +109,92 @@ const themedSyntaxHighlighterStyles = {
     overflow: 'auto',
   },
   'comment': {
-    color: 'var(--color--codeSnippet--comment)',
+    color: 'var(--color--code--comment)',
     fontStyle: 'italic',
   },
   'prolog': {
-    color: 'var(--color--codeSnippet--comment)',
+    color: 'var(--color--code--comment)',
     fontStyle: 'italic',
   },
   'doctype': {
-    color: 'var(--color--codeSnippet--comment)',
+    color: 'var(--color--code--comment)',
     fontStyle: 'italic',
   },
   'cdata': {
-    color: 'var(--color--codeSnippet--comment)',
+    color: 'var(--color--code--comment)',
     fontStyle: 'italic',
   },
   'namespace': {
     opacity: '0.7',
   },
   'string': {
-    color: 'var(--color--codeSnippet--string)',
+    color: 'var(--color--code--string)',
   },
   'attr-value': {
-    color: 'var(--color--codeSnippet--string)',
+    color: 'var(--color--code--string)',
   },
   'punctuation': {},
   'operator': {},
   'entity': {
-    color: 'var(--color--codeSnippet--numbers)',
+    color: 'var(--color--code--numbers)',
   },
   'url': {
-    color: 'var(--color--codeSnippet--numbers)',
+    color: 'var(--color--code--numbers)',
   },
   'symbol': {
-    color: 'var(--color--codeSnippet--numbers)',
+    color: 'var(--color--code--numbers)',
   },
   'number': {
-    color: 'var(--color--codeSnippet--numbers)',
+    color: 'var(--color--code--numbers)',
   },
   'boolean': {
-    color: 'var(--color--codeSnippet--numbers)',
+    color: 'var(--color--code--numbers)',
   },
   'variable': {
-    color: 'var(--color--codeSnippet--numbers)',
+    color: 'var(--color--code--numbers)',
   },
   'constant': {
-    color: 'var(--color--codeSnippet--numbers)',
+    color: 'var(--color--code--numbers)',
   },
   'property': {
-    color: 'var(--color--codeSnippet--numbers)',
+    color: 'var(--color--code--numbers)',
   },
   'regex': {
-    color: 'var(--color--codeSnippet--numbers)',
+    color: 'var(--color--code--numbers)',
   },
   'inserted': {
-    color: 'var(--color--codeSnippet--numbers)',
+    color: 'var(--color--code--numbers)',
   },
   'atrule': {
-    color: 'var(--color--codeSnippet--keyword)',
+    color: 'var(--color--code--keyword)',
   },
   'keyword': {
-    color: 'var(--color--codeSnippet--keyword)',
+    color: 'var(--color--code--keyword)',
   },
   'attr-name': {
-    color: 'var(--color--codeSnippet--keyword)',
+    color: 'var(--color--code--keyword)',
   },
   '.language-autohotkey .token.selector': {
-    color: 'var(--color--codeSnippet--keyword)',
+    color: 'var(--color--code--keyword)',
   },
   'function': {
-    color: 'var(--color--codeSnippet--function)',
+    color: 'var(--color--code--function)',
     fontWeight: 'bold',
   },
   'deleted': {
-    color: 'var(--color--codeSnippet--function)',
+    color: 'var(--color--code--function)',
   },
   '.language-autohotkey .token.tag': {
-    color: 'var(--color--codeSnippet--function)',
+    color: 'var(--color--code--function)',
   },
   'tag': {
-    color: 'var(--color--codeSnippet--tags)',
+    color: 'var(--color--code--tags)',
   },
   'selector': {
-    color: 'var(--color--codeSnippet--tags)',
+    color: 'var(--color--code--tags)',
   },
   '.language-autohotkey .token.keyword': {
-    color: 'var(--color--codeSnippet--tags)',
+    color: 'var(--color--code--tags)',
   },
   'important': {
     fontWeight: 'bold',

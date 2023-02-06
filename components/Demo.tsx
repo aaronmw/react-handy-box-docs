@@ -31,7 +31,7 @@ const Demo = ({
     <Box
       {...propsForContainer}
       styles={{
-        backgroundColor: 'shaded',
+        backgroundColor: 'background--shaded',
         borderRadius: 'normal',
         padding: 'normal',
         rowGap: 'normal',

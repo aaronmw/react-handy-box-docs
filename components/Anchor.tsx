@@ -11,11 +11,11 @@ export type AnchorProps = Omit<BoxPropsWithoutRef<'a'>, 'href'> & {
 const variantPropMap = {
   bare: {},
   normal: {
-    color: 'link',
+    color: 'text--link',
     fontWeight: 'bold',
     textDecoration: 'underline',
     stylesOnHover: {
-      color: 'link--hovered',
+      color: 'text--link--hovered',
     },
   },
   subtle: {
@@ -23,7 +23,7 @@ const variantPropMap = {
     fontWeight: 'bold',
     textDecoration: 'underline',
     stylesOnHover: {
-      color: 'link--hovered',
+      color: 'text--link--hovered',
     },
   },
 };

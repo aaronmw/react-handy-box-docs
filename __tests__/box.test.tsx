@@ -31,7 +31,7 @@ const tests: Array<TestDescriptor> = [
       [
         'adjusts lightness value of semantic swatch',
         {
-          color: 'shaded',
+          color: 'background--shaded',
           colorLightness: 200,
         },
         {
@@ -41,7 +41,7 @@ const tests: Array<TestDescriptor> = [
       [
         'adjusts alpha value of semantic swatch',
         {
-          color: 'shaded',
+          color: 'background--shaded',
           colorOpacity: 100,
         },
         {

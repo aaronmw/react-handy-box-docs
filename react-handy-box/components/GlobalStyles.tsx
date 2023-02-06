@@ -1,4 +1,4 @@
-import { colorPalette } from '@/react-handy-box/colors';
+import { colorAliasesByTheme, colorPalette } from '@/react-handy-box/colors';
 import { stylesToStyleObject } from '@/react-handy-box/components/Box';
 import {
   BreakpointName,
@@ -101,7 +101,7 @@ const GlobalStyles = createGlobalStyle<{
       },
       '::placeholder': stylesToStyleObject({
         styleProps: {
-          color: 'textFaded',
+          color: 'text--faded',
           fontStyle: 'italic',
         },
         colorThemeName,
@@ -124,6 +124,13 @@ const GlobalStyles = createGlobalStyle<{
       }),
       ':root': {
         ...mapKeysToCSSVariables(colorPalette, 'color'),
+        ...mapKeysToCSSVariables(
+          mapValues(
+            colorAliasesByTheme[colorThemeName],
+            (colorAlias) => colorPalette[colorAlias]
+          ),
+          'color'
+        ),
         ...stylesToStyleObject({
           styleProps: {
             backgroundColor: 'background',
@@ -131,7 +138,8 @@ const GlobalStyles = createGlobalStyle<{
             fontName: 'body',
             fontSize: 'normal',
             scrollPaddingTop: '10vh',
-            scrollbarColor: 'var(--color--primary) var(--color--shaded)',
+            scrollbarColor:
+              'var(--color--primary) var(--color--background--shaded)',
           },
           colorThemeName,
         }),

@@ -137,7 +137,7 @@ const SelectableTable = forwardRef(
                     <InputComponent
                       isSelected={isSelected}
                       styles={{
-                        color: isSelected ? 'selectedText' : undefined,
+                        color: isSelected ? 'text--selected' : undefined,
                       }}
                     />
                   </Button>
@@ -145,10 +145,12 @@ const SelectableTable = forwardRef(
                 ...rowObject,
                 propsForContainer: {
                   styles: {
-                    backgroundColor: isSelected ? 'selected' : undefined,
+                    backgroundColor: isSelected
+                      ? 'background--selected'
+                      : undefined,
                     cursor: 'pointer',
                     stylesOnHover: {
-                      backgroundColor: 'highlighted',
+                      backgroundColor: 'background--highlighted',
                       backgroundColorOpacity: isSelected ? '+20' : undefined,
                     },
                   },

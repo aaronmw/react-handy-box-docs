@@ -113,7 +113,7 @@ const Home: NextPage<{
         <Box
           as="nav"
           styles={{
-            backgroundColor: 'shaded',
+            backgroundColor: 'background--shaded',
             borderRight: 'hairline',
             height: '100%',
             overflowY: 'auto',
@@ -123,7 +123,7 @@ const Home: NextPage<{
           <Box
             styles={{
               alignItems: 'center',
-              backgroundColor: 'shaded',
+              backgroundColor: 'background--shaded',
               backgroundColorOpacity: 100,
               backgroundColorLightness: 600,
               color: 'white',
@@ -160,7 +160,7 @@ const Home: NextPage<{
           ref={scrollingContentElementRef}
           styles={{
             alignItems: isLoading ? 'center' : undefined,
-            backgroundColor: isLoading ? 'shaded' : undefined,
+            backgroundColor: isLoading ? 'background--shaded' : undefined,
             justifyContent: isLoading ? 'center' : undefined,
             height: '100%',
             overflowY: 'auto',

@@ -44,7 +44,7 @@ const LoadableBox = forwardRef(
         <Box
           styles={{
             alignItems: 'center',
-            backgroundColor: 'shaded',
+            backgroundColor: 'background--shaded',
             height: '100%',
             justifyContent: 'center',
             left: 0,

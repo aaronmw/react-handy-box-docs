@@ -72,7 +72,7 @@ const SingleSelectInput = forwardRef(
                 >
                   <Box
                     styles={{
-                      color: !selectedOption ? 'textFaded' : undefined,
+                      color: !selectedOption ? 'text--faded' : undefined,
                     }}
                   >
                     {selectedOption?.option.label ?? placeholder}

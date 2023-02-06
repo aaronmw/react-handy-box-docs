@@ -48,7 +48,7 @@ const NavigationItem = ({
         href={href}
         styles={{
           alignItems: 'center',
-          backgroundColor: isActive ? 'selected' : undefined,
+          backgroundColor: isActive ? 'background--selected' : undefined,
           columnGap: 'tight',
           display: 'flex',
           fontSize: level >= 1 ? 'small' : undefined,
@@ -56,7 +56,7 @@ const NavigationItem = ({
           paddingX: 'tight',
           paddingY: 'xxtight',
           stylesOnHover: {
-            backgroundColor: 'selected',
+            backgroundColor: 'background--selected',
           },
         }}
         variant="bare"
@@ -64,7 +64,7 @@ const NavigationItem = ({
         {level >= 1 && (
           <Icon
             name="turn-down-right"
-            styles={{ color: 'textFaded' }}
+            styles={{ color: 'text--faded' }}
             variant="light"
           />
         )}

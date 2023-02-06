@@ -215,7 +215,7 @@ const Table = forwardRef(
       const tableHeaderRowRenderProps = {
         propsForTableRowElement: {
           styles: {
-            color: 'textFaded',
+            color: 'text--faded',
             fontSize: 'small',
           },
         },
@@ -320,11 +320,11 @@ const TableHeaderCell = forwardRef(
     const innerPropsForCellContentsWrapper = merge(
       {
         styles: {
-          backgroundColor: isSorted ? 'shaded' : undefined,
+          backgroundColor: isSorted ? 'background--shaded' : undefined,
           borderBottom: 'normal',
           borderTopLeftRadius: isFirstColumn ? `calc(small - 1px)` : undefined,
           borderTopRightRadius: isLastColumn ? `calc(small - 1px)` : undefined,
-          color: 'textFaded',
+          color: 'text--faded',
           fontSize: 'small',
           paddingX: 'tight',
           paddingY: 'xtight',
@@ -425,7 +425,8 @@ const TableRow = forwardRef(
             key: `${rowObject.key}-${rowIndex}`,
             styles: {
               borderRadius: 'small',
-              backgroundColor: rowIndex % 2 === 0 ? 'shaded' : undefined,
+              backgroundColor:
+                rowIndex % 2 === 0 ? 'background--shaded' : undefined,
             },
           },
           rowObject.propsForContainer,
@@ -477,7 +478,9 @@ const TableCell = forwardRef(
         {...merge(
           {
             styles: {
-              backgroundColor: isColumnSorted ? 'shaded' : undefined,
+              backgroundColor: isColumnSorted
+                ? 'background--shaded'
+                : undefined,
               borderBottomLeftRadius:
                 isLastRow && isFirstColumn ? 'small' : undefined,
               borderBottomRightRadius:

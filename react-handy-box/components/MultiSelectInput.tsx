@@ -74,7 +74,7 @@ const MultiSelectInput = forwardRef(
                 >
                   <Box
                     styles={{
-                      color: 'textFaded',
+                      color: 'text--faded',
                     }}
                   >
                     {placeholder}

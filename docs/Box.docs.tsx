@@ -296,7 +296,7 @@ const docs: DocumentationPageDescriptor = {
             <Box
               key={boxName}
               styles={{
-                backgroundColor: 'shaded',
+                backgroundColor: 'background--shaded',
                 padding: 'tight',
               }}
             >
@@ -335,7 +335,7 @@ const docs: DocumentationPageDescriptor = {
             <Box
               key={boxName}
               styles={{
-                backgroundColor: 'shaded',
+                backgroundColor: 'background--shaded',
                 padding: 'tight',
               }}
             >
@@ -369,7 +369,7 @@ const docs: DocumentationPageDescriptor = {
             <Box
               key={boxName}
               styles={{
-                backgroundColor: 'shaded',
+                backgroundColor: 'background--shaded',
                 padding: 'tight',
               }}
             >
@@ -491,7 +491,7 @@ const docs: DocumentationPageDescriptor = {
           styles: {
             padding: 'normal',
             stylesOnHover: {
-              backgroundColor: 'shaded',
+              backgroundColor: 'background--shaded',
             },
           },
           highlightLines: range(4, 7),
@@ -502,7 +502,7 @@ const docs: DocumentationPageDescriptor = {
             padding: 'normal',
             transitionDuration: 'normal',
             stylesOnHover: {
-              backgroundColor: 'shaded',
+              backgroundColor: 'background--shaded',
             },
           },
           highlightLines: [7],
@@ -521,7 +521,7 @@ const docs: DocumentationPageDescriptor = {
           styles={{
             padding: 'normal',
             stylesOnHover: {
-              backgroundColor: 'shaded',
+              backgroundColor: 'background--shaded',
             },
             transitionDuration,
           }}
@@ -556,7 +556,7 @@ const docs: DocumentationPageDescriptor = {
             opacity: 0.5,
             padding: 'normal',
             stylesOnHover: {
-              backgroundColor: 'shaded',
+              backgroundColor: 'background--shaded',
               border: 'normal',
               opacity: 1,
               width: '100%',

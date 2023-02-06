@@ -38,7 +38,7 @@ const Checkbox = forwardRef(
       }
       ref={ref}
       styles={{
-        color: isSelected ? 'primary' : 'textFaded',
+        color: isSelected ? 'primary' : 'text--faded',
         ...styles,
       }}
       variant={isSelected ? 'solid' : undefined}
@@ -58,7 +58,7 @@ const Radio = forwardRef(
       name={isSelected ? 'circle-dot' : 'circle'}
       ref={ref}
       styles={{
-        color: isSelected ? 'primary' : 'textFaded',
+        color: isSelected ? 'primary' : 'text--faded',
         ...styles,
       }}
       variant={isSelected ? 'solid' : undefined}
@@ -107,7 +107,7 @@ const CheckboxesOrRadioInput = forwardRef(
                 <Icon
                   name={isSelected ? iconWhenSelected : iconWhenNotSelected}
                   styles={{
-                    color: isSelected ? 'primary' : 'textFaded',
+                    color: isSelected ? 'primary' : 'text--faded',
                   }}
                   variant={isSelected ? 'solid' : undefined}
                 />

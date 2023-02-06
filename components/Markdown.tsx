@@ -16,7 +16,7 @@ const Markdown = ({ children, ...otherProps }: MarkdownProps) => (
             as="a"
             target="_blank"
             styles={{
-              color: 'link',
+              color: 'text--link',
             }}
             {...(props as any)}
           />

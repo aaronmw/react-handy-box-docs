@@ -322,7 +322,7 @@ const propHandlers: PropHandlers = {
           String(lineHeight),
           tokenNames.fontSizes.map(String),
           (lineHeight) => `var(--line-height--${kebabCase(lineHeight)})`
-        ) || `var(--line-height--${lineHeight})`,
+        ) || lineHeight,
     }),
   },
 

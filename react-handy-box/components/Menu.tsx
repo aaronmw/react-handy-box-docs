@@ -70,7 +70,7 @@ const Menu = forwardRef(
       return options.length === 0 ? (
         <Box
           styles={{
-            color: 'textFaded',
+            color: 'text--faded',
             fontSize: 'small',
             textAlign: 'center',
           }}
@@ -257,7 +257,7 @@ const GroupLabel = forwardRef(
     <Box
       ref={ref}
       styles={{
-        color: 'textFaded',
+        color: 'text--faded',
         fontSize: 'small',
         paddingBottom: 'xtight',
         paddingTop: 'tight',
@@ -305,7 +305,7 @@ const MenuItem = forwardRef(
             zIndex: '1--stickyElements',
           },
           stylesOnHover: {
-            backgroundColor: 'selected',
+            backgroundColor: 'background--selected',
           },
           whiteSpace: 'nowrap',
         },
