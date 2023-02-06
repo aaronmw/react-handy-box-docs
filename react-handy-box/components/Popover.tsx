@@ -5,7 +5,7 @@ import {
   PopoverRenderProps,
 } from '@/react-handy-box/components/Popover.types';
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
-import { modalLayerStyles } from '@/tokens/modalLayerStyles';
+import { tokens } from '@/tokens';
 import { Options, Placement } from '@popperjs/core';
 import merge from 'lodash/merge';
 import {
@@ -168,7 +168,7 @@ const Popover = forwardRef(
         ref={multipleRefs}
         renderTrigger={renderTriggerCallback}
         style={popperStyles}
-        styles={merge({}, modalLayerStyles.popover, styles)}
+        styles={merge({}, tokens.modalLayerVariants.popover, styles)}
         type={type}
         onBeforeClose={onBeforeCloseCallback}
         onBeforeOpen={onBeforeOpenCallback}

@@ -2,7 +2,7 @@ import { Box } from '@/react-handy-box/components/Box';
 import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { Popover } from '@/react-handy-box/components/Popover';
 import { PopoverRenderProps } from '@/react-handy-box/components/Popover.types';
-import { modalLayerStyles } from '@/tokens/modalLayerStyles';
+import { tokens } from '@/tokens';
 import merge from 'lodash/merge';
 import { forwardRef, ReactNode, Ref, useCallback, useRef } from 'react';
 
@@ -78,7 +78,7 @@ const Tooltip = forwardRef(
         renderTrigger={innerRenderTrigger}
         styles={merge(
           { pointerEvents: isInteractive ? 'all' : 'none' },
-          modalLayerStyles.tooltip
+          tokens.modalLayerVariants.tooltip
         )}
         type="tooltip"
         onMouseEnter={cancelTooltipTimers}

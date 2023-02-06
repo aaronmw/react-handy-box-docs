@@ -9,7 +9,7 @@ import { Button } from '@/react-handy-box/components/Button';
 import { Icon } from '@/react-handy-box/components/Icon';
 import { Menu } from '@/react-handy-box/components/Menu';
 import { MenuItem } from '@/react-handy-box/components/Menu.types';
-import { inputStyles } from '@/tokens/inputStyles';
+import { tokens } from '@/tokens';
 import { forwardRef, MouseEvent, Ref } from 'react';
 
 type SingleSelectInputProps<T extends BaseOptionShape> = Omit<
@@ -60,7 +60,7 @@ const SingleSelectInput = forwardRef(
                 <Box
                   ref={propsForTrigger.ref as Ref<HTMLDivElement>}
                   styles={{
-                    ...inputStyles,
+                    ...tokens.inputStyles,
                     alignItems: 'center',
                     columnGap: 'tight',
                     display: 'flex',

@@ -12,7 +12,7 @@ import {
   useKeyboardShortcuts,
 } from '@/react-handy-box/hooks/useKeyboardShortcuts';
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
-import { zIndices } from '@/tokens/zIndices';
+import { tokens } from '@/tokens';
 import last from 'lodash/last';
 import merge from 'lodash/merge';
 import { ExtendedKeyboardEvent } from 'mousetrap';
@@ -266,7 +266,7 @@ const ModalLayer = forwardRef(
       }
     };
 
-    const zIndex = zIndices['10--modalWindows'] + modalLayerStackIndex;
+    const zIndex = tokens.zIndices['10--modalWindows'] + modalLayerStackIndex;
 
     return (
       <>

@@ -1,12 +1,7 @@
 import { Box } from '@/react-handy-box/components/Box';
-import {
-  BoxPropsWithoutRef,
-  ThemeObject,
-} from '@/react-handy-box/components/Box.types';
-import { colorCodesBySwatchName } from '@/tokens/colorPalette';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { trimEnd } from 'lodash';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { useTheme } from 'styled-components';
 
 type CodeSnippetProps = Omit<BoxPropsWithoutRef, 'children'> & {
   children: string;
@@ -23,8 +18,6 @@ const CodeSnippet = ({
   styles,
   ...otherProps
 }: CodeSnippetProps) => {
-  const theme = useTheme() as ThemeObject;
-
   const trimmedCodeSnippet = removeIndentation(children);
 
   const patchedCodeSnippet = Object.keys(codeReplacements).reduce(
@@ -35,14 +28,6 @@ const CodeSnippet = ({
       ),
     trimmedCodeSnippet
   );
-
-  const themedHighlightedLineStyles = getThemedHighlightedLineStyles({
-    theme: theme!,
-  });
-
-  const themedSyntaxHighlighterStyles = getThemedSyntaxHighlighterStyles({
-    theme: theme!,
-  });
 
   return (
     <Box
@@ -95,11 +80,11 @@ const removeIndentation = (code: string) => {
   return [lines[0], ...trimmedLines].join('\n');
 };
 
-const getThemedHighlightedLineStyles = ({ theme }: { theme: ThemeObject }) => ({
-  backgroundColor: colorCodesBySwatchName[theme!['highlighted']],
+const themedHighlightedLineStyles = {
+  backgroundColor: 'var(--color--highlighted)',
   borderRadius: '4px',
   display: 'block',
-});
+};
 
 const stylesForCodeAndPre = {
   direction: 'ltr',
@@ -117,110 +102,109 @@ const stylesForCodeAndPre = {
   hyphens: 'none',
 } as const;
 
-const getThemedSyntaxHighlighterStyles = ({ theme }: { theme: ThemeObject }) =>
-  ({
-    'code[class*="language-"]': stylesForCodeAndPre,
-    'pre[class*="language-"]': {
-      ...stylesForCodeAndPre,
-      overflow: 'auto',
-    },
-    'comment': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--comment']],
-      fontStyle: 'italic',
-    },
-    'prolog': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--comment']],
-      fontStyle: 'italic',
-    },
-    'doctype': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--comment']],
-      fontStyle: 'italic',
-    },
-    'cdata': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--comment']],
-      fontStyle: 'italic',
-    },
-    'namespace': {
-      opacity: '0.7',
-    },
-    'string': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--string']],
-    },
-    'attr-value': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--string']],
-    },
-    'punctuation': {},
-    'operator': {},
-    'entity': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--numbers']],
-    },
-    'url': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--numbers']],
-    },
-    'symbol': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--numbers']],
-    },
-    'number': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--numbers']],
-    },
-    'boolean': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--numbers']],
-    },
-    'variable': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--numbers']],
-    },
-    'constant': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--numbers']],
-    },
-    'property': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--numbers']],
-    },
-    'regex': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--numbers']],
-    },
-    'inserted': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--numbers']],
-    },
-    'atrule': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--keyword']],
-    },
-    'keyword': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--keyword']],
-    },
-    'attr-name': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--keyword']],
-    },
-    '.language-autohotkey .token.selector': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--keyword']],
-    },
-    'function': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--function']],
-      fontWeight: 'bold',
-    },
-    'deleted': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--function']],
-    },
-    '.language-autohotkey .token.tag': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--function']],
-    },
-    'tag': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--tags']],
-    },
-    'selector': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--tags']],
-    },
-    '.language-autohotkey .token.keyword': {
-      color: colorCodesBySwatchName[theme!['codeSnippet--tags']],
-    },
-    'important': {
-      fontWeight: 'bold',
-    },
-    'bold': {
-      fontWeight: 'bold',
-    },
-    'italic': {
-      fontStyle: 'italic',
-    },
-  } as const);
+const themedSyntaxHighlighterStyles = {
+  'code[class*="language-"]': stylesForCodeAndPre,
+  'pre[class*="language-"]': {
+    ...stylesForCodeAndPre,
+    overflow: 'auto',
+  },
+  'comment': {
+    color: 'var(--color--codeSnippet--comment)',
+    fontStyle: 'italic',
+  },
+  'prolog': {
+    color: 'var(--color--codeSnippet--comment)',
+    fontStyle: 'italic',
+  },
+  'doctype': {
+    color: 'var(--color--codeSnippet--comment)',
+    fontStyle: 'italic',
+  },
+  'cdata': {
+    color: 'var(--color--codeSnippet--comment)',
+    fontStyle: 'italic',
+  },
+  'namespace': {
+    opacity: '0.7',
+  },
+  'string': {
+    color: 'var(--color--codeSnippet--string)',
+  },
+  'attr-value': {
+    color: 'var(--color--codeSnippet--string)',
+  },
+  'punctuation': {},
+  'operator': {},
+  'entity': {
+    color: 'var(--color--codeSnippet--numbers)',
+  },
+  'url': {
+    color: 'var(--color--codeSnippet--numbers)',
+  },
+  'symbol': {
+    color: 'var(--color--codeSnippet--numbers)',
+  },
+  'number': {
+    color: 'var(--color--codeSnippet--numbers)',
+  },
+  'boolean': {
+    color: 'var(--color--codeSnippet--numbers)',
+  },
+  'variable': {
+    color: 'var(--color--codeSnippet--numbers)',
+  },
+  'constant': {
+    color: 'var(--color--codeSnippet--numbers)',
+  },
+  'property': {
+    color: 'var(--color--codeSnippet--numbers)',
+  },
+  'regex': {
+    color: 'var(--color--codeSnippet--numbers)',
+  },
+  'inserted': {
+    color: 'var(--color--codeSnippet--numbers)',
+  },
+  'atrule': {
+    color: 'var(--color--codeSnippet--keyword)',
+  },
+  'keyword': {
+    color: 'var(--color--codeSnippet--keyword)',
+  },
+  'attr-name': {
+    color: 'var(--color--codeSnippet--keyword)',
+  },
+  '.language-autohotkey .token.selector': {
+    color: 'var(--color--codeSnippet--keyword)',
+  },
+  'function': {
+    color: 'var(--color--codeSnippet--function)',
+    fontWeight: 'bold',
+  },
+  'deleted': {
+    color: 'var(--color--codeSnippet--function)',
+  },
+  '.language-autohotkey .token.tag': {
+    color: 'var(--color--codeSnippet--function)',
+  },
+  'tag': {
+    color: 'var(--color--codeSnippet--tags)',
+  },
+  'selector': {
+    color: 'var(--color--codeSnippet--tags)',
+  },
+  '.language-autohotkey .token.keyword': {
+    color: 'var(--color--codeSnippet--tags)',
+  },
+  'important': {
+    fontWeight: 'bold',
+  },
+  'bold': {
+    fontWeight: 'bold',
+  },
+  'italic': {
+    fontStyle: 'italic',
+  },
+};
 
 export { CodeSnippet };

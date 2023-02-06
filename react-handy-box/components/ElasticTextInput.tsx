@@ -6,7 +6,7 @@ import {
 import { useGlobalInterval } from '@/react-handy-box/hooks/useGlobalInterval';
 import { useKeyboardShortcuts } from '@/react-handy-box/hooks/useKeyboardShortcuts';
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
-import { inputStyles } from '@/tokens/inputStyles';
+import { tokens } from '@/tokens';
 import { forwardRef, Ref, useCallback, useEffect, useRef } from 'react';
 
 const ElasticTextInput = forwardRef(
@@ -78,7 +78,7 @@ const ElasticTextInput = forwardRef(
           as="div"
           ref={ghostElementRef}
           styles={{
-            ...inputStyles,
+            ...tokens.inputStyles,
             ...styles,
             opacity: 0,
             pointerEvents: 'none',

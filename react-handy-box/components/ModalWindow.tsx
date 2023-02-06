@@ -12,7 +12,7 @@ import { ScrollableBox } from '@/react-handy-box/components/ScrollableBox';
 import { Tooltip } from '@/react-handy-box/components/Tooltip';
 import { useGlobalInterval } from '@/react-handy-box/hooks/useGlobalInterval';
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
-import { backdropStyles, modalLayerStyles } from '@/tokens/modalLayerStyles';
+import { tokens } from '@/tokens';
 import merge from 'lodash/merge';
 import {
   forwardRef,
@@ -107,14 +107,14 @@ const ModalWindow = forwardRef(
           ref={multipleRefs}
           styles={merge(
             {},
-            modalLayerStyles.window,
+            tokens.modalLayerVariants.window,
             variantStylesMap[variant],
             styles
           )}
           stylesForBackdrop={merge(
             isLowestModalWindowInStack
               ? {
-                  ...backdropStyles,
+                  ...tokens.modalBackdropStyles,
                   ...stylesForBackdrop,
                 }
               : {},

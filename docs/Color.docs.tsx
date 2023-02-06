@@ -1,16 +1,9 @@
 import { Markdown } from '@/components/Markdown';
 import { DocumentationPageDescriptor } from '@/pages/index';
 import { Box } from '@/react-handy-box/components/Box';
-import {
-  BoxPropsWithoutRef,
-  SwatchNameOrAlias,
-} from '@/react-handy-box/components/Box.types';
-import {
-  coreColorDefinitions,
-  swatchNameAliases,
-  utilityColors,
-} from '@/tokens/colorPalette';
-import { toJSXAttributeValue } from '@/utilities/toJSXAttributeValue';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
+import { ColorValue } from '@/react-handy-box/types';
+import { tokenNames } from '@/tokenNames';
 
 const swatchDescriptions = {
   'black': 'Handy to have around, sometimes.',
@@ -109,7 +102,7 @@ const docs: DocumentationPageDescriptor = {
 
     {
       title: 'Core Swatches',
-      values: Object.keys(coreColorDefinitions),
+      values: [...tokenNames.colorsCore],
       renderDemo: (colorName) => (
         <Box
           styles={{
@@ -120,7 +113,7 @@ const docs: DocumentationPageDescriptor = {
         >
           {[100, 200, 300, 400, 500, 600, 700].map((lightnessValue) => (
             <ColorSwatch
-              colorName={`${colorName}--${lightnessValue}` as SwatchNameOrAlias}
+              colorName={`${colorName}--${lightnessValue}` as ColorValue}
               key={lightnessValue}
             />
           ))}
@@ -138,7 +131,7 @@ const docs: DocumentationPageDescriptor = {
 
     {
       title: 'Semantic Swatches',
-      values: swatchNameAliases.map((swatchName) => ({
+      values: tokenNames.colorAliases.map((swatchName) => ({
         swatchName,
         description:
           swatchDescriptions[swatchName as keyof typeof swatchDescriptions],
@@ -152,7 +145,7 @@ const docs: DocumentationPageDescriptor = {
           }}
         >
           <ColorSwatch
-            colorName={swatchName as SwatchNameOrAlias}
+            colorName={swatchName}
             key={swatchName}
             styles={{
               borderRadius: 'small',
@@ -165,7 +158,7 @@ const docs: DocumentationPageDescriptor = {
 
     {
       title: 'Utility Colors',
-      values: Object.keys(utilityColors),
+      values: [...tokenNames.colorsUtility],
       renderDemo: (utilityColorName) => (
         <Box
           styles={{
@@ -183,7 +176,7 @@ const docs: DocumentationPageDescriptor = {
           }}
         >
           <ColorSwatch
-            colorName={utilityColorName as SwatchNameOrAlias}
+            colorName={utilityColorName}
             key={utilityColorName}
             styles={{
               border: 'normal',
@@ -202,7 +195,7 @@ const ColorSwatch = ({
   styles,
   ...otherProps
 }: BoxPropsWithoutRef & {
-  colorName: SwatchNameOrAlias;
+  colorName: ColorValue;
 }) => (
   <Box
     styles={{

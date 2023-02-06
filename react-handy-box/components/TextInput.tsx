@@ -4,7 +4,7 @@ import { useFormField } from '@/react-handy-box/components/Form';
 import { CommonFormInputProps } from '@/react-handy-box/components/Form.types';
 import { LabeledInput } from '@/react-handy-box/components/LabeledInput';
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
-import { inputStyles } from '@/tokens/inputStyles';
+import { tokens } from '@/tokens';
 import { FocusEventHandler, forwardRef, Ref, useRef } from 'react';
 
 export type SupportedInputTypes =
@@ -77,7 +77,7 @@ const TextInput = forwardRef(
         <Box
           as={type === 'textarea' ? 'textarea' : 'input'}
           ref={inputElementRef}
-          styles={inputStyles}
+          styles={tokens.inputStyles}
           type={type === 'textarea' ? undefined : type}
           onFocus={handleFocus}
           {...propsForInput}

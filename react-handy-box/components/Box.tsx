@@ -1,26 +1,13 @@
+import { getAdjustedSwatchName } from '@/react-handy-box/colors';
 import {
-  BorderStyle,
-  BoxPropsWithRef,
-  Breakpoint,
   StyleProps,
-  SupportedTags,
   ThemedStyles,
-  ThemeObject,
-  TransitionDuration,
   validStyleProps,
 } from '@/react-handy-box/components/Box.types';
-import { getAdjustedColorCode } from '@/react-handy-box/utilities/getAdjustedColorCode';
+import { BreakpointName, ColorThemeName } from '@/react-handy-box/types';
 import { replaceEach } from '@/react-handy-box/utilities/replaceEach';
-import { animationNames } from '@/tokens/animationNames';
-import { borderRadiiNames } from '@/tokens/borderRadii';
-import { borderStyles } from '@/tokens/borderStyles';
-import { boxShadows } from '@/tokens/boxShadows';
-import { breakpoints } from '@/tokens/breakpoints';
-import { themes } from '@/tokens/colorPalette';
-import { transitionDurations } from '@/tokens/transitionDurations';
-import { fontNames, fontSizeNames } from '@/tokens/typography';
-import { whiteSpaceNames } from '@/tokens/whiteSpaces';
-import { zIndices } from '@/tokens/zIndices';
+import { tokenNames } from '@/tokenNames';
+import { tokens } from '@/tokens';
 import camelCase from 'lodash/camelCase';
 import get from 'lodash/get';
 import isNumber from 'lodash/isNumber';
@@ -28,10 +15,10 @@ import kebabCase from 'lodash/kebabCase';
 import upperFirst from 'lodash/upperFirst';
 import styled, { CSSObject, CSSProperties } from 'styled-components';
 
-const whiteSpacesAsCSSVariables = Object.fromEntries(
-  whiteSpaceNames.map((whiteSpaceName) => [
-    whiteSpaceName,
-    `var(--white-space--${whiteSpaceName})`,
+const whitespacesAsCSSVariables = Object.fromEntries(
+  tokenNames.whitespaces.map((whitespaceName) => [
+    whitespaceName,
+    `var(--white-space--${whitespaceName})`,
   ])
 );
 
@@ -50,10 +37,10 @@ type PropHandler<K extends keyof StyleProps> = {
   options:
     | Record<string, string | number | CSSObject>
     | ((args: {
-        styleName: K;
-        styles: StyleProps;
-        styleValue: NonNullable<StyleProps[K]>;
-        theme: ThemeObject;
+        stylePropName: K;
+        styleProps: StyleProps;
+        stylePropValue: NonNullable<StyleProps[K]>;
+        colorThemeName: ColorThemeName;
       }) => CSSObject);
 };
 
@@ -67,21 +54,27 @@ const propHandlers: PropHandlers = {
     setDefaults: {
       display: 'flex',
     },
-    options: ({ styleName, styleValue }) => ({
-      [styleName]: styleValue,
+    options: ({ stylePropName, stylePropValue }) => ({
+      [stylePropName]: stylePropValue,
     }),
   },
+
   animationDuration: {
-    options: transitionDurations,
+    options: tokens.animationDurations,
   },
+
   animationName: {
-    options: ({ styleValue: animationName }) => {
+    options: ({ stylePropValue: animationName, colorThemeName }) => {
       return {
         animationName,
-        ...animationNames[animationName].style,
+        ...stylesToStyleObject({
+          styleProps: tokens.animations[animationName].defaultStyles,
+          colorThemeName,
+        }),
       };
     },
   },
+
   borderRadius: {
     aliases: [
       'borderBottomLeftRadius',
@@ -89,39 +82,44 @@ const propHandlers: PropHandlers = {
       'borderTopLeftRadius',
       'borderTopRightRadius',
     ],
-    options: ({ styleName, styleValue }) => ({
-      [styleName]:
-        typeof styleValue === 'number'
-          ? `${styleValue}px`
+    options: ({ stylePropName, stylePropValue }) => ({
+      [stylePropName]:
+        typeof stylePropValue === 'number'
+          ? `${stylePropValue}px`
           : replaceEach(
-              String(styleValue),
-              borderRadiiNames.map(String),
+              String(stylePropValue),
+              tokenNames.borderRadii.map(String),
               (borderRadius) =>
                 `var(--border-radius--${kebabCase(borderRadius)})`
             ),
     }),
   },
+
   borderBottomRadius: {
     aliases: ['borderLeftRadius', 'borderRightRadius', 'borderTopRadius'],
-    options: ({ styleName, styleValue, theme }) => {
-      const edgeName = styleName.replace(/(border|Radius)/g, '');
+    options: ({ stylePropName, stylePropValue, colorThemeName }) => {
+      const edgeName = stylePropName.replace(/(border|Radius)/g, '');
+
       const isLeftOrRight = ['Left', 'Right'].includes(edgeName);
+
       const propNameA = isLeftOrRight
         ? `borderBottom${edgeName}Radius`
         : `border${edgeName}LeftRadius`;
+
       const propNameB = isLeftOrRight
         ? `borderTop${edgeName}Radius`
         : `border${edgeName}RightRadius`;
 
       return stylesToStyleObject({
-        styles: {
-          [propNameA]: styleValue,
-          [propNameB]: styleValue,
+        styleProps: {
+          [propNameA]: stylePropValue,
+          [propNameB]: stylePropValue,
         },
-        theme,
+        colorThemeName,
       });
     },
   },
+
   border: {
     aliases: [
       'borderTop',
@@ -134,106 +132,149 @@ const propHandlers: PropHandlers = {
       'borderBottomColor',
       'borderLeftColor',
     ],
-    options: ({ styles, styleName, theme }) => {
-      const borderEdgeName = styleName.replace('Color', '') as
+    options: ({ styleProps, stylePropName, colorThemeName }) => {
+      const borderEdgeName = stylePropName.replace('Color', '') as
         | 'border'
         | 'borderBottom'
         | 'borderLeft'
         | 'borderRight'
         | 'borderTop';
+
       const borderStyleObject =
-        borderStyles[(styles[borderEdgeName] ?? 'normal') as BorderStyle];
-      const borderColor = styles[`${borderEdgeName}Color`] ?? 'border';
-      const adjustedBorderColor = getAdjustedColorCode(
-        theme,
+        tokens.borderStyles[styleProps[borderEdgeName] ?? 'normal'];
+
+      const borderColor = styleProps[`${borderEdgeName}Color`] ?? 'border';
+
+      const adjustedBorderColor = getAdjustedSwatchName(
         borderColor,
-        styles[`${borderEdgeName}ColorLightness`],
-        styles[`${borderEdgeName}ColorOpacity`]
+        styleProps[`${borderEdgeName}ColorLightness`],
+        styleProps[`${borderEdgeName}ColorOpacity`],
+        colorThemeName
       );
 
       return {
-        [`${borderEdgeName}Color`]: adjustedBorderColor,
+        [`${borderEdgeName}Color`]: `var(--color--${adjustedBorderColor})`,
         [`${borderEdgeName}Style`]: get(borderStyleObject, 'borderStyle'),
         [`${borderEdgeName}Width`]: get(borderStyleObject, 'borderWidth'),
       };
     },
   },
+
+  // 20 => 20px
+  // 'tight' => 'var(--white-space--tight)'
+  // 'calc(tight * 2)' => 'calc(var(--white-space--tight) * 2)'
   bottom: {
-    aliases: ['left', 'right', 'top'],
-    options: ({ styleName, styleValue }) => ({
-      [styleName]:
-        typeof styleValue === 'number'
-          ? `${styleValue}px`
-          : replaceEach(
-              String(styleValue),
-              whiteSpaceNames.map(String),
-              (whiteSpaceName) =>
-                `var(--white-space--${kebabCase(whiteSpaceName)})`
-            ),
+    aliases: [
+      'height',
+      'left',
+      'margin',
+      'marginBottom',
+      'marginLeft',
+      'marginRight',
+      'marginTop',
+      'maxHeight',
+      'maxWidth',
+      'minHeight',
+      'minWidth',
+      'padding',
+      'paddingBottom',
+      'paddingLeft',
+      'paddingRight',
+      'paddingTop',
+      'right',
+      'top',
+      'transform',
+      'width',
+    ],
+    options: ({ stylePropName, stylePropValue }) => ({
+      [stylePropName]: isNumber(stylePropValue)
+        ? `${stylePropValue}px`
+        : replaceEach(
+            String(stylePropValue),
+            tokenNames.whitespaces.map(String),
+            (whitespaceName) =>
+              `var(--white-space--${kebabCase(whitespaceName)})`
+          ),
     }),
   },
-  boxShadow: {
-    options: ({ styleValue, theme }) => {
-      const shadowStyles = boxShadows({ theme });
 
-      return {
-        boxShadow:
-          shadowStyles[styleValue as keyof typeof shadowStyles] ?? styleValue,
-      };
-    },
+  boxShadow: {
+    options: ({ stylePropValue, colorThemeName }) => ({
+      boxShadow:
+        stylePropValue in tokens.boxShadows
+          ? replaceEach(
+              String((tokens.boxShadows as any)[stylePropValue]),
+              tokenNames.colorAliases.map(String),
+              (colorAliasName) => `var(--color--${colorAliasName})`
+            )
+          : stylePropValue,
+    }),
   },
+
   color: {
     aliases: ['backgroundColor'],
-    options: ({ styleName, styleValue, styles, theme }) => {
-      const typedPropName = styleName as 'color' | 'backgroundColor';
+    options: ({
+      stylePropName,
+      stylePropValue,
+      styleProps,
+      colorThemeName,
+    }) => {
+      const typedPropName = stylePropName as 'color' | 'backgroundColor';
+
+      const adjustedSwatchName = getAdjustedSwatchName(
+        stylePropValue,
+        styleProps[`${typedPropName}Lightness`],
+        styleProps[`${typedPropName}Opacity`],
+        colorThemeName
+      );
 
       return {
-        [styleName]: getAdjustedColorCode(
-          theme,
-          styleValue,
-          styles[`${typedPropName}Lightness`],
-          styles[`${typedPropName}Opacity`]
-        ),
+        [stylePropName]: `var(--color--${adjustedSwatchName})`,
       };
     },
   },
+
   colorLightness: {
     aliases: ['colorOpacity'],
-    options: ({ styles, theme }) => {
+    options: ({ styleProps, colorThemeName }) => {
+      const adjustedSwatchName = getAdjustedSwatchName(
+        styleProps.color ?? 'text',
+        styleProps.colorLightness,
+        styleProps.colorOpacity,
+        colorThemeName
+      );
+
       return {
-        color: getAdjustedColorCode(
-          theme,
-          styles.color ?? 'text',
-          styles.colorLightness,
-          styles.colorOpacity
-        ),
+        color: `var(--color--${adjustedSwatchName})`,
       };
     },
   },
+
   columnGap: {
     setDefaults: {
       alignItems: 'center',
       display: 'flex',
       flexDirection: 'row',
     },
-    options: whiteSpacesAsCSSVariables,
+    options: whitespacesAsCSSVariables,
   },
+
   columns: {
     aliases: ['rows'],
     setDefaults: {
       gridAutoRows: 'auto',
     },
-    options: ({ styleName, styleValue }) => {
-      const typedPropName = styleName as 'columns' | 'rows';
+    options: ({ stylePropName, stylePropValue }) => {
+      const typedPropName = stylePropName as 'columns' | 'rows';
 
       let result;
 
-      if (typeof styleValue === 'number') {
-        result = Array(styleValue).fill('1fr').join(' ');
-      } else if (Array.isArray(styleValue)) {
-        result = styleValue.join(' ');
+      if (typeof stylePropValue === 'number') {
+        result = Array(stylePropValue).fill('1fr').join(' ');
+      } else if (Array.isArray(stylePropValue)) {
+        result = stylePropValue.join(' ');
       } else {
-        result = styleValue;
+        result = stylePropValue;
       }
 
       return {
@@ -242,46 +283,56 @@ const propHandlers: PropHandlers = {
       };
     },
   },
+
   flexDirection: {
     setDefaults: {
       display: 'flex',
     },
-    options: ({ styleValue }) => ({
-      flexDirection: styleValue,
+    options: ({ stylePropValue }) => ({
+      flexDirection: stylePropValue,
     }),
   },
+
   flexWrap: {
     setDefaults: {
       display: 'flex',
     },
-    options: ({ styleValue }) => ({
-      flexWrap: styleValue,
+    options: ({ stylePropValue }) => ({
+      flexWrap: stylePropValue,
     }),
   },
+
   fontName: {
-    options: ({ styleValue }) => fontNames[styleValue],
+    options: ({ stylePropValue, colorThemeName }) =>
+      stylesToStyleObject({
+        styleProps: tokens.fontNames[stylePropValue],
+        colorThemeName,
+      }),
   },
+
   fontSize: {
-    options: ({ styles: { fontSize, lineHeight = fontSize } }) => ({
+    options: ({ styleProps: { fontSize, lineHeight = fontSize } }) => ({
       fontSize: replaceEach(
         String(fontSize),
-        fontSizeNames.map(String),
+        tokenNames.fontSizes.map(String),
         (fontSize) => `var(--font-size--${kebabCase(fontSize)})`
       ),
       lineHeight:
         replaceEach(
           String(lineHeight),
-          fontSizeNames.map(String),
+          tokenNames.fontSizes.map(String),
           (lineHeight) => `var(--line-height--${kebabCase(lineHeight)})`
         ) || `var(--line-height--${lineHeight})`,
     }),
   },
+
   gap: {
     setDefaults: {
       display: 'grid',
     },
-    options: whiteSpacesAsCSSVariables,
+    options: whitespacesAsCSSVariables,
   },
+
   isOnlyForScreenReaders: {
     options: () => ({
       clip: 'rect(0, 0, 0, 0)',
@@ -290,147 +341,105 @@ const propHandlers: PropHandlers = {
       margin: '-1px',
       overflow: 'hidden',
       position: 'absolute',
-      whiteSpace: 'nowrap',
+      whitespace: 'nowrap',
       width: '1px',
     }),
   },
-  margin: {
-    aliases: [
-      'padding',
-      'paddingLeft',
-      'paddingRight',
-      'paddingTop',
-      'paddingBottom',
-      'marginLeft',
-      'marginRight',
-      'marginTop',
-      'marginBottom',
-    ],
-    options: ({ styleName, styleValue }) => ({
-      [styleName]:
-        typeof styleValue === 'number'
-          ? `${styleValue}px`
-          : replaceEach(
-              String(styleValue),
-              whiteSpaceNames.map(String),
-              (whiteSpaceName) =>
-                `var(--white-space--${kebabCase(whiteSpaceName)})`
-            ),
-    }),
-  },
+
   marginX: {
     aliases: ['marginY', 'paddingX', 'paddingY'],
-    options: ({ styleName, styleValue, theme }) => {
-      const XorY = styleName.includes('X') ? 'X' : 'Y';
+    options: ({ stylePropName, stylePropValue, colorThemeName }) => {
+      const XorY = stylePropName.includes('X') ? 'X' : 'Y';
       const LeftOrBottom = XorY === 'X' ? 'Left' : 'Bottom';
       const RightOrTop = XorY === 'X' ? 'Right' : 'Top';
-      const propNameLeftOrBottom = styleName.replace(XorY, LeftOrBottom);
-      const propNameRightOrTop = styleName.replace(XorY, RightOrTop);
+      const propNameLeftOrBottom = stylePropName.replace(XorY, LeftOrBottom);
+      const propNameRightOrTop = stylePropName.replace(XorY, RightOrTop);
 
       return stylesToStyleObject({
-        styles: {
-          [`${propNameLeftOrBottom}`]: styleValue,
-          [`${propNameRightOrTop}`]: styleValue,
+        styleProps: {
+          [`${propNameLeftOrBottom}`]: stylePropValue,
+          [`${propNameRightOrTop}`]: stylePropValue,
         },
-        theme,
+        colorThemeName,
       });
     },
   },
-  maxHeight: {
-    aliases: ['maxWidth', 'minHeight', 'minWidth'],
-    options: ({ styleName, styleValue }) => ({
-      [styleName]:
-        typeof styleValue === 'number'
-          ? `${styleValue}px`
-          : replaceEach(
-              String(styleValue),
-              whiteSpaceNames.map(String),
-              (whiteSpaceName) =>
-                `var(--white-space--${kebabCase(whiteSpaceName)})`
-            ),
-    }),
-  },
+
   stylesForAfterElement: {
     aliases: ['stylesForBeforeElement'],
-    options: ({ styleName, styleValue, theme }) => ({
+    options: ({ stylePropName, stylePropValue, colorThemeName }) => ({
       [nestedSelectorPropAliases[
-        styleName as keyof typeof nestedSelectorPropAliases
+        stylePropName as keyof typeof nestedSelectorPropAliases
       ]]: {
-        ...stylesToStyleObject({ styles: styleValue, theme }),
-        content: `"${styleValue.content ?? ''}"`,
+        ...stylesToStyleObject({
+          styleProps: stylePropValue,
+          colorThemeName,
+        }),
+        content: `"${stylePropValue.content ?? ''}"`,
       },
     }),
   },
+
   stylesForCustomSelector: {
-    options: ({ styleValue, theme }) => {
+    options: ({ stylePropValue, colorThemeName }) => {
       return Object.fromEntries(
-        Object.entries(styleValue).map(([customSelector, styles]) => [
+        Object.entries(stylePropValue).map(([customSelector, styleProps]) => [
           customSelector,
-          stylesToStyleObject({ styles, theme }),
+          stylesToStyleObject({ styleProps, colorThemeName }),
         ])
       );
     },
   },
-  stylesForRoot: {
-    aliases: Object.keys(breakpoints).map(
-      (breakpointName) => `stylesFor${upperFirst(breakpointName)}`
-    ) as Array<`stylesFor${Capitalize<Breakpoint>}`>,
-    options: ({ styleName, styleValue, theme }) => {
-      const breakpointName = camelCase(
-        styleName.replace('stylesFor', '')
-      ) as Breakpoint;
 
-      const mediaQuery = breakpoints[breakpointName];
+  stylesForRoot: {
+    aliases: tokenNames.breakpoints.map(
+      (breakpointName) => `stylesFor${upperFirst(breakpointName)}`
+    ) as Array<`stylesFor${Capitalize<BreakpointName>}`>,
+    options: ({ stylePropName, stylePropValue, colorThemeName }) => {
+      const breakpointName = camelCase(
+        stylePropName.replace('stylesFor', '')
+      ) as BreakpointName;
+
+      const mediaQuery = tokens.breakpoints[breakpointName];
 
       return {
-        [mediaQuery]: stylesToStyleObject({ styles: styleValue, theme }),
+        [mediaQuery]: stylesToStyleObject({
+          styleProps: stylePropValue,
+          colorThemeName,
+        }),
       };
     },
   },
+
   stylesOnHover: {
     aliases: ['stylesOnFocus', 'stylesForFirstElement', 'stylesForLastElement'],
-    options: ({ styleName, styleValue, theme }) => {
+    options: ({ stylePropName, stylePropValue, colorThemeName }) => {
       const propSelector =
         nestedSelectorPropAliases[
-          styleName as keyof typeof nestedSelectorPropAliases
+          stylePropName as keyof typeof nestedSelectorPropAliases
         ];
 
       return {
-        [propSelector!]: stylesToStyleObject({ styles: styleValue, theme }),
+        [propSelector!]: stylesToStyleObject({
+          styleProps: stylePropValue,
+          colorThemeName,
+        }),
       };
     },
   },
+
   rowGap: {
     setDefaults: {
       display: 'flex',
       flexDirection: 'column',
     },
-    options: whiteSpacesAsCSSVariables,
+    options: whitespacesAsCSSVariables,
   },
-  transform: {
-    aliases: [
-      'width',
-      'height',
-      'maxWidth',
-      'maxHeight',
-      'minWidth',
-      'minHeight',
-    ],
-    options: ({ styleName, styleValue }) => ({
-      [styleName]: isNumber(styleValue)
-        ? `${styleValue}px`
-        : replaceEach(
-            String(styleValue),
-            whiteSpaceNames.map(String),
-            (whiteSpaceName) =>
-              `var(--white-space--${kebabCase(whiteSpaceName)})`
-          ),
-    }),
-  },
+
   transitionDuration: {
     aliases: ['transitionProperty', 'transitionTimingFunction'],
     options: ({
-      styles: {
+      styleProps: {
         transitionDuration,
         transitionProperty,
         transitionTimingFunction,
@@ -438,48 +447,52 @@ const propHandlers: PropHandlers = {
     }) => ({
       transitionDuration:
         typeof transitionDuration === 'undefined'
-          ? transitionDurations['normal']
+          ? tokens.animationDurations['normal']
           : typeof transitionDuration === 'number'
           ? `${transitionDuration}ms`
-          : transitionDuration in transitionDurations
-          ? transitionDurations[
-              transitionDuration as keyof typeof transitionDurations
-            ]
+          : transitionDuration in tokens.animationDurations
+          ? (tokens.animationDurations as any)[transitionDuration]
           : transitionDuration,
       transitionProperty: Array.isArray(transitionProperty)
         ? transitionProperty.map(kebabCase).join(', ')
-        : kebabCase(transitionProperty) ?? 'all',
+        : transitionProperty
+        ? kebabCase(transitionProperty)
+        : 'all',
       transitionTimingFunction: transitionTimingFunction ?? 'ease',
     }),
   },
+
   zIndex: {
     setDefaults: {
       position: 'relative',
     },
-    options: zIndices,
+    options: tokens.zIndices,
   },
 };
 
-Object.entries(propHandlers).forEach(([styleName, propHandler]) => {
+Object.entries(propHandlers).forEach(([stylePropName, propHandler]) => {
   propHandler.aliases?.forEach((aliasedPropName) => {
-    propHandlers[aliasedPropName] = (propHandlers as any)[styleName];
+    propHandlers[aliasedPropName] = (propHandlers as any)[stylePropName];
   });
 });
 
 const stylesToStyleObject: (args: {
-  styles: StyleProps;
-  theme: ThemeObject;
-}) => CSSObject = ({ styles = {}, theme = {} }) =>
-  Object.keys(styles).reduce((currentStyleObject, styleName) => {
-    const typedPropName = styleName as keyof PropHandlers;
+  styleProps: StyleProps;
+  colorThemeName: ColorThemeName;
+}) => CSSObject = ({
+  styleProps = {},
+  colorThemeName = tokenNames.colorThemes[0],
+}) =>
+  Object.keys(styleProps).reduce((currentStyleObject, stylePropName) => {
+    const typedPropName = stylePropName as keyof PropHandlers;
 
     const propHandler = propHandlers[typedPropName] as PropHandler<
       keyof ThemedStyles
     >;
 
-    const styleValue = styles[typedPropName];
+    const stylePropValue = styleProps[typedPropName];
 
-    if (typeof styleValue === 'undefined') {
+    if (typeof stylePropValue === 'undefined') {
       return currentStyleObject;
     }
 
@@ -491,7 +504,7 @@ const stylesToStyleObject: (args: {
       return validStyleProps.includes(typedPropName)
         ? {
             ...currentStyleObject,
-            [typedPropName]: styleValue,
+            [typedPropName]: stylePropValue,
           }
         : currentStyleObject;
     }
@@ -503,10 +516,10 @@ const stylesToStyleObject: (args: {
         ...defaults,
         ...currentStyleObject,
         ...(propHandler.options as Function)({
-          styles,
-          styleName: typedPropName,
-          styleValue,
-          theme,
+          styleProps,
+          stylePropName: typedPropName,
+          stylePropValue,
+          colorThemeName,
         }),
       };
     } else if (typeof propHandler.options === 'object') {
@@ -514,24 +527,23 @@ const stylesToStyleObject: (args: {
         ...defaults,
         ...currentStyleObject,
         [typedPropName]:
-          propHandler.options[styleValue as keyof typeof propHandler.options] ??
-          styleValue,
+          propHandler.options[
+            stylePropValue as keyof typeof propHandler.options
+          ] ?? stylePropValue,
       };
     }
 
     return currentStyleObject;
   }, {});
 
-const Box = styled('div')(
-  <E extends SupportedTags = 'div'>(props: BoxPropsWithRef<E>) => {
-    return stylesToStyleObject({
-      styles: props.styles ?? {},
-      theme: props.theme ?? themes.light,
-    });
-  }
-) as <E extends SupportedTags = 'div'>(
-  props: BoxPropsWithRef<E>
-) => JSX.Element;
+const Box = styled.div<{
+  styles?: StyleProps;
+}>((props) =>
+  stylesToStyleObject({
+    styleProps: props.styles ?? {},
+    colorThemeName: props.theme.name ?? tokenNames.colorThemes[0],
+  })
+);
 
 export { Box };
 export { nestedSelectorPropAliases, stylesToStyleObject };

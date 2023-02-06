@@ -19,7 +19,7 @@ import {
   useKeyboardShortcuts,
 } from '@/react-handy-box/hooks/useKeyboardShortcuts';
 import { useMultipleRefs } from '@/react-handy-box/hooks/useMultipleRefs';
-import { modalLayerStyles } from '@/tokens/modalLayerStyles';
+import { tokens } from '@/tokens';
 import merge from 'lodash/merge';
 import {
   forwardRef,
@@ -202,7 +202,7 @@ const Menu = forwardRef(
         role="menu"
         styles={merge(
           {},
-          modalLayerStyles.menu,
+          tokens.modalLayerVariants.menu,
           { width: triggerWidth <= 200 ? undefined : triggerWidth },
           styles
         )}

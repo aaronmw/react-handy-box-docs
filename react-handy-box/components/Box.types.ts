@@ -1,21 +1,19 @@
-import { animationNames } from '@/tokens/animationNames';
-import { borderRadiiNames } from '@/tokens/borderRadii';
-import { borderStyles } from '@/tokens/borderStyles';
-import { boxShadows } from '@/tokens/boxShadows';
-import { breakpointNames } from '@/tokens/breakpoints';
 import {
-  coreColorCodes,
-  coreColorDefinitions,
-  lightnessLevels,
-  opacityOptions,
-  swatchNameAliases,
-  themeNames,
-  utilityColors,
-} from '@/tokens/colorPalette';
-import { transitionDurations } from '@/tokens/transitionDurations';
-import { fontNames, fontSizeNames } from '@/tokens/typography';
-import { whiteSpaceNames } from '@/tokens/whiteSpaces';
-import { zIndices } from '@/tokens/zIndices';
+  AnimationDurationName,
+  AnimationName,
+  BorderRadiusName,
+  BorderVariantName,
+  BoxShadowVariantName,
+  BreakpointName,
+  ColorLightnessAdjustmentValue,
+  ColorOpacityAdjustmentValue,
+  ColorThemeAliases,
+  ColorValue,
+  FontName,
+  FontSizeName,
+  WhitespaceName,
+  ZIndexName,
+} from '@/react-handy-box/types';
 import {
   ComponentPropsWithoutRef,
   ComponentPropsWithRef,
@@ -24,49 +22,7 @@ import {
   ReactNode,
 } from 'react';
 
-export type AnimationDuration = TransitionDuration | `${number}${TimeUnit}`;
-
-export type AnimationName = keyof typeof animationNames;
-
-export type BorderRadius = typeof borderRadiiNames[number] | Length | number;
-
-export type BorderStyle = keyof typeof borderStyles;
-
-export type Breakpoint = typeof breakpointNames[number];
-
-export type BoxShadow = keyof ReturnType<typeof boxShadows>;
-
-export type CoreColorName = keyof typeof coreColorDefinitions;
-
-export type UtilityColor = keyof typeof utilityColors;
-
-export type SwatchName = UtilityColor | CoreColorName | ValidColorSwatchName;
-
-export type SwatchNameAlias = typeof swatchNameAliases[number];
-
-export type SwatchNameOrAlias = SwatchNameAlias | SwatchName;
-
-export type ThemeName = typeof themeNames[number];
-
-export type ThemeObject = {
-  [K in SwatchNameAlias]: SwatchName;
-};
-
-export type ColorLightnessValue = keyof typeof lightnessLevels;
-
-export type ColorOpacityValue = typeof opacityOptions[number] | 100;
-
-export type ValidColorSwatchName =
-  | `${keyof typeof coreColorCodes}--${ColorLightnessValue}`
-  | `${keyof typeof coreColorCodes}--${ColorLightnessValue}--${ColorOpacityValue}`;
-
-export type ColorLightnessAdjustmentValue =
-  | ColorLightnessValue
-  | `${'+' | '-'}${ColorLightnessValue}`;
-
-export type ColorOpacityAdjustmentValue =
-  | ColorOpacityValue
-  | `${'+' | '-'}${ColorOpacityValue}`;
+export type BorderRadius = BorderRadiusName | Length | number;
 
 export type ColumnsOrRows = number | Array<number | string>;
 
@@ -74,14 +30,10 @@ export type FlexDirection = 'column' | 'column-reverse' | 'row' | 'row-reverse';
 
 export type FlexWrap = 'nowrap' | 'wrap' | 'wrap-reverse';
 
-export type FontName = keyof typeof fontNames;
-
-export type FontSize = typeof fontSizeNames[number] | Length;
-
-export type WhiteSpaceName = typeof whiteSpaceNames[number];
+export type FontSize = FontSizeName | Length;
 
 export type WhiteSpaceNameOrLength =
-  | WhiteSpaceName
+  | WhitespaceName
   | Length
   | number
   | 'none'
@@ -99,13 +51,13 @@ export type Length = 0 | `${number}${LengthUnit}` | 'auto' | `calc(${string})`;
 export type TimeUnit = 's' | 'ms';
 
 export type TransitionDuration =
-  | keyof typeof transitionDurations
+  | AnimationDurationName
   | number
   | `${number}${'s' | 'ms'}`;
 
 export type LengthUnit = 'px' | 'em' | 'rem' | '%' | 'vh' | 'vw';
 
-export type ZIndex = keyof typeof zIndices | number;
+export type ZIndex = ZIndexName | number;
 
 export const validStyleProps = [
   'alignContent',
@@ -471,37 +423,37 @@ export const validStyleProps = [
 ];
 
 export type ThemedStyles = {
-  animationDuration?: AnimationDuration;
+  animationDuration?: AnimationDurationName | `${number}${TimeUnit}`;
   animationName?: AnimationName;
-  backgroundColor?: SwatchNameOrAlias;
+  backgroundColor?: ColorValue;
   backgroundColorOpacity?: ColorOpacityAdjustmentValue;
   backgroundColorLightness?: ColorLightnessAdjustmentValue;
-  border?: BorderStyle;
-  borderBottom?: BorderStyle;
+  border?: BorderVariantName;
+  borderBottom?: BorderVariantName;
   borderBottomLeftRadius?: BorderRadius;
   borderBottomRadius?: BorderRadius;
   borderBottomRightRadius?: BorderRadius;
-  borderColor?: SwatchNameOrAlias;
+  borderColor?: ColorValue;
   borderColorOpacity?: ColorOpacityAdjustmentValue;
   borderColorLightness?: ColorLightnessAdjustmentValue;
-  borderBottomColor?: SwatchNameOrAlias;
+  borderBottomColor?: ColorValue;
   borderBottomColorOpacity?: ColorOpacityAdjustmentValue;
   borderBottomColorLightness?: ColorLightnessAdjustmentValue;
-  borderLeftColor?: SwatchNameOrAlias;
+  borderLeftColor?: ColorValue;
   borderLeftColorOpacity?: ColorOpacityAdjustmentValue;
   borderLeftColorLightness?: ColorLightnessAdjustmentValue;
-  borderRightColor?: SwatchNameOrAlias;
+  borderRightColor?: ColorValue;
   borderRightColorOpacity?: ColorOpacityAdjustmentValue;
   borderRightColorLightness?: ColorLightnessAdjustmentValue;
-  borderTopColor?: SwatchNameOrAlias;
+  borderTopColor?: ColorValue;
   borderTopColorOpacity?: ColorOpacityAdjustmentValue;
   borderTopColorLightness?: ColorLightnessAdjustmentValue;
-  borderLeft?: BorderStyle;
+  borderLeft?: BorderVariantName;
   borderLeftRadius?: BorderRadius;
   borderRadius?: BorderRadius;
-  borderRight?: BorderStyle;
+  borderRight?: BorderVariantName;
   borderRightRadius?: BorderRadius;
-  borderTop?: BorderStyle;
+  borderTop?: BorderVariantName;
   borderTopLeftRadius?: BorderRadius;
   borderTopRadius?: BorderRadius;
   borderTopRightRadius?: BorderRadius;
@@ -516,11 +468,11 @@ export type ThemedStyles = {
    * ```
    */
   boxShadow?:
-    | BoxShadow
+    | BoxShadowVariantName
     | `${string} ${string} ${string} ${string}`
     | `${string} ${string} ${string} ${string} ${string}`;
   children?: ReactNode;
-  color?: SwatchNameOrAlias;
+  color?: ColorValue;
   colorOpacity?: ColorOpacityAdjustmentValue;
   colorLightness?: ColorLightnessAdjustmentValue;
   columnGap?: WhiteSpaceNameOrLength;
@@ -556,7 +508,7 @@ export type ThemedStyles = {
   /** Sets both `paddingTop` and `paddingBottom` */
   paddingY?: WhiteSpaceNameOrLength;
 } & {
-  [K in `stylesFor${Capitalize<Breakpoint>}`]?: StyleProps;
+  [K in `stylesFor${Capitalize<BreakpointName>}`]?: StyleProps;
 } & {
   /** `BoxProps` to be applied to the `::after` psuedo element.
    * `content` is set to `""` automatically. */
@@ -616,7 +568,7 @@ export type BoxPropsWithRef<E extends SupportedTags = 'div'> = Omit<
 > & {
   as?: E;
   styles?: StyleProps;
-  theme?: ThemeObject;
+  theme?: ColorThemeAliases;
   onClick?: (event: MouseEvent) => void;
 };
 
@@ -626,7 +578,7 @@ export type BoxPropsWithoutRef<E extends SupportedTags = 'div'> = Omit<
 > & {
   as?: E;
   styles?: StyleProps;
-  theme?: ThemeObject;
+  theme?: ColorThemeAliases;
   onClick?: (event: MouseEvent) => void;
 };
 
@@ -638,4 +590,4 @@ export type HTMLElementFor<T extends SupportedTags> = HTMLElementTagNameMap[T];
 export type TokensByBreakpoint<
   TokenShape extends unknown,
   TokenNames extends string
-> = Partial<Record<Breakpoint, Record<TokenNames[number], TokenShape>>>;
+> = Partial<Record<BreakpointName, Record<TokenNames[number], TokenShape>>>;

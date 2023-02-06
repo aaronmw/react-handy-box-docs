@@ -1,12 +1,6 @@
 import { DocumentationPageDescriptor } from '@/pages/index';
 import { Box } from '@/react-handy-box/components/Box';
-import { borderRadii, borderRadiiNames } from '@/tokens/borderRadii';
-import { borderStyles } from '@/tokens/borderStyles';
-import { boxShadows } from '@/tokens/boxShadows';
-import { themes } from '@/tokens/colorPalette';
-import { transitionDurations } from '@/tokens/transitionDurations';
-import { fontSizeNames } from '@/tokens/typography';
-import { whiteSpaceByBreakpoint } from '@/tokens/whiteSpaces';
+import { tokenNames } from '@/tokenNames';
 import range from 'lodash/range';
 
 const docs: DocumentationPageDescriptor = {
@@ -79,7 +73,7 @@ const docs: DocumentationPageDescriptor = {
 
     {
       title: 'border',
-      values: Object.keys(borderStyles),
+      values: [...tokenNames.borderStyles],
       renderDemo: (borderStyle) => (
         <Box
           styles={{
@@ -178,7 +172,7 @@ const docs: DocumentationPageDescriptor = {
 
     {
       title: 'borderRadius',
-      values: ([] as Array<string | number>).concat(borderRadiiNames, 25),
+      values: [...tokenNames.borderRadii, 25],
       renderDemo: (borderRadius) => (
         <Box
           styles={{
@@ -196,10 +190,7 @@ const docs: DocumentationPageDescriptor = {
 
     {
       title: 'boxShadow',
-      values: ([] as Array<string | number>).concat(
-        Object.keys(boxShadows({ theme: themes.light })),
-        '2px 2px 5px red'
-      ),
+      values: [...tokenNames.boxShadows, '2px 2px 5px red'],
       renderDemo: (boxShadow) => (
         <Box
           styles={{
@@ -294,14 +285,11 @@ const docs: DocumentationPageDescriptor = {
       title: 'columnGap',
       description:
         'Setting this prop automatically sets `display: flex` for you.',
-      values: ([] as Array<string | number>).concat(
-        Object.keys(whiteSpaceByBreakpoint.root ?? {}),
-        1
-      ),
-      renderDemo: (whiteSpaceName) => (
+      values: [...tokenNames.whitespaces, 1],
+      renderDemo: (whitespaceName) => (
         <Box
           styles={{
-            columnGap: whiteSpaceName,
+            columnGap: whitespaceName,
           }}
         >
           {['A', 'B', 'C'].map((boxName) => (
@@ -317,10 +305,10 @@ const docs: DocumentationPageDescriptor = {
           ))}
         </Box>
       ),
-      renderSnippet: (whiteSpaceName) => `
+      renderSnippet: (whitespaceName) => `
         <Box
           styles={{
-            columnGap: ${JSON.stringify(whiteSpaceName)}
+            columnGap: ${JSON.stringify(whitespaceName)}
           }}
         >
           <Box />
@@ -408,7 +396,7 @@ const docs: DocumentationPageDescriptor = {
       title: 'fontSize',
       description:
         'Check out the [Text](/docs/text) component for slightly nicer syntax.',
-      values: fontSizeNames.map((v) => v),
+      values: [...tokenNames.fontSizes],
       renderDemo: (fontSize) => <Box styles={{ fontSize }}>{fontSize}</Box>,
       renderSnippet: true,
       highlightLines: [3],
@@ -416,16 +404,16 @@ const docs: DocumentationPageDescriptor = {
 
     {
       title: 'margin/padding',
-      values: Object.keys(whiteSpaceByBreakpoint.root ?? {}),
-      renderDemo: (whiteSpaceName) => (
+      values: [...tokenNames.whitespaces],
+      renderDemo: (whitespaceName) => (
         <Box
           styles={{
             border: 'hairline',
             borderRadius: 'small',
-            padding: whiteSpaceName,
+            padding: whitespaceName,
           }}
         >
-          {whiteSpaceName}
+          {whitespaceName}
         </Box>
       ),
       renderSnippet: true,
@@ -527,7 +515,7 @@ const docs: DocumentationPageDescriptor = {
 
     {
       title: 'transitionDuration',
-      values: Object.keys(transitionDurations),
+      values: [...tokenNames.animationDurations, '3.5s'],
       renderDemo: (transitionDuration) => (
         <Box
           styles={{

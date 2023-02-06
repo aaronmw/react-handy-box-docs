@@ -1,20 +1,20 @@
+import { colorPalette } from '@/react-handy-box/colors';
 import { stylesToStyleObject } from '@/react-handy-box/components/Box';
-import { ThemeObject } from '@/react-handy-box/components/Box.types';
+import {
+  BreakpointName,
+  ColorThemeName,
+  FontSizeName,
+  WhitespaceName,
+} from '@/react-handy-box/types';
 import { mapKeysToCSSVariables } from '@/react-handy-box/utilities/mapKeysToCSSVariables';
-import { animationNames } from '@/tokens/animationNames';
-import { borderRadii } from '@/tokens/borderRadii';
-import { breakpointNames, breakpoints } from '@/tokens/breakpoints';
-import { colorCodesBySwatchName } from '@/tokens/colorPalette';
-import { globalStyles } from '@/tokens/globalStyles';
-import { scrollbarStyles } from '@/tokens/scrollbarStyles';
-import { fontSizesAndLineHeights } from '@/tokens/typography';
-import { whiteSpaceByBreakpoint } from '@/tokens/whiteSpaces';
-import mapValues from 'lodash/mapValues';
+import { tokenNames } from '@/tokenNames';
+import { tokens } from '@/tokens';
+import { mapValues } from 'lodash';
 import merge from 'lodash/merge';
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalAnimations = createGlobalStyle`
-    ${Object.entries(animationNames).map(
+    ${Object.entries(tokens.animations).map(
       ([animationName, animationDescriptor]) => `
         @keyframes ${animationName} {
           ${animationDescriptor.keyframes}
@@ -23,18 +23,63 @@ const GlobalAnimations = createGlobalStyle`
     )}
 `;
 
-const fontSizesByBreakpoint = mapValues(fontSizesAndLineHeights, (value, key) =>
-  mapValues(value, (tuple) => tuple[0])
-);
+const fontSizesByBreakpoint: Partial<
+  Record<BreakpointName, Partial<Record<FontSizeName, string>>>
+> = {};
 
-const lineHeightsByBreakpoint = mapValues(
-  fontSizesAndLineHeights,
-  (value, key) => mapValues(value, (tuple) => tuple[1])
-);
+const lineHeightsByBreakpoint: Partial<
+  Record<BreakpointName, Partial<Record<FontSizeName, string>>>
+> = {};
+
+const { fontSizesAndLineHeights } = tokens;
+
+if ('root' in fontSizesAndLineHeights) {
+  Object.entries(fontSizesAndLineHeights).forEach(
+    ([breakpointName, fontSizeAndLineHeightMap]) => {
+      const typedBreakpointName = breakpointName as BreakpointName;
+
+      fontSizesByBreakpoint[typedBreakpointName] = mapValues(
+        fontSizeAndLineHeightMap,
+        (v) => v![0]
+      );
+
+      lineHeightsByBreakpoint[typedBreakpointName] = mapValues(
+        fontSizeAndLineHeightMap,
+        (v) => v![1]
+      );
+    }
+  );
+} else {
+  fontSizesByBreakpoint['root'] = mapValues(
+    fontSizesAndLineHeights,
+    (v) => v![0]
+  ) as any;
+
+  lineHeightsByBreakpoint['root'] = mapValues(
+    fontSizesAndLineHeights,
+    (v) => v![1]
+  ) as any;
+}
+
+const whitespacesByBreakpoint: Partial<
+  Record<BreakpointName, Partial<Record<WhitespaceName, string>>>
+> = {};
+
+const { whitespaces } = tokens;
+
+if ('root' in whitespaces) {
+  Object.entries(whitespaces).forEach(([breakpointName, value]) => {
+    whitespacesByBreakpoint[breakpointName as BreakpointName] = value;
+  });
+} else {
+  whitespacesByBreakpoint.root = whitespaces as any;
+}
 
 const GlobalStyles = createGlobalStyle<{
-  theme: ThemeObject;
-}>(({ theme }) =>
+  theme: {
+    name: ColorThemeName;
+  };
+}>(({ theme: { name: colorThemeName } }) =>
   merge(
     {
       '*': {
@@ -55,78 +100,82 @@ const GlobalStyles = createGlobalStyle<{
         textDecoration: 'none',
       },
       '::placeholder': stylesToStyleObject({
-        styles: {
+        styleProps: {
           color: 'textFaded',
           fontStyle: 'italic',
         },
-        theme,
+        colorThemeName,
       }),
       '::-webkit-scrollbar': stylesToStyleObject({
-        styles: scrollbarStyles.scrollbar,
-        theme,
+        styleProps: tokens.scrollbarStyles,
+        colorThemeName,
       }),
       '::-webkit-scrollbar-corner': stylesToStyleObject({
-        styles: scrollbarStyles.corner,
-        theme,
+        styleProps: tokens.scrollbarCornerStyles,
+        colorThemeName,
       }),
       '::-webkit-scrollbar-thumb': stylesToStyleObject({
-        styles: scrollbarStyles.thumb,
-        theme,
+        styleProps: tokens.scrollbarThumbStyles,
+        colorThemeName,
       }),
       '::-webkit-scrollbar-track': stylesToStyleObject({
-        styles: scrollbarStyles.track,
-        theme,
+        styleProps: tokens.scrollbarTrackStyles,
+        colorThemeName,
       }),
-      ':root': stylesToStyleObject({
-        styles: {
-          backgroundColor: 'background',
-          color: 'text',
-          fontName: 'body',
-          fontSize: 'normal',
-          scrollPaddingTop: '10vh',
-          scrollbarColor: `${colorCodesBySwatchName[theme.primary]} ${
-            colorCodesBySwatchName[theme.shaded]
-          }`,
-        },
-        theme,
-      }),
+      ':root': {
+        ...mapKeysToCSSVariables(colorPalette, 'color'),
+        ...stylesToStyleObject({
+          styleProps: {
+            backgroundColor: 'background',
+            color: 'text',
+            fontName: 'body',
+            fontSize: 'normal',
+            scrollPaddingTop: '10vh',
+            scrollbarColor: 'var(--color--primary) var(--color--shaded)',
+          },
+          colorThemeName,
+        }),
+      },
       'body': stylesToStyleObject({
-        styles: {
+        styleProps: {
           fontSize: 'normal',
         },
-        theme,
+        colorThemeName,
       }),
       ...Object.fromEntries(
-        breakpointNames
-          .map((breakpointName) => {
-            return [
-              breakpoints[breakpointName],
-              {
-                ':root': {
-                  ...mapKeysToCSSVariables(
-                    borderRadii[breakpointName] ?? {},
-                    'border-radius'
-                  ),
-                  ...mapKeysToCSSVariables(
-                    fontSizesByBreakpoint[breakpointName] ?? {},
-                    'font-size'
-                  ),
-                  ...mapKeysToCSSVariables(
-                    lineHeightsByBreakpoint[breakpointName] ?? {},
-                    'line-height'
-                  ),
-                  ...mapKeysToCSSVariables(
-                    whiteSpaceByBreakpoint[breakpointName] ?? {},
-                    'white-space'
-                  ),
-                },
+        tokenNames.breakpoints
+          .map((breakpointName) => [
+            tokens.breakpoints[breakpointName],
+            {
+              ':root': {
+                ...mapKeysToCSSVariables(
+                  (breakpointName in tokens.borderRadii
+                    ? (tokens.borderRadii as any)[breakpointName]
+                    : tokens.borderRadii) ?? {},
+                  'border-radius'
+                ),
+                ...mapKeysToCSSVariables(
+                  fontSizesByBreakpoint[breakpointName] ?? {},
+                  'font-size'
+                ),
+                ...mapKeysToCSSVariables(
+                  lineHeightsByBreakpoint[breakpointName] ?? {},
+                  'line-height'
+                ),
+                ...mapKeysToCSSVariables(
+                  whitespacesByBreakpoint[breakpointName] ?? {},
+                  'white-space'
+                ),
               },
-            ];
-          })
+            },
+          ])
           .reverse()
       ),
     } as const,
-    globalStyles
+
+    mapValues(tokens.globalStyles ?? {}, (styleProps) =>
+      stylesToStyleObject({ styleProps, colorThemeName })
+    )
   )
 );
 

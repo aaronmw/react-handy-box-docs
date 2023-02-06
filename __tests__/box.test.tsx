@@ -1,14 +1,11 @@
+import { colorPalette } from '@/react-handy-box/colors';
 import {
   nestedSelectorPropAliases,
   stylesToStyleObject,
 } from '@/react-handy-box/components/Box';
 import { StyleProps } from '@/react-handy-box/components/Box.types';
-import { borderRadii } from '@/tokens/borderRadii';
-import { borderStyles } from '@/tokens/borderStyles';
-import { breakpoints } from '@/tokens/breakpoints';
-import { colorCodesBySwatchName, themes } from '@/tokens/colorPalette';
-import { transitionDurations } from '@/tokens/transitionDurations';
-import { zIndices } from '@/tokens/zIndices';
+import { BorderRadiusName } from '@/react-handy-box/types';
+import { tokens } from '@/tokens';
 import { CSSObject } from 'styled-components';
 
 type TestDescriptor = [
@@ -16,7 +13,7 @@ type TestDescriptor = [
   tests: Array<[it: string, given: StyleProps, expect: CSSObject]>
 ];
 
-const theme = themes.light;
+const colorThemeName = 'light';
 
 const tests: Array<TestDescriptor> = [
   [
@@ -28,7 +25,7 @@ const tests: Array<TestDescriptor> = [
           backgroundColor: 'black',
         },
         {
-          backgroundColor: colorCodesBySwatchName.black,
+          backgroundColor: 'var(--color--black)',
         },
       ],
       [
@@ -38,7 +35,7 @@ const tests: Array<TestDescriptor> = [
           colorLightness: 200,
         },
         {
-          color: colorCodesBySwatchName['purple--200--40'],
+          color: 'var(--color--purple--200--40)',
         },
       ],
       [
@@ -48,7 +45,7 @@ const tests: Array<TestDescriptor> = [
           colorOpacity: 100,
         },
         {
-          color: colorCodesBySwatchName['purple--100'],
+          color: 'var(--color--purple--100--100)',
         },
       ],
       [
@@ -57,7 +54,7 @@ const tests: Array<TestDescriptor> = [
           colorLightness: 200,
         },
         {
-          color: colorCodesBySwatchName['blue--200'],
+          color: 'var(--color--blue--200--100)',
         },
       ],
       [
@@ -67,7 +64,7 @@ const tests: Array<TestDescriptor> = [
           backgroundColorLightness: 200,
         },
         {
-          backgroundColor: colorCodesBySwatchName['orange--200'],
+          backgroundColor: 'var(--color--orange--200--100)',
         },
       ],
       [
@@ -77,7 +74,7 @@ const tests: Array<TestDescriptor> = [
           backgroundColorLightness: '+200',
         },
         {
-          backgroundColor: colorCodesBySwatchName['orange--700'],
+          backgroundColor: 'var(--color--orange--700--100)',
         },
       ],
       [
@@ -87,7 +84,7 @@ const tests: Array<TestDescriptor> = [
           backgroundColorLightness: '+700',
         },
         {
-          backgroundColor: colorCodesBySwatchName['orange--700'],
+          backgroundColor: 'var(--color--orange--700--100)',
         },
       ],
       [
@@ -97,7 +94,7 @@ const tests: Array<TestDescriptor> = [
           backgroundColorOpacity: '-10',
         },
         {
-          backgroundColor: colorCodesBySwatchName['orange--500--90'],
+          backgroundColor: 'var(--color--orange--500--90)',
         },
       ],
       [
@@ -107,7 +104,7 @@ const tests: Array<TestDescriptor> = [
           backgroundColorOpacity: 50,
         },
         {
-          backgroundColor: colorCodesBySwatchName['orange--500--50'],
+          backgroundColor: 'var(--color--orange--500--50)',
         },
       ],
       [
@@ -118,7 +115,7 @@ const tests: Array<TestDescriptor> = [
           backgroundColorOpacity: '-10',
         },
         {
-          backgroundColor: colorCodesBySwatchName['orange--400--90'],
+          backgroundColor: 'var(--color--orange--400--90)',
         },
       ],
       [
@@ -128,9 +125,9 @@ const tests: Array<TestDescriptor> = [
           borderLeftColorLightness: '+200',
         },
         {
-          borderLeftColor: colorCodesBySwatchName['gray--400'],
-          borderLeftStyle: borderStyles.normal.borderStyle as any,
-          borderLeftWidth: borderStyles.normal.borderWidth,
+          borderLeftColor: 'var(--color--gray--400--100)',
+          borderLeftStyle: tokens.borderStyles.normal.borderStyle as any,
+          borderLeftWidth: tokens.borderStyles.normal.borderWidth,
         },
       ],
       [
@@ -141,9 +138,9 @@ const tests: Array<TestDescriptor> = [
           borderLeftColorLightness: '+200',
         },
         {
-          borderLeftColor: colorCodesBySwatchName['blue--600'],
-          borderLeftStyle: borderStyles.normal.borderStyle as any,
-          borderLeftWidth: borderStyles.normal.borderWidth,
+          borderLeftColor: 'var(--color--blue--600--100)',
+          borderLeftStyle: tokens.borderStyles.normal.borderStyle as any,
+          borderLeftWidth: tokens.borderStyles.normal.borderWidth,
         },
       ],
       [
@@ -154,9 +151,9 @@ const tests: Array<TestDescriptor> = [
           borderLeftColorLightness: '+200',
         },
         {
-          borderLeftColor: colorCodesBySwatchName['blue--600'],
-          borderLeftStyle: borderStyles.thick.borderStyle as any,
-          borderLeftWidth: borderStyles.thick.borderWidth,
+          borderLeftColor: 'var(--color--blue--600--100)',
+          borderLeftStyle: tokens.borderStyles.thick.borderStyle as any,
+          borderLeftWidth: tokens.borderStyles.thick.borderWidth,
         },
       ],
       [
@@ -166,12 +163,12 @@ const tests: Array<TestDescriptor> = [
           borderTop: 'dashed',
         },
         {
-          borderLeftColor: colorCodesBySwatchName[theme.border],
-          borderLeftStyle: borderStyles.hairline.borderStyle as any,
-          borderLeftWidth: borderStyles.hairline.borderWidth,
-          borderTopColor: colorCodesBySwatchName[theme.border],
-          borderTopStyle: borderStyles.dashed.borderStyle as any,
-          borderTopWidth: borderStyles.dashed.borderWidth,
+          borderLeftColor: 'var(--color--gray--200--100)',
+          borderLeftStyle: tokens.borderStyles.hairline.borderStyle as any,
+          borderLeftWidth: tokens.borderStyles.hairline.borderWidth,
+          borderTopColor: 'var(--color--gray--200--100)',
+          borderTopStyle: tokens.borderStyles.dashed.borderStyle as any,
+          borderTopWidth: tokens.borderStyles.dashed.borderWidth,
         },
       ],
       [
@@ -181,8 +178,8 @@ const tests: Array<TestDescriptor> = [
           borderTopLeftRadius: 'normal',
         },
         {
-          borderRadius: borderRadii.circle,
-          borderTopLeftRadius: borderRadii.normal,
+          borderRadius: 'var(--border-radius--circle)',
+          borderTopLeftRadius: 'var(--border-radius--normal)',
         },
       ],
       [
@@ -191,8 +188,8 @@ const tests: Array<TestDescriptor> = [
           borderTopRadius: 'normal',
         },
         {
-          borderTopRightRadius: borderRadii.normal,
-          borderTopLeftRadius: borderRadii.normal,
+          borderTopRightRadius: 'var(--border-radius--normal)',
+          borderTopLeftRadius: 'var(--border-radius--normal)',
         },
       ],
       [
@@ -247,9 +244,9 @@ const tests: Array<TestDescriptor> = [
           },
         },
         {
-          color: colorCodesBySwatchName.black,
+          color: 'var(--color--black)',
           [nestedSelectorPropAliases.stylesOnHover]: {
-            color: colorCodesBySwatchName.white,
+            color: 'var(--color--white)',
           },
         },
       ],
@@ -263,9 +260,9 @@ const tests: Array<TestDescriptor> = [
           },
         },
         {
-          color: colorCodesBySwatchName.white,
+          color: 'var(--color--white)',
           [nestedSelectorPropAliases.stylesForAfterElement]: {
-            backgroundColor: colorCodesBySwatchName.black,
+            backgroundColor: 'var(--color--black)',
             content: '""',
             display: 'block',
           },
@@ -281,9 +278,9 @@ const tests: Array<TestDescriptor> = [
           },
         },
         {
-          color: colorCodesBySwatchName.black,
+          color: 'var(--color--black)',
           [nestedSelectorPropAliases.stylesForBeforeElement]: {
-            backgroundColor: colorCodesBySwatchName.white,
+            backgroundColor: 'var(--color--white)',
             content: '""',
             display: 'block',
           },
@@ -298,9 +295,9 @@ const tests: Array<TestDescriptor> = [
           },
         },
         {
-          color: colorCodesBySwatchName.black,
+          color: 'var(--color--black)',
           [nestedSelectorPropAliases.stylesForFirstElement]: {
-            color: colorCodesBySwatchName.white,
+            color: 'var(--color--white)',
           },
         },
       ],
@@ -313,9 +310,9 @@ const tests: Array<TestDescriptor> = [
           },
         },
         {
-          'color': colorCodesBySwatchName.black,
+          'color': 'var(--color--black)',
           '&:hover': {
-            color: colorCodesBySwatchName.white,
+            color: 'var(--color--white)',
           },
         },
       ],
@@ -331,12 +328,12 @@ const tests: Array<TestDescriptor> = [
           },
         },
         {
-          color: colorCodesBySwatchName.black,
-          [breakpoints.tabletOrLarger]: {
-            color: colorCodesBySwatchName.white,
+          color: 'var(--color--black)',
+          [tokens.breakpoints.tabletOrLarger]: {
+            color: 'var(--color--white)',
           },
-          [breakpoints.phoneOnly]: {
-            color: colorCodesBySwatchName.white,
+          [tokens.breakpoints.phoneOnly]: {
+            color: 'var(--color--white)',
           },
         },
       ],
@@ -346,7 +343,7 @@ const tests: Array<TestDescriptor> = [
           transitionDuration: 'short',
         },
         {
-          transitionDuration: transitionDurations.short,
+          transitionDuration: tokens.animationDurations.short,
           transitionProperty: 'all',
           transitionTimingFunction: 'ease',
         },
@@ -358,7 +355,7 @@ const tests: Array<TestDescriptor> = [
           transitionTimingFunction: 'ease-in-out',
         },
         {
-          transitionDuration: transitionDurations.short,
+          transitionDuration: tokens.animationDurations.short,
           transitionProperty: 'all',
           transitionTimingFunction: 'ease-in-out',
         },
@@ -369,7 +366,7 @@ const tests: Array<TestDescriptor> = [
           transitionProperty: ['color', 'opacity'],
         },
         {
-          transitionDuration: transitionDurations.normal,
+          transitionDuration: tokens.animationDurations.normal,
           transitionProperty: 'color, opacity',
           transitionTimingFunction: 'ease',
         },
@@ -381,7 +378,7 @@ const tests: Array<TestDescriptor> = [
         },
         {
           position: 'relative',
-          zIndex: zIndices['1--stickyElements'],
+          zIndex: tokens.zIndices['1--stickyElements'],
         },
       ],
     ],
@@ -390,11 +387,11 @@ const tests: Array<TestDescriptor> = [
 
 tests.forEach(([testDescription, tests]) => {
   describe(testDescription, () => {
-    tests.forEach(([testName, styles, expectedCSSObject]) => {
+    tests.forEach(([testName, styleProps, expectedCSSObject]) => {
       it(testName, () => {
         const result = stylesToStyleObject({
-          styles,
-          theme: theme,
+          styleProps,
+          colorThemeName,
         });
 
         expect(result).toStrictEqual(expectedCSSObject);

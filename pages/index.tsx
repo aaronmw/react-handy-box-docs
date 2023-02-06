@@ -2,20 +2,19 @@ import { Demo } from '@/components/Demo';
 import { Markdown } from '@/components/Markdown';
 import { NavigationItem, NavigationTree } from '@/components/NavigationTree';
 import { Box } from '@/react-handy-box/components/Box';
-import {
-  BoxPropsWithoutRef,
-  ThemeName,
-} from '@/react-handy-box/components/Box.types';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { Button } from '@/react-handy-box/components/Button';
 import { HandyProviders } from '@/react-handy-box/components/HandyProviders';
 import { Icon } from '@/react-handy-box/components/Icon';
 import { Text } from '@/react-handy-box/components/Text';
+import { ColorThemeName } from '@/react-handy-box/types';
 import { select } from '@/react-handy-box/utilities/select';
 import startCase from 'lodash/startCase';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import styled from 'styled-components';
 
 type DocumentationPageDescriptor = {
   title: string;
@@ -38,7 +37,8 @@ const Home: NextPage<{
 }> = ({ navigationTree }) => {
   const scrollingContentElementRef = useRef<HTMLDivElement>(null);
 
-  const [activeThemeName, setActiveThemeName] = useState<ThemeName>('light');
+  const [activeThemeName, setActiveThemeName] =
+    useState<ColorThemeName>('light');
 
   const [pageData, setPageData] = useState<DocumentationPageDescriptor>();
 
@@ -165,6 +165,7 @@ const Home: NextPage<{
             height: '100%',
             overflowY: 'auto',
             scrollPaddingTop: 50,
+            scrollBehavior: 'smooth',
           }}
         >
           {isLoading && <Box>Loading...</Box>}
@@ -177,6 +178,14 @@ const Home: NextPage<{
                 rowGap: 'loose',
               }}
             >
+              <FancyTestBox
+                styles={{
+                  border: 'dashed',
+                }}
+              >
+                I am a test Box
+              </FancyTestBox>
+
               <Text variant="heading--2">{pageData.title}</Text>
 
               <Box styles={{ rowGap: 'loose' }}>
@@ -193,6 +202,12 @@ const Home: NextPage<{
     </HandyProviders>
   );
 };
+
+const FancyTestBox = styled(Box)((props) => {
+  return {
+    color: 'red',
+  };
+});
 
 export { getServerSideProps as getStaticProps } from '@/utilities/getServerSideProps';
 export type { DocumentationPageDescriptor, DocumentationSectionDescriptor };

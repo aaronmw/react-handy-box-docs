@@ -1,13 +1,11 @@
 import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { FormFieldClickHandler } from '@/react-handy-box/components/Form.types';
-import { buttonStyles } from '@/tokens/buttonStyles';
+import { ButtonVariantName } from '@/react-handy-box/types';
 import { MouseEvent } from 'react';
-
-export type ButtonType = keyof typeof buttonStyles;
 
 export type ButtonProps = {
   stopClickPropagation?: boolean;
-  variant?: keyof typeof buttonStyles;
+  variant?: ButtonVariantName;
   onClick?: ((event: MouseEvent) => void) | FormFieldClickHandler;
 };
 
