@@ -21,7 +21,7 @@ const Button = forwardRef(
     const formContext = useContext(FormContext);
 
     const extendedVariantStyles = (
-      tokens.buttonVariants[variant].extends ?? []
+      tokens.buttonVariants[variant]?.extends ?? []
     ).reduce(
       (acc, variantName) =>
         merge(acc, tokens.buttonVariants[variantName].styles),
@@ -35,7 +35,7 @@ const Button = forwardRef(
         styles={merge(
           {},
           extendedVariantStyles,
-          tokens.buttonVariants[variant].styles,
+          tokens.buttonVariants[variant]?.styles,
           styles
         )}
         onClick={(event: MouseEvent) => {
@@ -65,11 +65,24 @@ const AnchorButton = forwardRef(
     }: ButtonComponentProps<'a'>,
     ref: Ref<HTMLAnchorElement>
   ) => {
+    const extendedVariantStyles = (
+      tokens.buttonVariants[variant]?.extends ?? []
+    ).reduce(
+      (acc, variantName) =>
+        merge(acc, tokens.buttonVariants[variantName].styles),
+      {}
+    );
+
     return (
       <Box
         as="a"
         ref={ref}
-        styles={merge({}, tokens.buttonVariants[variant], styles)}
+        styles={merge(
+          {},
+          extendedVariantStyles,
+          tokens.buttonVariants[variant]?.styles,
+          styles
+        )}
         {...otherProps}
       >
         {children}

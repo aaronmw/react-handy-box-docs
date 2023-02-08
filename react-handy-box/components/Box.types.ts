@@ -508,12 +508,13 @@ export type ThemedStyles = {
   /** Sets both `paddingTop` and `paddingBottom` */
   paddingY?: WhiteSpaceNameOrLength;
 } & {
+  /** Applies styles only when media query matches */
   [K in `stylesFor${Capitalize<BreakpointName>}`]?: StyleProps;
 } & {
-  /** `BoxProps` to be applied to the `::after` psuedo element.
+  /** Styles to be applied to the `::after` psuedo element.
    * `content` is set to `""` automatically. */
   stylesForAfterElement?: StyleProps;
-  /** `BoxProps` to be applied to the `::before` psuedo element.
+  /** Styles to be applied to the `::before` psuedo element.
    * `content` is set to `""` automatically. */
   stylesForBeforeElement?: StyleProps;
   stylesForCustomSelector?: {
@@ -521,7 +522,7 @@ export type ThemedStyles = {
   };
   stylesForFirstElement?: StyleProps;
   stylesForLastElement?: StyleProps;
-  /** `BoxProps` to be applied on `:focus` and `:focus-within`.
+  /** Styles to be applied on `:focus` and `:focus-within`.
    *
    * Example:
    * ```
@@ -535,7 +536,7 @@ export type ThemedStyles = {
    * ```
    */
   stylesOnFocus?: StyleProps;
-  /** `BoxProps` to be applied on `:hover` or `:focus`.
+  /** Styles to be applied on `:hover` or `:focus`.
    *
    * Example:
    * ```

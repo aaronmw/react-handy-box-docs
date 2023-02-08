@@ -280,7 +280,8 @@ export const tokens: HandyTokens = {
       extends: ['unstyled'],
       styles: {
         backgroundColor: 'primary',
-        borderRadius: 'small',
+        borderColor: 'primary',
+        borderRadius: 'circle',
         boxSizing: 'content-box',
         color: 'white',
         paddingX: 'tight',
@@ -298,6 +299,7 @@ export const tokens: HandyTokens = {
 
     unstyled: {
       styles: {
+        borderRadius: 'small',
         cursor: 'pointer',
         display: 'inline-block',
         stylesForCustomSelector: {
