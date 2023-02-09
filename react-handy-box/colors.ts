@@ -3,6 +3,7 @@ import {
   ColorLightnessAdjustmentValue,
   ColorOpacityAdjustmentValue,
   ColorSwatchName,
+  ColorThemeAliases,
   ColorThemeName,
   ColorThemeToAliasMap,
   ColorValue,
@@ -28,7 +29,7 @@ export const colorAliasesByTheme: ColorThemeToAliasMap =
               : colorAliasValue,
           };
         },
-        {}
+        {} as ColorThemeAliases
       ),
     }),
     {} as ColorThemeToAliasMap

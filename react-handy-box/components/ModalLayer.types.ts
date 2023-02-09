@@ -4,19 +4,13 @@ import {
 } from '@/react-handy-box/components/Box.types';
 import { FormProps } from '@/react-handy-box/components/Form.types';
 import { variantStylesMap } from '@/react-handy-box/components/ModalWindow';
+import { ModalLayerVariantName } from '@/react-handy-box/types';
 import { MouseEvent, MutableRefObject, ReactNode, Ref, RefObject } from 'react';
-
-export type ModalLayerType =
-  | 'dialog'
-  | 'menu'
-  | 'popover'
-  | 'tooltip'
-  | 'window';
 
 export type ModalLayerStackEntry = {
   element: HTMLElement;
   setIsOpen: (isOpen: boolean) => void;
-  type: ModalLayerType;
+  type: ModalLayerVariantName;
 };
 
 export type ModalLayerStack = Array<ModalLayerStackEntry>;
@@ -54,7 +48,7 @@ type BasicModalLayerProps = Omit<BoxPropsWithRef, 'children' | 'type'> & {
   stylesForBackdropOnOpen?: StyleProps;
   stylesOnClose?: StyleProps;
   stylesOnOpen?: StyleProps;
-  type: ModalLayerType;
+  type: ModalLayerVariantName;
   onBeforeClose?: ModalLayerEventHandler;
   onBeforeOpen?: ModalLayerEventHandler;
   onClose?: ModalLayerEventHandler;
@@ -82,6 +76,6 @@ export type ModalWindowProps = Omit<ModalLayerProps, 'type'> & {
     | ((renderProps: ModalLayerRenderProps) => Omit<FormProps, 'children'>);
   renderFooter?: ModalLayerRenderFunction;
   renderHeader?: ModalLayerRenderFunction;
-  type?: ModalLayerType;
+  type?: ModalLayerVariantName;
   variant?: keyof typeof variantStylesMap;
 };

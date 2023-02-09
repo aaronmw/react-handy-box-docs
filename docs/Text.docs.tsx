@@ -1,4 +1,5 @@
 import { Text } from '@/react-handy-box/components/Text';
+import { tokenNames } from '@/tokenNames';
 import { DocumentationPageDescriptor } from '../pages';
 
 const docs: DocumentationPageDescriptor = {
@@ -10,6 +11,17 @@ const docs: DocumentationPageDescriptor = {
       renderSnippet: () => `
         <Text weight="bold">Hey, I'm some text 👋</Text>
       `,
+    },
+
+    {
+      title: 'Variants',
+      description:
+        'These are canned styles configured in `tokens.textVariants`.',
+      values: [...tokenNames.textVariants],
+      renderDemo: (variantName) => (
+        <Text variant={variantName}>{variantName}</Text>
+      ),
+      renderSnippet: true,
     },
   ],
 };

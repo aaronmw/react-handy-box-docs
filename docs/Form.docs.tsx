@@ -60,10 +60,16 @@ const FormDemo = () => {
   return (
     <Box styles={{ rowGap: 'normal' }}>
       <Box styles={{ columnGap: 'tight' }}>
-        <Button onClick={() => setAllFieldsDisabled(!allFieldsDisabled)}>
+        <Button
+          variant="pill"
+          onClick={() => setAllFieldsDisabled(!allFieldsDisabled)}
+        >
           {allFieldsDisabled ? 'Enable' : 'Disable'} All Fields
         </Button>
-        <Button onClick={() => setAllFieldsRequired(!allFieldsRequired)}>
+        <Button
+          variant="pill"
+          onClick={() => setAllFieldsRequired(!allFieldsRequired)}
+        >
           Mark All Fields {allFieldsRequired ? 'Optional' : 'Required'}
         </Button>
       </Box>

@@ -211,7 +211,6 @@ const Form = forwardRef(
         newValue.forEach((v) => formData.append(fieldName, String(v)));
       } else {
         formData.set(fieldName, String(newValue));
-        (formElement[fieldName] as HTMLInputElement).value = String(newValue);
       }
 
       formFieldRegistryRef.current[fieldName].onWrite(newValue, formContext);

@@ -345,7 +345,7 @@ const TableHeaderCell = forwardRef(
                   : 'center',
             },
             tabIndex: 1,
-            variant: isSortable ? 'bare' : undefined,
+            variant: isSortable ? 'unstyled' : undefined,
           }
         : {}
     );

@@ -299,7 +299,6 @@ export const tokens: HandyTokens = {
 
     unstyled: {
       styles: {
-        borderRadius: 'small',
         cursor: 'pointer',
         display: 'inline-block',
         stylesForCustomSelector: {
@@ -431,9 +430,7 @@ export const tokens: HandyTokens = {
   },
 
   modalLayerVariants: {
-    dialog: {},
     menu: {
-      // Extends `popover` below
       borderRadius: 'small',
       flexDirection: 'column',
       maxHeight: `calc(100vh - normal * 2)`,

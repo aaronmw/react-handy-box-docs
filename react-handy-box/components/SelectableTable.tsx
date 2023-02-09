@@ -106,7 +106,7 @@ const SelectableTable = forwardRef(
                     fontSize: 'normal',
                     lineHeight: 0,
                   }}
-                  variant="bare"
+                  variant="unstyled"
                   onClick={handleClickSelectAll}
                 >
                   <InputComponent
@@ -133,7 +133,7 @@ const SelectableTable = forwardRef(
 
               return {
                 control: (
-                  <Button variant="bare" {...propsForOption}>
+                  <Button variant="unstyled" {...propsForOption}>
                     <InputComponent
                       isSelected={isSelected}
                       styles={{

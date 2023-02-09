@@ -96,7 +96,7 @@ const CheckboxesOrRadioInput = forwardRef(
                   cursor: 'pointer',
                   display: 'flex',
                 }}
-                variant="bare"
+                variant="unstyled"
                 onBlur={propsForOption.onBlur}
                 onClick={(event: MouseEvent) => {
                   event.preventDefault();

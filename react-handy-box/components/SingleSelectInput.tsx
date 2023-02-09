@@ -81,6 +81,7 @@ const SingleSelectInput = forwardRef(
                   <Box
                     styles={{
                       columnGap: 'xtight',
+                      height: 0,
                     }}
                   >
                     {selectedOption && (

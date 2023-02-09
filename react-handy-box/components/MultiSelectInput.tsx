@@ -66,7 +66,6 @@ const MultiSelectInput = forwardRef(
                     columnGap: 'tight',
                     display: 'flex',
                     justifyContent: 'space-between',
-                    paddingY: 'xxtight',
                     whiteSpace: 'nowrap',
                   }}
                   tabIndex={0}
@@ -80,9 +79,11 @@ const MultiSelectInput = forwardRef(
                     {placeholder}
                   </Box>
 
-                  <Button variant="iconOnly">
-                    <Icon name="chevron-down" />
-                  </Button>
+                  <Box styles={{ alignItems: 'center', height: 0 }}>
+                    <Button variant="iconOnly">
+                      <Icon name="chevron-down" />
+                    </Button>
+                  </Box>
                 </Box>
               )}
             />

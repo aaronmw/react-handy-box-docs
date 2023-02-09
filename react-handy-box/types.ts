@@ -110,7 +110,10 @@ export type HandyTokens = {
     }
   >;
 
-  colorAliases: Record<ColorAliasName, string | Array<string>>;
+  colorAliases: Record<
+    ColorAliasName,
+    ColorSwatchName | Array<ColorSwatchName>
+  >;
 
   colorLightnessScale: Record<ColorLightnessValue, number>;
 

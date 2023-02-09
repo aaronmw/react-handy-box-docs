@@ -262,6 +262,11 @@ const GroupLabel = forwardRef(
         paddingBottom: 'xtight',
         paddingTop: 'tight',
         paddingX: 'xtight',
+        stylesForCustomSelector: {
+          ':nth-child(2)': {
+            paddingTop: 'xtight',
+          },
+        },
         textTransform: 'uppercase',
         ...styles,
       }}

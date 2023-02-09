@@ -100,7 +100,7 @@ export const tokenNames = {
 
   fontSizes: ['xxlarge', 'xlarge', 'large', 'normal', 'small', 'xsmall'],
 
-  modalLayerVariants: ['dialog', 'menu', 'popover', 'tooltip', 'window'],
+  modalLayerVariants: ['menu', 'popover', 'tooltip', 'window'],
 
   textVariants: ['code', 'heading--1', 'heading--2', 'heading--3', 'label'],
 

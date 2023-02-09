@@ -5,6 +5,7 @@ import {
 import { ModalLayerProvider } from '@/react-handy-box/components/ModalLayer';
 import { GlobalIntervalProvider } from '@/react-handy-box/hooks/useGlobalInterval';
 import { ColorThemeName } from '@/react-handy-box/types';
+import { tokenNames } from '@/tokenNames';
 import { ReactNode } from 'react';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
 
@@ -14,7 +15,7 @@ export type HandyProviderRenderProps = {
 };
 
 const HandyProviders = ({
-  activeThemeName = 'light',
+  activeThemeName = tokenNames.colorThemes[0],
   children,
   disableVendorPrefixesInDevMode = true,
 }: {
