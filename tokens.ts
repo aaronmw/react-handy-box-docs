@@ -388,6 +388,10 @@ export const tokens: HandyTokens = {
       fontFamily: `Glegoo, sans-serif`,
       fontWeight: 400,
     },
+    icon: {
+      fontFamily: `"Font Awesome 6 Pro"`,
+      fontWeight: 400,
+    },
   },
 
   fontSizesAndLineHeights: {

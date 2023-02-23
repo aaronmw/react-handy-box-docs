@@ -23,12 +23,12 @@ const whitespacesAsCSSVariables = Object.fromEntries(
 );
 
 const nestedSelectorPropAliases = {
-  stylesForAfterElement: '&:after',
-  stylesForBeforeElement: '&:before',
-  stylesForFirstElement: '&:first-child',
+  stylesForAfterElement: '&::after',
+  stylesForBeforeElement: '&::before',
+  stylesForFirstElement: '&::first-child',
   stylesOnFocus: '&:focus, &:focus-within',
   stylesOnHover: '&:hover, &:focus, &:focus-within',
-  stylesForLastElement: '&:last-child',
+  stylesForLastElement: '&::last-child',
 };
 
 type PropHandler<K extends keyof StyleProps> = {
@@ -365,8 +365,17 @@ const propHandlers: PropHandlers = {
     },
   },
 
+  content: {
+    options: ({ stylePropValue }) => ({
+      content: `"${stylePropValue}"`,
+    }),
+  },
+
   stylesForAfterElement: {
     aliases: ['stylesForBeforeElement'],
+    setDefaults: {
+      content: '""',
+    },
     options: ({ stylePropName, stylePropValue, colorThemeName }) => ({
       [nestedSelectorPropAliases[
         stylePropName as keyof typeof nestedSelectorPropAliases
@@ -375,20 +384,18 @@ const propHandlers: PropHandlers = {
           styleProps: stylePropValue,
           colorThemeName,
         }),
-        content: `"${stylePropValue.content ?? ''}"`,
       },
     }),
   },
 
   stylesForCustomSelector: {
-    options: ({ stylePropValue, colorThemeName }) => {
-      return Object.fromEntries(
+    options: ({ stylePropValue, colorThemeName }) =>
+      Object.fromEntries(
         Object.entries(stylePropValue).map(([customSelector, styleProps]) => [
           customSelector,
           stylesToStyleObject({ styleProps, colorThemeName }),
         ])
-      );
-    },
+      ),
   },
 
   stylesForRoot: {

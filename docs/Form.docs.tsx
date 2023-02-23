@@ -1,16 +1,11 @@
 import { Box } from '@/react-handy-box/components/Box';
+import { BoxPropsWithoutRef } from '@/react-handy-box/components/Box.types';
 import { Button } from '@/react-handy-box/components/Button';
-import {
-  CheckboxesInput,
-  RadioInput,
-} from '@/react-handy-box/components/CheckboxesInput';
-import { ElasticTextInput } from '@/react-handy-box/components/ElasticTextInput';
-import { Form } from '@/react-handy-box/components/Form';
-import { MultiSelectInput } from '@/react-handy-box/components/MultiSelectInput';
-import { SelectableTable } from '@/react-handy-box/components/SelectableTable';
-import { SingleSelectInput } from '@/react-handy-box/components/SingleSelectInput';
-import { TextInput } from '@/react-handy-box/components/TextInput';
-import { useState } from 'react';
+import { Menu } from '@/react-handy-box/components/Menu';
+import { Text } from '@/react-handy-box/components/Text';
+import { tokens } from '@/tokens';
+import { FormEvent, forwardRef, ReactNode, Ref, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { DocumentationPageDescriptor } from '../pages';
 
 const dummyOptions = [
@@ -53,9 +48,39 @@ const dummyRows = [
   },
 ];
 
+const getFormFieldValues = (event: FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+
+  const formElement = event.target as HTMLFormElement;
+
+  const formData = new FormData(formElement);
+
+  const formFieldNames = Array.from(formData.keys());
+
+  const data = Object.fromEntries(
+    formFieldNames.map((fieldName) => [fieldName, formData.getAll(fieldName)])
+  );
+
+  return data;
+};
+
+type FormFieldValues = {
+  text_field: string;
+  checkboxes_field: Array<string>;
+};
+
 const FormDemo = () => {
   const [allFieldsDisabled, setAllFieldsDisabled] = useState(false);
   const [allFieldsRequired, setAllFieldsRequired] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<FormFieldValues>();
+
+  const onSubmit = (data: any) => console.log(data);
 
   return (
     <Box styles={{ rowGap: 'normal' }}>
@@ -74,83 +99,69 @@ const FormDemo = () => {
         </Button>
       </Box>
 
-      <Form
+      <Box
+        as="form"
         styles={{
           rowGap: 'normal',
         }}
-        onSubmit={(event, formContext) => {
-          console.log(formContext?.getFieldValues());
-        }}
+        onSubmit={handleSubmit(onSubmit)}
       >
-        <TextInput
+        <TextField
           disabled={allFieldsDisabled}
-          isRequired={allFieldsRequired}
-          label="First Name"
-          name="first_name"
-          placeholder="Single-Line Text Input"
+          label="Text Field"
+          required={allFieldsRequired}
+          {...register('text_field')}
         />
 
-        <ElasticTextInput
-          disabled={allFieldsDisabled}
-          isRequired={allFieldsRequired}
-          label="Elastic (Auto-Expanding) Textarea"
-          name="elastic_text_input"
-          placeholder="Type some stuff into me..."
+        <CheckboxesField
+          label="Checkboxes Field"
+          options={[
+            { label: 'First', value: 'first' },
+            { label: 'Second', value: 'second' },
+            { label: 'Third', value: 'third' },
+          ]}
+          {...register('checkboxes_field', {
+            disabled: allFieldsDisabled,
+            required: allFieldsRequired,
+          })}
         />
 
-        <CheckboxesInput
+        {/* <RadiosField
           disabled={allFieldsDisabled}
-          isRequired={allFieldsRequired}
-          label="Checkboxes Input"
-          name="checkboxes"
-          options={dummyOptions}
+          label="Radios Field"
+          name="radios_field"
+          options={[
+            { label: 'First', value: 'first' },
+            { label: 'Second', value: 'second' },
+            { label: 'Third', value: 'third' },
+          ]}
+          required={allFieldsRequired}
         />
 
-        <RadioInput
+        <SelectField
           disabled={allFieldsDisabled}
-          isRequired={allFieldsRequired}
-          label="Radio Input"
-          name="radios"
-          options={dummyOptions}
+          label="Single Select Field"
+          name="single_select_field"
+          options={[
+            { label: 'First', value: 'first' },
+            { label: 'Second', value: 'second' },
+            { label: 'Third', value: 'third' },
+          ]}
+          required={allFieldsRequired}
         />
 
-        <SingleSelectInput
+        <SelectField
           disabled={allFieldsDisabled}
-          isRequired={allFieldsRequired}
-          label="Single Select"
-          name="single_select"
-          options={dummyOptions}
-          placeholder="Single-Select Input"
-        />
-
-        <MultiSelectInput
-          disabled={allFieldsDisabled}
-          isRequired={allFieldsRequired}
-          label="Multi Select"
-          name="multi_select"
-          options={dummyOptions}
-          placeholder="Multi-Select Input"
-        />
-
-        <SelectableTable
-          columnDescriptors={dummyColumns as any}
-          disabled={allFieldsDisabled}
-          isMultiValue={true}
-          isRequired={allFieldsRequired}
-          label="Multi-Selectable Table"
-          name="multi_selectable_table"
-          rowObjects={dummyRows}
-        />
-
-        <SelectableTable
-          columnDescriptors={dummyColumns as any}
-          disabled={allFieldsDisabled}
-          isMultiValue={false}
-          isRequired={allFieldsRequired}
-          label="Single-Selectable Table"
-          name="single_selectable_table"
-          rowObjects={dummyRows}
-        />
+          label="Multiple Select Field"
+          multiple={true}
+          name="multiple_select_field"
+          options={[
+            { label: 'First', value: 'first' },
+            { label: 'Second', value: 'second' },
+            { label: 'Third', value: 'third' },
+          ]}
+          required={allFieldsRequired}
+        /> */}
 
         <Box
           styles={{
@@ -158,16 +169,346 @@ const FormDemo = () => {
             justifyContent: 'flex-end',
           }}
         >
-          <Button
-            type="reset"
-            onClick={(e, formContext) => formContext?.resetForm()}
-          >
-            Reset
-          </Button>
+          <Button type="reset">Reset</Button>
           <Button type="submit">Submit</Button>
         </Box>
-      </Form>
+      </Box>
     </Box>
+  );
+};
+
+type UniversalFormFieldProps = {
+  disabled?: boolean;
+  label: ReactNode;
+  name: string;
+  required?: boolean;
+};
+
+type LabeledFormFieldProps = BoxPropsWithoutRef<'label'> &
+  Pick<UniversalFormFieldProps, 'disabled' | 'label' | 'required'>;
+
+const LabeledFormField = ({
+  children,
+  disabled,
+  label,
+  required,
+  ...otherProps
+}: LabeledFormFieldProps) => {
+  return (
+    <Box
+      as="label"
+      styles={{
+        opacity: disabled ? 0.3 : undefined,
+        pointerEvents: disabled ? 'none' : undefined,
+        rowGap: 'xtight',
+      }}
+      {...otherProps}
+    >
+      <Text variant="label">
+        {label}
+        {required && <Text styles={{ color: 'red' }}> *</Text>}
+      </Text>
+
+      {children}
+    </Box>
+  );
+};
+
+const checkableInputTypeIconMap = {
+  checkbox: {
+    checked: '\f14a', // square-check,
+    unchecked: '\f0c8', // square
+    indeterminate: '\f146', // square-minus
+  },
+  radio: {
+    checked: '\f192', // circle-dot
+    unchecked: '\f111', // circle
+  },
+} as const;
+
+type CheckableInputProps<T extends 'checkbox' | 'radio'> = Omit<
+  BoxPropsWithoutRef<'input'>,
+  'type'
+> & {
+  indeterminate?: T extends 'checkbox' ? boolean : never;
+  type: T;
+};
+
+const CheckableInput = forwardRef(
+  <T extends 'checkbox' | 'radio'>(
+    {
+      checked = false,
+      indeterminate,
+      styles,
+      type,
+      onChange,
+      ...otherProps
+    }: CheckableInputProps<T>,
+    ref: Ref<HTMLInputElement>
+  ) => {
+    return (
+      <Box
+        styles={{
+          display: 'inline-block',
+          position: 'relative',
+          stylesForCustomSelector: {
+            ':focus-within': {
+              boxShadow: 'focusRing',
+            },
+          },
+          ...styles,
+        }}
+      >
+        <Box
+          as="input"
+          className={`js-hidden-${type}-field`}
+          ref={ref}
+          styles={{
+            height: '100%',
+            left: 0,
+            opacity: 0,
+            position: 'absolute',
+            top: 0,
+            width: '100%',
+          }}
+          type={type}
+          {...otherProps}
+        />
+        <Box
+          styles={{
+            stylesForBeforeElement: {
+              fontName: 'icon',
+              content: checkableInputTypeIconMap[type].unchecked,
+              color: 'text--faded',
+            },
+            stylesForCustomSelector: {
+              [`.js-hidden-${type}-field:checked + &::before`]: {
+                color: 'primary',
+                content: checkableInputTypeIconMap[type].checked,
+                fontWeight: 900,
+              },
+              ...(type === 'checkbox'
+                ? {
+                    [`.js-hidden-checkbox-field:indeterminate + &::before`]: {
+                      color: 'primary',
+                      content: checkableInputTypeIconMap.checkbox.indeterminate,
+                      fontWeight: 900,
+                    },
+                  }
+                : {}),
+            },
+          }}
+        />
+      </Box>
+    );
+  }
+);
+
+CheckableInput.displayName = 'CheckableInput';
+
+type CheckableInputFieldProps<T extends 'checkbox' | 'radio'> =
+  UniversalFormFieldProps &
+    CheckableInputProps<T> & {
+      options: Array<{
+        label?: ReactNode;
+        value: string | number;
+      }>;
+    };
+
+const CheckableInputsField = forwardRef(
+  <T extends 'checkbox' | 'radio'>(
+    {
+      disabled,
+      label,
+      options,
+      required,
+      type,
+      ...otherProps
+    }: CheckableInputFieldProps<T>,
+    ref: Ref<HTMLInputElement>
+  ) => {
+    const Component = type === 'checkbox' ? Checkbox : Radio;
+
+    return (
+      <LabeledFormField disabled={disabled} label={label} required={required}>
+        <Box styles={{ flexWrap: 'wrap', gap: 'tight' }}>
+          {options.map((option) => (
+            <Box as="label" key={option.value} styles={{ columnGap: 'xtight' }}>
+              <Component
+                disabled={disabled}
+                ref={ref}
+                value={option.value}
+                {...(otherProps as any)}
+              />
+
+              {option.label ?? option.value}
+            </Box>
+          ))}
+        </Box>
+      </LabeledFormField>
+    );
+  }
+);
+
+CheckableInputsField.displayName = 'CheckableInputsField';
+
+const Checkbox = forwardRef(
+  (
+    { ...otherProps }: Omit<CheckableInputProps<'checkbox'>, 'type'>,
+    ref: Ref<HTMLInputElement>
+  ) => {
+    return <CheckableInput ref={ref} type="checkbox" {...otherProps} />;
+  }
+);
+
+Checkbox.displayName = 'Checkbox';
+
+const CheckboxesField = forwardRef(
+  (
+    props: Omit<CheckableInputFieldProps<'checkbox'>, 'type'>,
+    ref: Ref<HTMLInputElement>
+  ) => {
+    return <CheckableInputsField ref={ref} type="checkbox" {...props} />;
+  }
+);
+
+CheckboxesField.displayName = 'CheckboxesField';
+
+const Radio = forwardRef(
+  (
+    { ...otherProps }: Omit<CheckableInputProps<'radio'>, 'type'>,
+    ref: Ref<HTMLInputElement>
+  ) => {
+    return <CheckableInput ref={ref} type="radio" {...otherProps} />;
+  }
+);
+
+Radio.displayName = 'Radio';
+
+const RadiosField = forwardRef(
+  (
+    props: Omit<CheckableInputFieldProps<'radio'>, 'type'>,
+    ref: Ref<HTMLInputElement>
+  ) => {
+    return <CheckableInputsField type="radio" {...props} />;
+  }
+);
+
+RadiosField.displayName = 'RadiosField';
+
+type TextFieldProps = BoxPropsWithoutRef<'input'> & UniversalFormFieldProps;
+
+const TextField = forwardRef(
+  (
+    { disabled, label, required, ...otherProps }: TextFieldProps,
+    ref: Ref<HTMLInputElement>
+  ) => {
+    return (
+      <LabeledFormField disabled={disabled} label={label} required={required}>
+        <Box
+          as="input"
+          disabled={disabled}
+          ref={ref}
+          required={required}
+          styles={tokens.inputStyles}
+          {...otherProps}
+        />
+      </LabeledFormField>
+    );
+  }
+);
+
+TextField.displayName = 'TextField';
+
+type SelectFieldProps<IsMultiValue extends boolean> = Omit<
+  BoxPropsWithoutRef<'select'>,
+  'defaultValue' | 'multiple'
+> &
+  UniversalFormFieldProps & {
+    defaultValue?: IsMultiValue extends true
+      ? Array<string | number>
+      : string | number;
+    multiple?: IsMultiValue;
+    options: Array<{
+      label?: ReactNode;
+      selected?: boolean;
+      value: string | number;
+    }>;
+    readOnly?: boolean;
+  };
+
+const SelectField = <IsMultiValue extends boolean>({
+  defaultValue,
+  disabled,
+  label,
+  multiple,
+  options,
+  required,
+  ...otherProps
+}: SelectFieldProps<IsMultiValue>) => {
+  const [selectedOptions, setSelectedOptions] = useState(
+    defaultValue
+      ? options.filter((option) =>
+          multiple
+            ? (defaultValue as Array<string | number>).includes(option.value)
+            : defaultValue === option.value
+        )
+      : []
+  );
+
+  const deselectOptionValue = (optionValue: string | number) => {
+    setSelectedOptions(
+      selectedOptions.filter(
+        (selectedOption) => selectedOption.value === optionValue
+      )
+    );
+  };
+
+  const selectOptionValue = (optionValue: string | number) => {
+    const selectedOption = options.find(
+      (option) => option.value === optionValue
+    )!;
+
+    setSelectedOptions(
+      multiple ? [...selectedOptions, selectedOption] : [selectedOption]
+    );
+  };
+
+  const optionsAsMenuOptions = options
+    .filter((option) => (multiple ? !selectedOptions.includes(option) : true))
+    .map(
+      (option) =>
+        ({
+          label: option.label ?? option.value,
+          type: 'menu-item',
+          onClick: selectOptionValue.bind(null, option.value),
+        } as const)
+    );
+
+  return (
+    <LabeledFormField disabled={disabled} label={label} required={required}>
+      <Menu
+        options={optionsAsMenuOptions}
+        renderTrigger={({ propsForTrigger }) => (
+          <Box as="button" styles={tokens.inputStyles} {...propsForTrigger}>
+            {!multiple && !!selectedOptions.length ? (
+              selectedOptions[0].label
+            ) : (
+              <>&nbsp;</>
+            )}
+          </Box>
+        )}
+      />
+
+      {selectedOptions.map((selectedOption) => (
+        <Box
+          as="input"
+          key={selectedOption.value}
+          type="hidden"
+          value={selectedOption.value}
+        />
+      ))}
+    </LabeledFormField>
   );
 };
 
@@ -177,66 +518,6 @@ const docs: DocumentationPageDescriptor = {
     {
       title: 'Usage',
       renderDemo: () => <FormDemo />,
-      renderSnippet: () => `
-        <Form
-          styles={{
-            rowGap: 'normal',
-          }}
-          onSubmit={(event, formContext) => {
-            console.log(formContext?.getFieldValues());
-          }}
-        >
-          <TextInput
-            disabled={allFieldsDisabled}
-            isRequired={allFieldsRequired}
-            label="First Name"
-            name="first_name"
-            placeholder="Single-Line Text Input"
-          />
-
-          <CheckboxesInput
-            disabled={allFieldsDisabled}
-            isRequired={allFieldsRequired}
-            label="Checkboxes Input"
-            name="checkboxes"
-            options={dummyOptions}
-          />
-
-          <RadioInput
-            disabled={allFieldsDisabled}
-            isRequired={allFieldsRequired}
-            label="Radio Input"
-            name="radios"
-            options={dummyOptions}
-          />
-
-          <MultiSelectInput
-            disabled={allFieldsDisabled}
-            isRequired={allFieldsRequired}
-            label="Multi Select"
-            name="multi_select"
-            options={dummyOptions}
-            placeholder="Multi-Select Input"
-          />
-
-          <Box
-            styles={{
-              columnGap: 'tight',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <Button
-              type="reset"
-              onClick={(e, formContext) =>
-                formContext?.resetForm()
-              }
-            >
-              Reset
-            </Button>
-            <Button type="submit">Submit</Button>
-          </Box>
-        </Form>
-      `,
       highlightLines: [],
     },
   ],

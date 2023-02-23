@@ -96,7 +96,7 @@ export const tokenNames = {
 
   colorThemes: ['light', 'dark'],
 
-  fontNames: ['body', 'display'],
+  fontNames: ['body', 'display', 'icon'],
 
   fontSizes: ['xxlarge', 'xlarge', 'large', 'normal', 'small', 'xsmall'],
 
